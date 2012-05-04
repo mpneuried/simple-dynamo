@@ -1,2 +1,2 @@
-dynamo_connector
-================
+dynamo_test
+===========
