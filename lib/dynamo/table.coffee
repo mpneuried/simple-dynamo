@@ -398,7 +398,7 @@ module.exports = class DynamoTable extends EventEmitter
 		# define range if key is defined
 		if @hasRange
 			_rName = @_model_settings.rangeKey
-			_rType = @_model_settings.rangeKeyType or "S"
+			_rType = @_model_settings.rangeKeyType or "N"
 			oShema[ _rName ] = if _rType is "S" then String else Number
 		
 		oShema
