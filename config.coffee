@@ -17,9 +17,25 @@ CONFIG =
 					hashKey:  "_id"
 
 					attributes: [
-						key: "name", type: "string"
-						key: "age", type: "number"
-						key: "lastlogin", type: "timestamp"
+						{ key: "name", type: "string", required: true }
+						{ key: "age", type: "number" }
+						{ key: "lastlogin", type: "number" }
+					]
+
+				"Messages":
+					name: "messages"
+					hashKey:  "_id"
+					rangeKey:  "_t"
+					rangeKeyType:  "N"
+
+					fnCreateHash: ( attributes, cb )=>
+						cb( attributes.user_id )
+						return
+
+					attributes: [
+						key: "_t", type: "number", required: true
+					,	key: "user_id", type: "string", required: true
+					,	key: "lastlogin", type: "number"
 					]
 
 

@@ -1,5 +1,6 @@
 (function() {
   var CONFIG, portOverwrite;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   CONFIG = {
     "_BASIC": {
       server: {
@@ -20,10 +21,35 @@
               {
                 key: "name",
                 type: "string",
+                required: true
+              }, {
                 key: "age",
-                type: "number",
+                type: "number"
+              }, {
                 key: "lastlogin",
-                type: "timestamp"
+                type: "number"
+              }
+            ]
+          },
+          "Messages": {
+            name: "messages",
+            hashKey: "_id",
+            rangeKey: "_t",
+            rangeKeyType: "N",
+            fnCreateHash: __bind(function(attributes, cb) {
+              cb(attributes.user_id);
+            }, this),
+            attributes: [
+              {
+                key: "_t",
+                type: "number",
+                required: true
+              }, {
+                key: "user_id",
+                type: "string",
+                required: true,
+                key: "lastlogin",
+                type: "number"
               }
             ]
           }
