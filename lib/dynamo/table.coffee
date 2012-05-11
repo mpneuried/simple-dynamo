@@ -165,6 +165,10 @@ module.exports = class DynamoTable extends EventEmitter
 				return
 			return
 
+	destroy: ( cb )=>
+		if @_isExistend( cb )
+			@external.destroy( cb )
+
 
 	# short helper to check if the databe is existend in AWS and return a error to callback if not existend
 	_isExistend: ( cb )=>
