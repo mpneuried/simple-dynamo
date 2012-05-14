@@ -217,4 +217,80 @@ describe "----- Table Tests -----", ->
 
 		return
 
+	describe 'Overwrite Tests', ->
+
+		table = null
+
+		_C = _CONFIG.tables[ "Todos" ]
+		_D = _DATA[ "Todos" ]
+		_G = {}
+		_ItemCount = 0
+
+		it "get table", ( done )->
+			table = dynDB.get( "Todos" )
+			should.exist( table )
+			done()
+			return
+
+		it "create item", ( done )->
+			
+			table.set _D[ "insert1" ], ( err, item )->
+				throw err if err
+
+				item.id.should.exist
+				item.title.should.exist
+				item.done.should.exist
+
+				item.id.should.equal( _D[ "insert1" ].id )
+				item.title.should.equal( _D[ "insert1" ].title )
+				item.done.should.equal( _D[ "insert1" ].done )
+
+				_ItemCount++
+				_G[ "insert1" ] = item
+
+				done()
+				return
+			return
+
+		it "try secont insert with same hash", ( done )->
+			
+			table.set _D[ "insert2" ], ( err, item )->
+				throw err if err
+
+				console.log item
+
+				item.id.should.exist
+				item.title.should.exist
+				item.done.should.exist
+
+				item.id.should.equal( _D[ "insert2" ].id )
+				item.title.should.equal( _D[ "insert2" ].title )
+				item.done.should.equal( _D[ "insert2" ].done )
+
+				
+				_G[ "insert2" ] = item
+
+				done()
+				return
+			return
+
+		it "List items", ( done )->
+			table.find ( err, items )->
+				throw err if err
+				console.log items
+				items.should.an.instanceof( Array )
+				items.length.should.equal( _ItemCount )
+				done()
+				return
+			return
+
+		it "delete the first inserted item", ( done )->
+			
+			table.del _G[ "insert1" ][ _C.hashKey ], ( err )->
+				throw err if err
+				_ItemCount--
+				done()
+				return
+			return
+
 	return

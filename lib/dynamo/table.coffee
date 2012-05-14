@@ -15,7 +15,6 @@ module.exports = class DynamoTable extends EventEmitter
 		@defaults = @options.defaults
 		@external = @options.external
 
-
 		@__defineGetter__ "hashRangeDelimiter", =>
 			"::"
 
@@ -31,6 +30,15 @@ module.exports = class DynamoTable extends EventEmitter
 		@__defineGetter__ "rangeKey", =>
 			@_model_settings?.rangeKey or null
 
+		@__defineGetter__ "overwriteDoubleHash", =>
+
+			if @_model_settings?.overwriteDoubleHash?
+				@_model_settings.overwriteDoubleHash
+			else if @defaults.overwriteDoubleHash?
+				@defaults.overwriteDoubleHash
+			else
+				false
+
 		@init( table )
 
 		return
@@ -40,6 +48,7 @@ module.exports = class DynamoTable extends EventEmitter
 		@_attrs = new Attributes( table.attributes, @ )
 
 		@name = table.name
+
 
 		return
 
@@ -202,6 +211,8 @@ module.exports = class DynamoTable extends EventEmitter
 				_upd = item.update( @_attrs.updateAttrsFn( current, attributes ) )
 				_upd.returning( "UPDATED_NEW" )
 
+				#_upd = @_checkSetOptions( _upd, attributes )
+
 				# only save if data has changed
 				if _upd.AttributeUpdates?
 					_upd.save ( err, _saved )=>
@@ -220,13 +231,15 @@ module.exports = class DynamoTable extends EventEmitter
 	_create: ( attributes = {}, cb )=>
 
 		@_createId attributes, ( attributes )=>
-			item = @external.put( attributes )
+			_upd = @external.put( attributes )
 
-			item.save ( err )=>
+			_upd = @_checkSetOptions( _upd, attributes )
+
+			_upd.save ( err )=>
 				if err
 					cb err
 				else
-					cb( null, item )
+					cb( null, _upd )
 				return
 
 			return
@@ -366,6 +379,17 @@ module.exports = class DynamoTable extends EventEmitter
 				val.toString( val ) if val
 			else
 				val
+
+	_checkSetOptions: ( _upd, attributes )=>
+		if not @overwriteDoubleHash
+
+			_pred = {}
+			_pred[ @hashKey ] = { "==": [] }
+
+			_upd.when _pred
+
+		_upd
+
 
 	_generate: ( cb )=>
 

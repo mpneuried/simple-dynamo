@@ -22,6 +22,18 @@
         email: "second@employee.com",
         age: 35
       }
+    },
+    "Todos": {
+      "insert1": {
+        id: "123456",
+        title: "First",
+        done: 0
+      },
+      "insert2": {
+        id: "123456",
+        title: "Second",
+        done: 0
+      }
     }
   };
 }).call(this);

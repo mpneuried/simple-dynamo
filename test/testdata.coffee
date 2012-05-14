@@ -5,3 +5,8 @@ module.exports =
 		"insert3": { name: "Third employee", email: "third@employee.com", age: 78 }
 
 		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35 }
+
+	"Todos": 
+		"insert1": { id: "123456", title: "First", done: 0 }
+
+		"insert2": { id: "123456", title: "Second", done: 0  }

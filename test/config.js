@@ -3,10 +3,11 @@
     aws: {
       accessKeyId: "-",
       secretAccessKey: "-",
-      region: "eu-west-1"
+      region: "eu-west-1",
+      scanWarning: false
     },
     test: {
-      deleteTablesOnEnd: true,
+      deleteTablesOnEnd: false,
       singleCreateTableTest: "Employees"
     },
     tables: {
@@ -30,6 +31,8 @@
       "Todos": {
         name: "test_todos",
         hashKey: "id",
+        hashKeyType: "S",
+        overwriteDoubleHash: false,
         attributes: [
           {
             key: "title",

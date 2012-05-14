@@ -89,7 +89,7 @@ class Attributes
 	getQuery: ( table, query )=>
 		[ _q, isScan ] = @fixPredicates( query )
 		if isScan
-			console.warn "WARNING! Dynamo-Scan on `#{ table.TableName }`. Query:", _q
+			console.warn "WARNING! Dynamo-Scan on `#{ table.TableName }`. Query:", _q if @table.mng.options.scanWarning
 			table.scan( _q )
 		else
 			table.query( _q )

@@ -188,5 +188,70 @@
         });
       });
     });
+    describe('Overwrite Tests', function() {
+      var _C, _D, _G, _ItemCount;
+      table = null;
+      _C = _CONFIG.tables["Todos"];
+      _D = _DATA["Todos"];
+      _G = {};
+      _ItemCount = 0;
+      it("get table", function(done) {
+        table = dynDB.get("Todos");
+        should.exist(table);
+        done();
+      });
+      it("create item", function(done) {
+        table.set(_D["insert1"], function(err, item) {
+          if (err) {
+            throw err;
+          }
+          item.id.should.exist;
+          item.title.should.exist;
+          item.done.should.exist;
+          item.id.should.equal(_D["insert1"].id);
+          item.title.should.equal(_D["insert1"].title);
+          item.done.should.equal(_D["insert1"].done);
+          _ItemCount++;
+          _G["insert1"] = item;
+          done();
+        });
+      });
+      it("try secont insert with same hash", function(done) {
+        table.set(_D["insert2"], function(err, item) {
+          if (err) {
+            throw err;
+          }
+          console.log(item);
+          item.id.should.exist;
+          item.title.should.exist;
+          item.done.should.exist;
+          item.id.should.equal(_D["insert2"].id);
+          item.title.should.equal(_D["insert2"].title);
+          item.done.should.equal(_D["insert2"].done);
+          _G["insert2"] = item;
+          done();
+        });
+      });
+      it("List items", function(done) {
+        table.find(function(err, items) {
+          if (err) {
+            throw err;
+          }
+          console.log(items);
+          items.should.an["instanceof"](Array);
+          items.length.should.equal(_ItemCount);
+          done();
+        });
+      });
+      return it("delete the first inserted item", function(done) {
+        table.del(_G["insert1"][_C.hashKey], function(err) {
+          if (err) {
+            throw err;
+          }
+          _ItemCount--;
+          done();
+        });
+      });
+    });
   });
 }).call(this);
