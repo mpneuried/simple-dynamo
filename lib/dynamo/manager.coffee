@@ -13,7 +13,7 @@ module.exports = class DynamoManager extends EventEmitter
 
 	defaults:
 		throughput:
-			read: 3
+			read: 10
 			write: 5
 
 	constructor: ( @options, @tableSettings )->
@@ -113,7 +113,7 @@ module.exports = class DynamoManager extends EventEmitter
 			if err
 				cb err
 			else
-				cb null, Object.keys( @client.tables )
+				cb null, Object.keys( @_tables )
 			return
 		return
 
