@@ -10,10 +10,21 @@ module.exports = class DynamoTable extends EventEmitter
 
 	constructor: ( table, @options )->
 
-		@name = null
 		@mng = @options.manager
 		@defaults = @options.defaults
 		@external = @options.external
+
+		@__defineGetter__ "name", =>
+			@_model_settings.name
+
+		@__defineGetter__ "tableName", =>
+			@_model_settings.combineTableTo or @_model_settings.name or null
+
+		@__defineGetter__ "isCombinedTable", =>
+			@_model_settings.combineTableTo?
+		
+		@__defineGetter__ "combinedHashDelimiter", =>
+			""
 
 		@__defineGetter__ "hashRangeDelimiter", =>
 			"::"
@@ -27,8 +38,20 @@ module.exports = class DynamoTable extends EventEmitter
 		@__defineGetter__ "hashKey", =>
 			@_model_settings?.hashKey or null
 
+		@__defineGetter__ "hashKeyType", =>
+			if @isCombinedTable
+				"S"
+			else
+				@_model_settings?.hashKeyType or "S"
+
 		@__defineGetter__ "rangeKey", =>
 			@_model_settings?.rangeKey or null
+
+		@__defineGetter__ "rangeKeyType", =>
+			if @hasRange
+				@_model_settings?.rangeKeyType or "N"
+			else
+				null
 
 		@__defineGetter__ "overwriteDoubleHash", =>
 
@@ -47,8 +70,10 @@ module.exports = class DynamoTable extends EventEmitter
 		@_model_settings = table
 		@_attrs = new Attributes( table.attributes, @ )
 
-		@name = table.name
+		@external.schema( @_getShema() ) if @existend
 
+		if @isCombinedTable
+			@_regexRemCT = new RegExp( "^#{ @name }", "i" )
 
 		return
 
@@ -127,6 +152,9 @@ module.exports = class DynamoTable extends EventEmitter
 								@_error( cb,err )
 							else
 								if _old
+									# fix hash key
+									_old[ @hashKey ] = _old[ @hashKey ].replace( @_regexRemCT, "" )
+
 									# update done
 									_obj = @_dynamoItem2JSON( _curr, true )
 									
@@ -138,6 +166,8 @@ module.exports = class DynamoTable extends EventEmitter
 									@emit( "update", _new, _old )
 									cb( null, _new )
 								else
+									# fix hash key
+									_curr[ @hashKey ] = _curr[ @hashKey ].replace( @_regexRemCT, "" )
 									# nothing changed
 									@emit( "update", _curr, _curr )
 									cb( null, _curr )
@@ -163,6 +193,9 @@ module.exports = class DynamoTable extends EventEmitter
 		if arguments.length is 1 and _.isFunction( query )
 			cb = query
 			query = {}
+
+		if @isCombinedTable
+			query[ @hashKey ] = { "startsWith" : @name }
 
 		if @_isExistend( cb )
 			_query = @_attrs.getQuery( @external, query )
@@ -194,7 +227,7 @@ module.exports = class DynamoTable extends EventEmitter
 				# table not existend
 				error = new Error
 				error.name = "table-not-created"
-				error.message = "Table '#{ @name }' not existend at AWS. please run `Table.generate()` or `Manager.generateAll()` first."
+				error.message = "Table '#{ @tableName }' not existend at AWS. please run `Table.generate()` or `Manager.generateAll()` first."
 				@_error( cb, error )
 
 			false
@@ -267,7 +300,7 @@ module.exports = class DynamoTable extends EventEmitter
 		return
 
 	_dynamoItem2JSON: ( items, convertAttrs = false )=>
-		if _.isArray( item )
+		if _.isArray( items )
 			for item, idx in items
 				items[ idx ] = @_dynamoItem2JSONSingle( item, convertAttrs )
 			items
@@ -283,15 +316,19 @@ module.exports = class DynamoTable extends EventEmitter
 		@_fixHash( _obj )
 
 	_fixHash: ( attrs )=>
-
+		
 		_attrs = _.clone( attrs )		
+		_hName = @hashKey
 
 		if @hasRange
-			_hName = @_model_settings.hashKey
-			_rName = @_model_settings.rangeKey
+			_rName = @rangeKey
 
 			if _attrs[ _hName ]? and _attrs[ _rName ]
 				_attrs[ _hName ] = _attrs[ _hName ] + @hashRangeDelimiter + _attrs[ _rName ]
+
+		# remove prefix from hashKey if it's a combined table
+		if @isCombinedTable and _attrs[ _hName ]?
+			_attrs[ @hashKey ] = _attrs[ _hName ].replace( @_regexRemCT, "" )
 
 		_attrs
 
@@ -299,23 +336,32 @@ module.exports = class DynamoTable extends EventEmitter
 		if _.isObject( attrs )
 			_attrs = _.clone( attrs )
 		else
-			_hName = @_model_settings.hashKey
+			_hName = @hashKey
 			_attrs = {}
 			_attrs[ _hName ] = attrs
-		
+
 		if @hasRange
-			_hType = @_model_settings.hashKeyType or "S"
-			_rName = @_model_settings.rangeKey
-			_rType = @_model_settings.rangeKeyType or "S"
+			_hType = @hashKeyType
+			_rName = @rangeKey
+			_rType = @rangeKeyType
 
 			[ _h, _r ] = _attrs[ _hName ].split( @hashRangeDelimiter )
 			_attrs[ _hName ] =  @_convertValue( _h, _hType )
 			_attrs[ _rName ] =  @_convertValue( _r, _rType )
 
+		# add prefix to hashKey if it's a combined table
+		if @isCombinedTable
+			_attrs[ _hName ] = @name + @combinedHashDelimiter + _attrs[ _hName ]
+
 		_attrs
 
 	_createId: ( attributes, cb )=>
 		@_createHashKey attributes, ( attributes )=>
+			# add prefix to hashKey if it's a combined table
+			if @isCombinedTable
+				_hName = @hashKey
+				attributes[ _hName ] = @name + @combinedHashDelimiter + attributes[ _hName ]
+
 			# create range attribute if defined in shema
 			if @hasRange
 				@_createRangeKey attributes, ( attributes )=>
@@ -328,8 +374,8 @@ module.exports = class DynamoTable extends EventEmitter
 		return
 
 	_createHashKey: ( attributes, cbH )=>
-		_hName = @_model_settings.hashKey
-		_hType = @_model_settings.hashKeyType or "S"
+		_hName = @hashKey
+		_hType = @hashKeyType
 
 		if @_model_settings.fnCreateHash and _.isFunction( @_model_settings.fnCreateHash )
 			@_model_settings.fnCreateHash attributes, ( _hash )=>
@@ -351,8 +397,8 @@ module.exports = class DynamoTable extends EventEmitter
 		return
 
 	_createRangeKey: ( attributes, cbR )=>
-		_rName = @_model_settings.rangeKey
-		_rType = @_model_settings.rangeKeyType or "S"
+		_rName = @rangeKey
+		_rType = @rangeKeyType
 		
 		if @_model_settings.fnCreateRange and _.isFunction( @_model_settings.fnCreateRange )
 			@_model_settings.fnCreateRange attributes, ( __range )=>
@@ -404,7 +450,7 @@ module.exports = class DynamoTable extends EventEmitter
 	_generate: ( cb )=>
 
 		_cr = @mng.client.add
-			name: @_model_settings.name
+			name: @tableName
 			throughput: @_getThroughput()
 			schema: @_getShema()
 
@@ -428,15 +474,15 @@ module.exports = class DynamoTable extends EventEmitter
 	_getShema: =>
 		oShema = {}
 
-		_hName = @_model_settings.hashKey
-		_hType = @_model_settings.hashKeyType or "S"
+		_hName = @hashKey
+		_hType = @hashKeyType
 
 		oShema[ _hName ] = if _hType is "S" then String else Number
 
 		# define range if key is defined
 		if @hasRange
-			_rName = @_model_settings.rangeKey
-			_rType = @_model_settings.rangeKeyType or "N"
+			_rName = @rangeKey
+			_rType = @rangeKeyType
 			oShema[ _rName ] = if _rType is "S" then String else Number
 		
 		oShema

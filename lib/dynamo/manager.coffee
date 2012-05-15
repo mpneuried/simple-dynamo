@@ -91,10 +91,11 @@ module.exports = class DynamoManager extends EventEmitter
 					delete @_tables[ tableName ]
 				
 				# generate a Table Object for each table-element out of @tableSettings
+				_ext = if table.combineTableTo?.length then @client.tables[ table.combineTableTo ] else @client.tables[ table.name ]
 				_opt = _.extend {},
 					manager: @
 					defaults: @defaults
-					external: @client.tables[ table.name ]
+					external: _ext
 
 				@_tables[ tableName ] = new Table( table, _opt )
 				@emit( "new-table", @_tables[ tableName ] )
@@ -132,10 +133,19 @@ module.exports = class DynamoManager extends EventEmitter
 		tableName = tableName.toLowerCase()
 		@_tables[ tableName ]?
 
+	_getTablesToGenerate: =>
+		_ret = {}
+		for _n, tbl of @_tables
+			if not _ret[ _n ]?
+				_ret[ _n ] = 
+					name: _n
+					tableName: tbl.tableName
+
+		_ret
+
 	generateAll: ( cb )=>
 		aCreate = []
-
-		for tableName of @_tables
+		for _n, table of @_getTablesToGenerate()
 			aCreate.push _.bind( ( tableName, cba )->
 				
 				@generate tableName, ( err, generated )=>
@@ -144,9 +154,9 @@ module.exports = class DynamoManager extends EventEmitter
 				
 				return
 				
-			, @, tableName )
+			, @, _n )
 
-		utils.runParallel aCreate, ( err, _generated )=>
+		utils.runSeries aCreate, ( err, _generated )=>
 			if utils.checkArray( err )
 				cb err
 			else

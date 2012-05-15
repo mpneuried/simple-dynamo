@@ -47,14 +47,29 @@ class Attributes
 
 	prepare: =>
 		@attrs or= {}
-
+		_hKey = @table.hashKey
+		_rKey = @table.rangeKey
 		for _attr in @raw
 			_outE = _.clone( _attr )
-			if _outE.key is @table.hashKey
+			if _outE.key is _hKey
 				_outE.isHash = true
-			if _outE.key is @table.rangeKey
+			if _outE.key is _rKey
 				_outE.isRange = true
 			@attrs[ _outE.key ] = _outE
+
+		if not @attrs[ _hKey ]
+			@attrs[ _hKey ] = 
+				key: _hKey
+				isHash: true
+				type: @table.hashKeyType
+				required: true
+
+		if @table.hasRange and not @attrs[ _rKey ]
+			@attrs[ _rKey ] = 
+				key: _rKey
+				isRange: true
+				type: @table.rangeKeyType
+				required: true
 
 		return
 
@@ -88,26 +103,31 @@ class Attributes
 
 	getQuery: ( table, query )=>
 		[ _q, isScan ] = @fixPredicates( query )
+
 		if isScan
 			console.warn "WARNING! Dynamo-Scan on `#{ table.TableName }`. Query:", _q if @table.mng.options.scanWarning
 			table.scan( _q )
 		else
 			table.query( _q )
 
-	fixPredicates: ( predicates )=>
+	fixPredicates: ( predicates = {} )=>
 		_fixed = {}
-		isScan = false
-		for key, predicate of predicates
-			_attr = @get( key )
+		isScan = not @hasRange
 
-			# only accept defined attributes for query
-			if _attr
-				# check if the query has to be a scan
-				if not isScan or ( not _attr.isHash and not _attr.isRange )
-					isScan = true
-				_fixed[ key ] = @_fixPredicate( predicate, _attr )
+		_predCount = Object.keys( predicates ).length
+		if _predCount
+			for key, predicate of predicates
+				_attr = @get( key )
+				# only accept defined attributes for query
+				if _attr
+					# check if the query has to be a scan
+					if not _attr.isHash and not _attr.isRange
+						isScan = true
+					_fixed[ key ] = @_fixPredicate( predicate, _attr )
+		else
+			isScan = true
 
-		[ _fixed, true ]
+		[ _fixed, isScan ]
 
 	_fixPredicate: ( predicate, _attr )=>
 		_ops = Object.keys( predicate )

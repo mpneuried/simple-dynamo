@@ -14,6 +14,23 @@ CONFIG =
 			tables: 
 				"Users":
 					name: "users"
+					combineTableTo: "combined"
+
+					hashKey:  "_id"
+
+					overwriteDoubleHash: false
+					# overwriteExisting
+
+					attributes: [
+						{ key: "name", type: "string", required: true }
+						{ key: "age", type: "number" }
+						{ key: "lastlogin", type: "number" }
+					]
+
+				"Rooms":
+					name: "rooms"
+					combineTableTo: "combined"
+
 					hashKey:  "_id"
 
 					overwriteDoubleHash: false
