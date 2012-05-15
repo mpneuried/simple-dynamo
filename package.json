@@ -2,7 +2,7 @@
 	"name": "simple-dynamo",
 	"description": "Abstraction of Amazons Dynamo DB Service.",
 	"keywords": [ "dynamo", "aws", "amazon", "model", "abstraction", "db", "simple" ],
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"author": "mpneuried",
 	"main": "./lib/dynamo/index.js",
 	"engines": {
