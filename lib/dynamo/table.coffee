@@ -71,7 +71,7 @@ module.exports = class DynamoTable extends EventEmitter
 			# get meta data cache and serve it
 			@external.fetch ( err, _meta )=>
 				if err
-					cb( err )
+					@_error( cb,  err )
 				else
 					@_meta = _meta
 					cb( null, _meta )
@@ -84,7 +84,7 @@ module.exports = class DynamoTable extends EventEmitter
 			
 			@_get query, ( err, _item )=>
 				if err
-					cb( err )
+					@_error( cb, err )
 				else
 					if _item
 						_obj = @_dynamoItem2JSON( _item, false )
@@ -110,12 +110,12 @@ module.exports = class DynamoTable extends EventEmitter
 
 			@_attrs.validateAttributes attributes, ( err, attributes )=>
 				if err
-					cb( err )
+					@_error( cb, err )
 				else
 					if _create
 						@_create attributes, ( err, _item )=>
 							if err
-								cb( err )
+								@_error( cb, err )
 							else
 								_obj = @_dynamoItem2JSON( _item, true )
 								@emit( "create", _obj )
@@ -124,7 +124,7 @@ module.exports = class DynamoTable extends EventEmitter
 					else
 						@_update _id, attributes, ( err, _curr, _old, _deletedKeys )=>
 							if err
-								cb( err )
+								@_error( cb,err )
 							else
 								if _old
 									# update done
@@ -150,7 +150,7 @@ module.exports = class DynamoTable extends EventEmitter
 			
 			@_del query, ( err, success )=>
 				if err
-					cb( err )
+					@_error( cb, err )
 				else
 					@emit( "delete", _id )
 					cb null, success
@@ -168,7 +168,7 @@ module.exports = class DynamoTable extends EventEmitter
 			_query = @_attrs.getQuery( @external, query )
 			_query.fetch ( err, _items )=>
 				if err
-					cb err
+					@_error( cb, err )
 				else
 					cb null, @_dynamoItem2JSON( _items, false )
 				return
@@ -178,16 +178,24 @@ module.exports = class DynamoTable extends EventEmitter
 		if @_isExistend( cb )
 			@external.destroy( cb )
 
+	_error: ( cb, err )=>
+		if ERRORMAPPING[ err.name ]?
+			cb( ERRORMAPPING[ err.name ] )
+		else
+			cb( err )
+		return
 
 	# short helper to check if the databe is existend in AWS and return a error to callback if not existend
 	_isExistend: ( cb )=>
 		if @existend
 			true
-		else
-			# table not existend
-			cb
-				error: "table-not-created"
-				msg:"Table '#{ @name }' not existend at AWS. please run `Table.generate()` or `Manager.generateAll()` first."
+		else 
+			if _.isFunction( cb )
+				# table not existend
+				error = new Error
+				error.name = "table-not-created"
+				error.message = "Table '#{ @name }' not existend at AWS. please run `Table.generate()` or `Manager.generateAll()` first."
+				@_error( cb, error )
 
 			false
 
@@ -383,13 +391,15 @@ module.exports = class DynamoTable extends EventEmitter
 	_checkSetOptions: ( _upd, attributes )=>
 		if not @overwriteDoubleHash
 
-			_pred = {}
-			_pred[ @hashKey ] = { "==": [] }
+			# du to the buggy `.when()` method i do this manually
+			#_pred = {}
+			#_pred[ @hashKey ] = { "==": [] }
+			#_upd.when _pred
 
-			_upd.when _pred
+			_upd.Expected = {}
+			_upd.Expected[ @hashKey ] = { Exists: false }
 
 		_upd
-
 
 	_generate: ( cb )=>
 
@@ -453,4 +463,8 @@ module.exports = class DynamoTable extends EventEmitter
 		return
 
 
+ERRORMAPPING = 
+	"com.amazonaws.dynamodb.v20111205#ConditionalCheckFailedException":
+		name: "conditional-check-failed"
+		message: "This is not a valid request. It doesnt match the conditions or you tried to insert a existing hash."
 

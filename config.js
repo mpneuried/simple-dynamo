@@ -17,6 +17,7 @@
           "Users": {
             name: "users",
             hashKey: "_id",
+            overwriteDoubleHash: false,
             attributes: [
               {
                 key: "name",

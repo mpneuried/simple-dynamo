@@ -216,23 +216,15 @@
           done();
         });
       });
-      it("try secont insert with same hash", function(done) {
+      it("try second insert with the same hash", function(done) {
         table.set(_D["insert2"], function(err, item) {
-          if (err) {
-            throw err;
-          }
-          console.log(item);
-          item.id.should.exist;
-          item.title.should.exist;
-          item.done.should.exist;
-          item.id.should.equal(_D["insert2"].id);
-          item.title.should.equal(_D["insert2"].title);
-          item.done.should.equal(_D["insert2"].done);
-          _G["insert2"] = item;
+          err.should.exist;
+          err.name.should.equal("conditional-check-failed");
+          should.not.exist(item);
           done();
         });
       });
-      it("List items", function(done) {
+      it("list items", function(done) {
         table.find(function(err, items) {
           if (err) {
             throw err;

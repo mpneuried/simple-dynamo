@@ -252,29 +252,20 @@ describe "----- Table Tests -----", ->
 				return
 			return
 
-		it "try secont insert with same hash", ( done )->
+		it "try second insert with the same hash", ( done )->
 			
 			table.set _D[ "insert2" ], ( err, item )->
-				throw err if err
 
-				console.log item
+				err.should.exist
+				err.name.should.equal( "conditional-check-failed" )
 
-				item.id.should.exist
-				item.title.should.exist
-				item.done.should.exist
-
-				item.id.should.equal( _D[ "insert2" ].id )
-				item.title.should.equal( _D[ "insert2" ].title )
-				item.done.should.equal( _D[ "insert2" ].done )
-
-				
-				_G[ "insert2" ] = item
+				should.not.exist( item )
 
 				done()
 				return
 			return
 
-		it "List items", ( done )->
+		it "list items", ( done )->
 			table.find ( err, items )->
 				throw err if err
 				console.log items

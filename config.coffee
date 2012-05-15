@@ -16,6 +16,8 @@ CONFIG =
 					name: "users"
 					hashKey:  "_id"
 
+					overwriteDoubleHash: false
+
 					attributes: [
 						{ key: "name", type: "string", required: true }
 						{ key: "age", type: "number" }

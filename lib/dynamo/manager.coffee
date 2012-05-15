@@ -64,9 +64,9 @@ module.exports = class DynamoManager extends EventEmitter
 
 			cb( null )
 		else
-			cb 
-				error: "missing-option"
-				msg: "Missing options vars. required options are: '#{ neededParams.join( ', ' ) }'"
+			error = new Error
+			error.name = "missing-option"
+			error.message = "Missing options vars. required options are: '#{ neededParams.join( ', ' ) }'"
 
 		return
 
@@ -103,9 +103,10 @@ module.exports = class DynamoManager extends EventEmitter
 			cb( null )
 
 		else
-			cb 
-				error: "no-tables-fetched"
-				msg: "Currently not tables fetched. Please run `Manager.connect()` first."
+			error = new Error
+			error.name = "no-tables-fetched"
+			error.message = "Currently not tables fetched. Please run `Manager.connect()` first."
+			cb( error )
 
 		return
 
@@ -159,9 +160,10 @@ module.exports = class DynamoManager extends EventEmitter
 		tbl = @get tableName
 
 		if not tbl
-			cb 
-				error: "table-not-found"
-				msg: "Table `#{ tableName }` not found."
+			error = new Error
+			error.name = "table-not-found"
+			error.message = "Table `#{ tableName }` not found."
+			cb( error )
 		else
 
 			tbl.generate ( err, generated )=>

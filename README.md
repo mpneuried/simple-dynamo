@@ -50,6 +50,8 @@ The range key name of your range attribute. If not defined the table will be gen
 The type of the `rangeKey`. Possible values are: `S` = String and `N` = Numeric
 - **fnCreateHash**: *( `Function` optional: default = `new UUID` )*  
 Method to generate a custom hash key.  
+- **overwriteDoubleHash**: *( `Boolean` optional: default = true )*  
+Overwrite a item on `create` of an existing hash. 
 **Method Arguments**  
   - **attributes**: The given attributes on create  
   - **cb**: Callback method to pass the custom generates id/hash. `cb( "my-special-hash" )`
