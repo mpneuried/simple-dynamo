@@ -269,7 +269,6 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "list items", ( done )->
 				table.find ( err, items )->
 					throw err if err
-					console.log items
 					items.should.an.instanceof( Array )
 					items.length.should.equal( _ItemCount )
 					done()
@@ -288,20 +287,31 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 		describe "#{ testTitle } Range Tests", ->
 
-			table = null
-			_D = _DATA[ _logTable1 ]
-			_ItemCount = 0
+			table1 = null
+			table2 = null
+			_D1 = _DATA[ _logTable1 ]
+			_D2 = _DATA[ _logTable2 ]
+			_G1 = []
+			_G2 = []
+			_ItemCount1 = 0
+			_ItemCount2 = 0
 			
-			it "get table", ( done )->
-				table = dynDB.get( _logTable1 )
-				should.exist( table )
+			it "get table 1", ( done )->
+				table1 = dynDB.get( _logTable1 )
+				should.exist( table1 )
 				done()
 				return
 
-			it "insert #{ _D.inserts.length } items to range list", ( done )->
+			it "get table 2", ( done )->
+				table2 = dynDB.get( _logTable2 )
+				should.exist( table2 )
+				done()
+				return
+
+			it "insert #{ _D1.inserts.length } items to range list of table 1", ( done )->
 				aFns = []
-				for insert in _D.inserts
-					_throtteldSet = _.throttle( table.set, 250 )
+				for insert in _D1.inserts
+					_throtteldSet = _.throttle( table1.set, 250 )
 					aFns.push _.bind( ( insert, cba )->
 						_throtteldSet _.clone( insert ), ( err, item )->
 							throw err if err
@@ -309,13 +319,112 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 							item.id.should.equal( insert.user + "::" + insert.t )
 							item.user.should.equal( insert.user )
 							item.title.should.equal( insert.title )
-							_ItemCount++
-							cba( insert )
+							_ItemCount1++
+							_G1.push( item )
+							cba( item )
 
-					, table, insert ) 
+					, table1, insert ) 
 
 				_utils.runSeries aFns, ( err )->
 					done()
+
+			it "insert #{ _D2.inserts.length } items to range list of table 2", ( done )->
+				aFns = []
+				for insert in _D2.inserts
+					_throtteldSet = _.throttle( table2.set, 250 )
+					aFns.push _.bind( ( insert, cba )->
+						_throtteldSet _.clone( insert ), ( err, item )->
+							throw err if err
+
+							item.id.should.equal( insert.user + "::" + insert.t )
+							item.user.should.equal( insert.user )
+							item.title.should.equal( insert.title )
+							_ItemCount2++
+							_G2.push( item )
+							cba( item )
+
+					, table2, insert ) 
+
+				_utils.runSeries aFns, ( err )->
+					done()
+
+			it "get a range of table 1", ( done )->
+				_q = 
+					id: { "==": "A" }
+					t: { ">=": 5 }
+
+				table1.find _q, ( err, items )->
+					throw err if err
+
+					items.length.should.equal( 3 )
+					done()
+
+			it "get a range of table 2", ( done )->
+				_q = 
+					id: { "==": "D" }
+					t: { ">=": 3 }
+
+				table2.find _q, ( err, items )->
+					throw err if err
+
+					items.length.should.equal( 1 )
+					done()
+
+			it "get a single item of table 1", ( done )->
+				_item = _G1[ 4 ]
+
+				table1.get _item.id, ( err, item )->
+					throw err if err
+
+					item.should.eql( _item )
+					done()
+
+			it "delete whole data from table 1", ( done )->
+				aFns = []
+				for item in _G1
+					_throtteldDel = _.throttle( table1.del, 250 )
+					aFns.push _.bind( ( item, cba )->
+						_throtteldDel item.id, ( err )->
+							throw err if err
+							_ItemCount1--
+							cba()
+					, table1, item )
+
+				_utils.runSeries aFns, ( err )->
+					done()
+
+			it "delete whole data from table 2", ( done )->
+				aFns = []
+				for item in _G2
+					_throtteldDel = _.throttle( table2.del, 250 )
+					aFns.push _.bind( ( item, cba )->
+						_throtteldDel item.id, ( err )->
+							throw err if err
+							_ItemCount2--
+							cba()
+					, table2, item )
+
+				_utils.runSeries aFns, ( err )->
+					done()
+
+			it "check for empty table 1", ( done )->
+				_q = {}
+
+				table1.find _q, ( err, items )->
+					throw err if err
+
+					items.length.should.equal( _ItemCount1 )
+					done()
+
+			it "check for empty table 2", ( done )->
+				_q = {}
+
+				table2.find _q, ( err, items )->
+					throw err if err
+
+					items.length.should.equal( _ItemCount2 )
+					done()
+					
 
 
 		return			

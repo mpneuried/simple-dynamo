@@ -33,7 +33,7 @@ module.exports  =
 			]
 
 		"Logs1":
-			name: "test_todos1"
+			name: "test_log1"
 			hashKey:  "id"
 			hashKeyType: "S"
 
@@ -50,7 +50,7 @@ module.exports  =
 			]
 
 		"Logs2":
-			name: "test_todos2"
+			name: "test_log2"
 			hashKey:  "id"
 			hashKeyType: "S"
 
@@ -93,7 +93,7 @@ module.exports  =
 			]
 
 		"C_Logs1":
-			name: "test_todos1"
+			name: "test_log1"
 			combineTableTo: "test_rangecombined"
 
 			hashKey:  "id"
@@ -112,7 +112,7 @@ module.exports  =
 			]
 
 		"C_Logs2":
-			name: "test_todos2"
+			name: "test_log2"
 			combineTableTo: "test_rangecombined"
 			
 			hashKey:  "id"

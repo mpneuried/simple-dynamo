@@ -70,7 +70,7 @@ module.exports = class DynamoTable extends EventEmitter
 		@_model_settings = table
 		@_attrs = new Attributes( table.attributes, @ )
 
-		@external.schema( @_getShema() ) if @existend
+		#@external.schema( @_getShema() ) if @existend
 
 		if @isCombinedTable
 			@_regexRemCT = new RegExp( "^#{ @name }", "i" )
@@ -195,7 +195,16 @@ module.exports = class DynamoTable extends EventEmitter
 			query = {}
 
 		if @isCombinedTable
-			query[ @hashKey ] = { "startsWith" : @name }
+			if query[ @hashKey ]
+				_op = _.first( Object.keys( query[ @hashKey ] ) )
+				_val = query[ @hashKey ][ _op ]
+				switch _op
+					when "==" then _val = @name + @combinedHashDelimiter + _val
+				
+				query[ @hashKey ][ _op ] = _val
+
+			else
+				query[ @hashKey ] = { "startsWith" : @name }
 
 		if @_isExistend( cb )
 			_query = @_attrs.getQuery( @external, query )
@@ -437,13 +446,9 @@ module.exports = class DynamoTable extends EventEmitter
 	_checkSetOptions: ( _upd, attributes )=>
 		if not @overwriteDoubleHash
 
-			# du to the buggy `.when()` method i do this manually
-			#_pred = {}
-			#_pred[ @hashKey ] = { "==": [] }
-			#_upd.when _pred
-
-			_upd.Expected = {}
-			_upd.Expected[ @hashKey ] = { Exists: false }
+			_pred = {}
+			_pred[ @hashKey ] = { "==": null }
+			_upd.when _pred
 
 		_upd
 

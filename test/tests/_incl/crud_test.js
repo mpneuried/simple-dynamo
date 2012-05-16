@@ -230,7 +230,6 @@
             if (err) {
               throw err;
             }
-            console.log(items);
             items.should.an["instanceof"](Array);
             items.length.should.equal(_ItemCount);
             done();
@@ -247,22 +246,32 @@
         });
       });
       describe("" + testTitle + " Range Tests", function() {
-        var _D, _ItemCount;
-        table = null;
-        _D = _DATA[_logTable1];
-        _ItemCount = 0;
-        it("get table", function(done) {
-          table = dynDB.get(_logTable1);
-          should.exist(table);
+        var table1, table2, _D1, _D2, _G1, _G2, _ItemCount1, _ItemCount2;
+        table1 = null;
+        table2 = null;
+        _D1 = _DATA[_logTable1];
+        _D2 = _DATA[_logTable2];
+        _G1 = [];
+        _G2 = [];
+        _ItemCount1 = 0;
+        _ItemCount2 = 0;
+        it("get table 1", function(done) {
+          table1 = dynDB.get(_logTable1);
+          should.exist(table1);
           done();
         });
-        return it("insert " + _D.inserts.length + " items to range list", function(done) {
+        it("get table 2", function(done) {
+          table2 = dynDB.get(_logTable2);
+          should.exist(table2);
+          done();
+        });
+        it("insert " + _D1.inserts.length + " items to range list of table 1", function(done) {
           var aFns, insert, _i, _len, _ref3, _throtteldSet;
           aFns = [];
-          _ref3 = _D.inserts;
+          _ref3 = _D1.inserts;
           for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
             insert = _ref3[_i];
-            _throtteldSet = _.throttle(table.set, 250);
+            _throtteldSet = _.throttle(table1.set, 250);
             aFns.push(_.bind(function(insert, cba) {
               return _throtteldSet(_.clone(insert), function(err, item) {
                 if (err) {
@@ -271,12 +280,147 @@
                 item.id.should.equal(insert.user + "::" + insert.t);
                 item.user.should.equal(insert.user);
                 item.title.should.equal(insert.title);
-                _ItemCount++;
-                return cba(insert);
+                _ItemCount1++;
+                _G1.push(item);
+                return cba(item);
               });
-            }, table, insert));
+            }, table1, insert));
           }
           return _utils.runSeries(aFns, function(err) {
+            return done();
+          });
+        });
+        it("insert " + _D2.inserts.length + " items to range list of table 2", function(done) {
+          var aFns, insert, _i, _len, _ref3, _throtteldSet;
+          aFns = [];
+          _ref3 = _D2.inserts;
+          for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+            insert = _ref3[_i];
+            _throtteldSet = _.throttle(table2.set, 250);
+            aFns.push(_.bind(function(insert, cba) {
+              return _throtteldSet(_.clone(insert), function(err, item) {
+                if (err) {
+                  throw err;
+                }
+                item.id.should.equal(insert.user + "::" + insert.t);
+                item.user.should.equal(insert.user);
+                item.title.should.equal(insert.title);
+                _ItemCount2++;
+                _G2.push(item);
+                return cba(item);
+              });
+            }, table2, insert));
+          }
+          return _utils.runSeries(aFns, function(err) {
+            return done();
+          });
+        });
+        it("get a range of table 1", function(done) {
+          var _q;
+          _q = {
+            id: {
+              "==": "A"
+            },
+            t: {
+              ">=": 5
+            }
+          };
+          return table1.find(_q, function(err, items) {
+            if (err) {
+              throw err;
+            }
+            items.length.should.equal(3);
+            return done();
+          });
+        });
+        it("get a range of table 2", function(done) {
+          var _q;
+          _q = {
+            id: {
+              "==": "D"
+            },
+            t: {
+              ">=": 3
+            }
+          };
+          return table2.find(_q, function(err, items) {
+            if (err) {
+              throw err;
+            }
+            items.length.should.equal(1);
+            return done();
+          });
+        });
+        it("get a single item of table 1", function(done) {
+          var _item;
+          _item = _G1[4];
+          return table1.get(_item.id, function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.should.eql(_item);
+            return done();
+          });
+        });
+        it("delete whole data from table 1", function(done) {
+          var aFns, item, _i, _len, _throtteldDel;
+          aFns = [];
+          for (_i = 0, _len = _G1.length; _i < _len; _i++) {
+            item = _G1[_i];
+            _throtteldDel = _.throttle(table1.del, 250);
+            aFns.push(_.bind(function(item, cba) {
+              return _throtteldDel(item.id, function(err) {
+                if (err) {
+                  throw err;
+                }
+                _ItemCount1--;
+                return cba();
+              });
+            }, table1, item));
+          }
+          return _utils.runSeries(aFns, function(err) {
+            return done();
+          });
+        });
+        it("delete whole data from table 2", function(done) {
+          var aFns, item, _i, _len, _throtteldDel;
+          aFns = [];
+          for (_i = 0, _len = _G2.length; _i < _len; _i++) {
+            item = _G2[_i];
+            _throtteldDel = _.throttle(table2.del, 250);
+            aFns.push(_.bind(function(item, cba) {
+              return _throtteldDel(item.id, function(err) {
+                if (err) {
+                  throw err;
+                }
+                _ItemCount2--;
+                return cba();
+              });
+            }, table2, item));
+          }
+          return _utils.runSeries(aFns, function(err) {
+            return done();
+          });
+        });
+        it("check for empty table 1", function(done) {
+          var _q;
+          _q = {};
+          return table1.find(_q, function(err, items) {
+            if (err) {
+              throw err;
+            }
+            items.length.should.equal(_ItemCount1);
+            return done();
+          });
+        });
+        return it("check for empty table 2", function(done) {
+          var _q;
+          _q = {};
+          return table2.find(_q, function(err, items) {
+            if (err) {
+              throw err;
+            }
+            items.length.should.equal(_ItemCount2);
             return done();
           });
         });

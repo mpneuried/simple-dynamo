@@ -136,8 +136,8 @@ module.exports = class DynamoManager extends EventEmitter
 	_getTablesToGenerate: =>
 		_ret = {}
 		for _n, tbl of @_tables
-			if not _ret[ _n ]?
-				_ret[ _n ] = 
+			if not _ret[ tbl.tableName ]?
+				_ret[ tbl.tableName ] = 
 					name: _n
 					tableName: tbl.tableName
 
@@ -154,7 +154,7 @@ module.exports = class DynamoManager extends EventEmitter
 				
 				return
 				
-			, @, _n )
+			, @, table.name )
 
 		utils.runSeries aCreate, ( err, _generated )=>
 			if utils.checkArray( err )

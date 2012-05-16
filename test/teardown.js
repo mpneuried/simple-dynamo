@@ -41,6 +41,7 @@
         _tbl = dynDB.get(tableName);
         if (_tbl) {
           aFn.push(_.bind(function(cba) {
+            tableName = this.name;
             return this.destroy(function(err) {
               console.log("" + tableName + " deleted");
               if (err) {

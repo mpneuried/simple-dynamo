@@ -36,6 +36,19 @@
   }, this)).on("table-generated", __bind(function() {
     console.log("table-generated");
   }, this));
+  app.post("/redpill/:method", function(req, res) {
+    var _data, _fn, _m;
+    _m = req.params.method;
+    _data = req.body;
+    _fn = _.bind(dynDB.client[_m], dynDB.client);
+    _fn(_data, function(err, result) {
+      if (err) {
+        res.json(err, 500);
+      } else {
+        res.json(result);
+      }
+    });
+  });
   app.get("/", function(req, res) {
     res.send("try '/_tables'");
   });

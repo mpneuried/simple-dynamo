@@ -46,7 +46,7 @@
         ]
       },
       "Logs1": {
-        name: "test_todos1",
+        name: "test_log1",
         hashKey: "id",
         hashKeyType: "S",
         rangeKey: "t",
@@ -66,7 +66,7 @@
         ]
       },
       "Logs2": {
-        name: "test_todos2",
+        name: "test_log2",
         hashKey: "id",
         hashKeyType: "S",
         rangeKey: "t",
@@ -121,7 +121,7 @@
         ]
       },
       "C_Logs1": {
-        name: "test_todos1",
+        name: "test_log1",
         combineTableTo: "test_rangecombined",
         hashKey: "id",
         hashKeyType: "S",
@@ -142,7 +142,7 @@
         ]
       },
       "C_Logs2": {
-        name: "test_todos2",
+        name: "test_log2",
         combineTableTo: "test_rangecombined",
         hashKey: "id",
         hashKeyType: "S",

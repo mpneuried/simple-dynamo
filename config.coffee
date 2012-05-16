@@ -57,6 +57,79 @@ CONFIG =
 					,	key: "lastlogin", type: "number"
 					]
 
+				"Logs1":
+					name: "test_log1"
+					hashKey:  "id"
+					hashKeyType: "S"
+
+					rangeKey: "t"
+					rangeKeyType: "N"
+
+					fnCreateHash: ( attributes, cb )=>
+						cb( attributes.user )
+						return
+
+					attributes: [
+						{ key: "user", type: "string", required: true }
+						{ key: "title", type: "string" }
+					]
+
+				"Logs2":
+					name: "test_log2"
+					hashKey:  "id"
+					hashKeyType: "S"
+
+					rangeKey: "t"
+					rangeKeyType: "N"
+
+					fnCreateHash: ( attributes, cb )=>
+						cb( attributes.user )
+						return
+
+					attributes: [
+						{ key: "user", type: "string", required: true }
+						{ key: "title", type: "string" }
+					]
+
+				
+				"C_Logs1":
+					name: "test_log1"
+					combineTableTo: "test_rangecombined"
+
+					hashKey:  "id"
+					hashKeyType: "S"
+
+					rangeKey: "t"
+					rangeKeyType: "N"
+
+					fnCreateHash: ( attributes, cb )=>
+						cb( attributes.user )
+						return
+
+					attributes: [
+						{ key: "user", type: "string", required: true }
+						{ key: "title", type: "string" }
+					]
+
+				"C_Logs2":
+					name: "test_log2"
+					combineTableTo: "test_rangecombined"
+					
+					hashKey:  "id"
+					hashKeyType: "S"
+
+					rangeKey: "t"
+					rangeKeyType: "N"
+
+					fnCreateHash: ( attributes, cb )=>
+						cb( attributes.user )
+						return
+
+					attributes: [
+						{ key: "user", type: "string", required: true }
+						{ key: "title", type: "string" }
+					]
+
 
 		
 portOverwrite = {}

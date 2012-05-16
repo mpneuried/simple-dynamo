@@ -45,6 +45,19 @@ dynDB
 		console.log "table-generated"
 		return
 
+app.post "/redpill/:method", ( req, res )->
+	_m = req.params.method
+	_data = req.body
+
+	_fn = _.bind( dynDB.client[ _m ], dynDB.client )
+
+	_fn _data, ( err, result )->
+		if err
+			res.json err, 500
+		else
+			res.json result
+		return
+	return
 
 app.get "/", ( req, res )->
 	res.send("try '/_tables'")

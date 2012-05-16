@@ -39,7 +39,7 @@ describe "----- TEARDOWN -----", ->
 			_tbl = dynDB.get( tableName )
 			if _tbl
 				aFn.push _.bind( ( cba )->
-
+					tableName = @name
 					@destroy ( err )->
 						console.log "#{ tableName } deleted"
 						throw err if err

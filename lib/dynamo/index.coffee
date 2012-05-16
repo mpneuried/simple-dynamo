@@ -1,6 +1,6 @@
 exports = module.exports = require "./manager"
 
-exports.version = '0.0.1'
+exports.version = '0.0.3'
 
 exports.Table = require "./table"
 

@@ -1,5 +1,2 @@
---bail
---colors
---timeout 100s
+--timeout 300s
 --reporter spec
---debug

@@ -5,6 +5,8 @@ simple-dynamo
 
 It provides a absolute simple JSON-CRUD Interface without any knowledge of Dynamos specialties.
 
+A special feature is the *combineTableTo* options for tables. It adds the ability to combine multiple models into one Dymamo-table, but use them separately in your application. So you have to pay only one throughput capacity.
+
 *Written in coffee-script*
 
 **INFO: all examples are written in coffee-script**
@@ -50,6 +52,8 @@ The range key name of your range attribute. If not defined the table will be gen
 The type of the `rangeKey`. Possible values are: `S` = String and `N` = Numeric
 - **fnCreateHash**: *( `Function` optional: default = `new UUID` )*  
 Method to generate a custom hash key.  
+- **combineTableTo**: *( `String` optional )*
+Option to combine multiple models into one dynamo-table. Makes sense if you want to pay only one table. Combinations are not allowed for tables of different types ( Hash-table and HashRange-table ) and you have to use the same hashKey and rangeKey. The module will handle all interactions with the models transparent, so you only have to define this option.
 - **overwriteDoubleHash**: *( `Boolean` optional: default = true )*  
 Overwrite a item on `create` of an existing hash. 
 **Method Arguments**  
@@ -87,7 +91,7 @@ connectionSettings =
 tables = 
 	"Users":
 		name: "users"
-		hashKey:  "id"
+		hashKey: "id"
 
 		attributes: [
 			{ key: "name", type: "string", required: true }
@@ -96,9 +100,9 @@ tables =
 		
 	"Todos":
 		name: "todos"
-		hashKey:  "id"
-		rangeKey:  "_t"
-		rangeKeyType:  "N"
+		hashKey: "id"
+		rangeKey: "_t"
+		rangeKeyType: "N"
 		
 		fnCreateHash: ( attributes, cb )=>
 			cb( attributes.user_id )
@@ -107,6 +111,25 @@ tables =
 		attributes: [
 			{ key: "title", type: "string", required: true }
 			{ key: "done", type: "number" }
+		]
+	
+	# example for a combined table usage
+	"Combined1":
+		name: "c1"
+		hashKey:  "id"
+		combineTableTo: "combined_hash"
+
+		attributes: [
+			{ key: "title", type: "string", required: true }
+		]
+	
+	"Combined2":
+		name: "c2"
+		hashKey:  "id"
+		combineTableTo: "combined_hash"
+
+		attributes: [
+			{ key: "title", type: "string", required: true }
 		]
 
 # create instance

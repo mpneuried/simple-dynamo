@@ -1,4 +1,5 @@
 _ = require "underscore"
+utils = require "./utils"
 
 Helper = 
 	val2dyn: ( value )->
@@ -103,7 +104,6 @@ class Attributes
 
 	getQuery: ( table, query )=>
 		[ _q, isScan ] = @fixPredicates( query )
-
 		if isScan
 			console.warn "WARNING! Dynamo-Scan on `#{ table.TableName }`. Query:", _q if @table.mng.options.scanWarning
 			table.scan( _q )
@@ -112,7 +112,7 @@ class Attributes
 
 	fixPredicates: ( predicates = {} )=>
 		_fixed = {}
-		isScan = not @hasRange
+		isScan = not @table.hasRange
 
 		_predCount = Object.keys( predicates ).length
 		if _predCount
@@ -124,6 +124,10 @@ class Attributes
 					if not _attr.isHash and not _attr.isRange
 						isScan = true
 					_fixed[ key ] = @_fixPredicate( predicate, _attr )
+			# check if its a valid query. otherwise force scan
+			if not isScan and not utils.params( _fixed, [ @table.hashKey, @table.rangeKey ] )
+				isScan = true
+
 		else
 			isScan = true
 
