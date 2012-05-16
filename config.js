@@ -74,6 +74,26 @@
               }
             ]
           },
+          "mt": {
+            name: "many",
+            hashKey: "id",
+            hashKeyType: "S",
+            rangeKey: "t",
+            rangeKeyType: "N",
+            fnCreateHash: __bind(function(attributes, cb) {
+              cb(attributes.user);
+            }, this),
+            attributes: [
+              {
+                key: "user",
+                type: "string",
+                required: true
+              }, {
+                key: "title",
+                type: "string"
+              }
+            ]
+          },
           "Logs1": {
             name: "test_log1",
             hashKey: "id",
@@ -140,6 +160,27 @@
             combineTableTo: "test_rangecombined",
             hashKey: "id",
             hashKeyType: "S",
+            rangeKey: "t",
+            rangeKeyType: "N",
+            fnCreateHash: __bind(function(attributes, cb) {
+              cb(attributes.user);
+            }, this),
+            attributes: [
+              {
+                key: "user",
+                type: "string",
+                required: true
+              }, {
+                key: "title",
+                type: "string"
+              }
+            ]
+          },
+          "c_mt": {
+            name: "cmt",
+            hashKey: "id",
+            hashKeyType: "S",
+            combineTableTo: "test_rangecombined",
             rangeKey: "t",
             rangeKeyType: "N",
             fnCreateHash: __bind(function(attributes, cb) {

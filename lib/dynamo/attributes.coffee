@@ -102,13 +102,17 @@ class Attributes
 			return
 
 
-	getQuery: ( table, query )=>
+	getQuery: ( table, query, cursor )=>
 		[ _q, isScan ] = @fixPredicates( query )
 		if isScan
 			console.warn "WARNING! Dynamo-Scan on `#{ table.TableName }`. Query:", _q if @table.mng.options.scanWarning
+
 			table.scan( _q )
 		else
-			table.query( _q )
+			_q = table.query( _q )
+			_q.limit( 4 )
+			#_q.cursor( cursor )
+			_q
 
 	fixPredicates: ( predicates = {} )=>
 		_fixed = {}

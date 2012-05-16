@@ -59,6 +59,37 @@ app.post "/redpill/:method", ( req, res )->
 		return
 	return
 
+app.get "/many/:table", ( req, res )->
+	_t = req.params.table
+	_i = 0
+	_tbl = dynDB.get( _t )
+	if not _tbl
+		res.json "table '#{ _t }' not found", 404
+		return
+
+	users = [ "A", "B", "C", "D" ]
+
+	_fnInsert = ( cb )->
+		_item = { title: randomString( 10 ), user: users[ _randrange( 0,3 ) ] }
+		_tbl.set _item, ( err, item )->
+			if err
+				console.log "ERROR", err
+				cb( false )
+			else
+				_i++
+				console.log "INSERT: ( #{ _i } )", item.id
+				cb( true )
+			return
+	fnInsert = _.throttle( _fnInsert, 250 )
+
+	fnOnSucess = ( success )->
+		if success
+			fnInsert( fnOnSucess )
+		return
+	fnInsert( fnOnSucess )
+
+	return
+
 app.get "/", ( req, res )->
 	res.send("try '/_tables'")
 
@@ -125,11 +156,12 @@ app.get "/:table/", ( req, res )->
 		res.json "table '#{ _t }' not found", 404
 		return
 
-	_tbl.find _q, ( err, data )->
+	_tbl.find _q, req.query?.c, ( err, data )->
 
 		if err
 			res.json err, 500
 		else
+			console.log "LEN", data?.length
 			res.json data
 		return
 	return
@@ -204,5 +236,25 @@ app.del "/:table/:id", ( req, res )->
 			res.json success
 		return
 	return
+
+# test helper
+randomString = ( length, withnumbers = true ) ->
+	chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	chars += "0123456789" if withnumbers
+
+	string_length = length or 5
+	randomstring = ""
+	i = 0
+	
+	while i < string_length
+		rnum = Math.floor(Math.random() * chars.length)
+		randomstring += chars.substring(rnum, rnum + 1)
+		i++
+	randomstring
+
+_randrange = ( lowVal, highVal )->
+	Math.floor( Math.random()*(highVal-lowVal+1 ))+lowVal
+
+
 
 app.listen(3000)

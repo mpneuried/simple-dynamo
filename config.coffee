@@ -57,6 +57,24 @@ CONFIG =
 					,	key: "lastlogin", type: "number"
 					]
 
+
+				"mt":
+					name: "many"
+					hashKey:  "id"
+					hashKeyType: "S"
+
+					rangeKey: "t"
+					rangeKeyType: "N"
+
+					fnCreateHash: ( attributes, cb )=>
+						cb( attributes.user )
+						return
+
+					attributes: [
+						{ key: "user", type: "string", required: true }
+						{ key: "title", type: "string" }
+					]
+
 				"Logs1":
 					name: "test_log1"
 					hashKey:  "id"
@@ -117,6 +135,25 @@ CONFIG =
 					
 					hashKey:  "id"
 					hashKeyType: "S"
+
+					rangeKey: "t"
+					rangeKeyType: "N"
+
+					fnCreateHash: ( attributes, cb )=>
+						cb( attributes.user )
+						return
+
+					attributes: [
+						{ key: "user", type: "string", required: true }
+						{ key: "title", type: "string" }
+					]
+
+				"c_mt":
+					name: "cmt"
+					hashKey:  "id"
+					hashKeyType: "S"
+
+					combineTableTo: "test_rangecombined"
 
 					rangeKey: "t"
 					rangeKeyType: "N"

@@ -1,5 +1,5 @@
 (function() {
-  var DynamoManager, app, dynDB, express, _dynamoOpt, _ref, _ref2;
+  var DynamoManager, app, dynDB, express, randomString, _dynamoOpt, _randrange, _ref, _ref2;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   root._ = require("underscore");
   express = require('express');
@@ -49,6 +49,41 @@
       }
     });
   });
+  app.get("/many/:table", function(req, res) {
+    var fnInsert, fnOnSucess, users, _fnInsert, _i, _t, _tbl;
+    _t = req.params.table;
+    _i = 0;
+    _tbl = dynDB.get(_t);
+    if (!_tbl) {
+      res.json("table '" + _t + "' not found", 404);
+      return;
+    }
+    users = ["A", "B", "C", "D"];
+    _fnInsert = function(cb) {
+      var _item;
+      _item = {
+        title: randomString(10),
+        user: users[_randrange(0, 3)]
+      };
+      return _tbl.set(_item, function(err, item) {
+        if (err) {
+          console.log("ERROR", err);
+          cb(false);
+        } else {
+          _i++;
+          console.log("INSERT: ( " + _i + " )", item.id);
+          cb(true);
+        }
+      });
+    };
+    fnInsert = _.throttle(_fnInsert, 250);
+    fnOnSucess = function(success) {
+      if (success) {
+        fnInsert(fnOnSucess);
+      }
+    };
+    fnInsert(fnOnSucess);
+  });
   app.get("/", function(req, res) {
     res.send("try '/_tables'");
   });
@@ -87,7 +122,7 @@
     });
   });
   app.get("/:table/", function(req, res) {
-    var key, val, _key, _q, _ref3, _ref4, _regexQuery, _regexQueryType, _t, _tbl;
+    var key, val, _key, _q, _ref3, _ref4, _ref5, _regexQuery, _regexQueryType, _t, _tbl;
     _t = req.params.table;
     if (0) {
       _regexQuery = /\w+(\^|\*|!|<|>)$/i;
@@ -133,10 +168,11 @@
       res.json("table '" + _t + "' not found", 404);
       return;
     }
-    _tbl.find(_q, function(err, data) {
+    _tbl.find(_q, (_ref5 = req.query) != null ? _ref5.c : void 0, function(err, data) {
       if (err) {
         res.json(err, 500);
       } else {
+        console.log("LEN", data != null ? data.length : void 0);
         res.json(data);
       }
     });
@@ -210,5 +246,27 @@
       }
     });
   });
+  randomString = function(length, withnumbers) {
+    var chars, i, randomstring, rnum, string_length;
+    if (withnumbers == null) {
+      withnumbers = true;
+    }
+    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    if (withnumbers) {
+      chars += "0123456789";
+    }
+    string_length = length || 5;
+    randomstring = "";
+    i = 0;
+    while (i < string_length) {
+      rnum = Math.floor(Math.random() * chars.length);
+      randomstring += chars.substring(rnum, rnum + 1);
+      i++;
+    }
+    return randomstring;
+  };
+  _randrange = function(lowVal, highVal) {
+    return Math.floor(Math.random() * (highVal - lowVal + 1)) + lowVal;
+  };
   app.listen(3000);
 }).call(this);

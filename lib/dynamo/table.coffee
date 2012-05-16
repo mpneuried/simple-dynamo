@@ -188,33 +188,40 @@ module.exports = class DynamoTable extends EventEmitter
 
 		return
 
-	find: ( query = {}, cb )=>
-		# fix args if no query is passed
-		if arguments.length is 1 and _.isFunction( query )
-			cb = query
-			query = {}
-
-		if @isCombinedTable
-			if query[ @hashKey ]
-				_op = _.first( Object.keys( query[ @hashKey ] ) )
-				_val = query[ @hashKey ][ _op ]
-				switch _op
-					when "==" then _val = @name + @combinedHashDelimiter + _val
-				
-				query[ @hashKey ][ _op ] = _val
-
-			else
-				query[ @hashKey ] = { "startsWith" : @name }
-
+	find: ( args..., cb )=>
 		if @_isExistend( cb )
-			_query = @_attrs.getQuery( @external, query )
-			_query.fetch ( err, _items )=>
-				if err
-					@_error( cb, err )
+			# fix args if no query is passed
+			switch args.length
+				when 1
+					cursor = null
+					[ query ] = args
+				when 2
+					[ query, cursor ] = args
+
+			if cursor?
+				cursor = @_deFixHash( cursor )
+
+			if @isCombinedTable
+				if query[ @hashKey ]
+					_op = _.first( Object.keys( query[ @hashKey ] ) )
+					_val = query[ @hashKey ][ _op ]
+					switch _op
+						when "==" then _val = @name + @combinedHashDelimiter + _val
+					
+					query[ @hashKey ][ _op ] = _val
+
 				else
-					cb null, @_dynamoItem2JSON( _items, false )
+					query[ @hashKey ] = { "startsWith" : @name }
+
+			if @_isExistend( cb )
+				_query = @_attrs.getQuery( @external, query, cursor )
+				_query.fetch ( err, _items )=>
+					if err
+						@_error( cb, err )
+					else
+						cb null, @_dynamoItem2JSON( _items, false )
+					return
 				return
-			return
 
 	destroy: ( cb )=>
 		if @_isExistend( cb )
