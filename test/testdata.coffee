@@ -8,8 +8,14 @@ module.exports =
 
 	"Todos": 
 		"insert1": { id: "123456", title: "First", done: 0 }
-
 		"insert2": { id: "123456", title: "Second", done: 0  }
+
+	"Rooms": 
+		"insert1": { name: "First", users: [ "a" ] }
+		"update1": { name: "First", users: [ "a", "b" ] }
+		"update2": { name: "First", users: { "$add": [ "b", "c" ] } }
+		"update3": { name: "First", users: { "$rem": [ "a" ] } }
+		"update4": { name: "First", users: { "$reset": [ "x", "y" ] } }
 
 	"Logs1": 
 		"inserts": [
@@ -54,6 +60,13 @@ module.exports =
 		"insert1": { id: "12345678911", title: "First", done: 0 }
 
 		"insert2": { id: "12345678911", title: "Second", done: 0  }
+
+	"C_Rooms": 
+		"insert1": { name: "C_First", users: [ "a" ] }
+		"update1": { name: "C_First", users: [ "a", "b" ] }
+		"update2": { name: "C_First", users: { "$add": [ "b", "c" ] } }
+		"update3": { name: "C_First", users: { "$rem": [ "a" ] } }
+		"update4": { name: "C_First", users: { "$reset": [ "x", "y" ] } }
 
 	"C_Logs1": 
 		"inserts": [

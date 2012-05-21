@@ -135,6 +135,7 @@ module.exports = class DynamoTable extends EventEmitter
 	set: ( args..., cb )=>
 		if @_isExistend( cb )
 			options = null
+
 			switch args.length
 				when 1
 					_create = true

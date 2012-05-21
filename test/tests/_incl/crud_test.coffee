@@ -1,4 +1,4 @@
-module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTable2 )->
+module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTable2, _setTable )->
 
 	# read configuration
 	_CONFIG = require "../../config.js"
@@ -6,8 +6,8 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 	should = require('should')
 
 	# read replace AWS keys from environment
-	_CONFIG.aws.accessKeyId = process.env.AWS_AKI if process.env?.AWS_AKI?
-	_CONFIG.aws.secretAccessKey = process.env.AWS_SAK if process.env?.AWS_SAK?
+	_CONFIG.aws.accessKeyId = process.env.AWS_ACCESS_KEY_ID if process.env?.AWS_ACCESS_KEY_ID?
+	_CONFIG.aws.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY if process.env?.AWS_SECRET_ACCESS_KEY?
 
 	# import module to test
 	SimpleDynamo = require "../../../lib/dynamo/"
@@ -424,7 +424,119 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 					items.length.should.equal( _ItemCount2 )
 					done()
-					
+		
+		describe "#{ testTitle } Set Tests", ->		
+			
 
+			_C = _CONFIG.tables[ _setTable ]
+			_D = _DATA[ _setTable ]
+			_G = {}
+			_ItemCount = 0
+			table = null
+
+			it "get table", ( done )->
+				table = dynDB.get( _setTable )
+				should.exist( table )
+				done()
+				return
+
+			it "create the test item", ( done )->
+				
+				table.set _.clone( _D[ "insert1" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "a" ] )
+
+					_ItemCount++
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test raw reset", ( done )->
+				
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update1" ] ), ( err, item )->
+					throw err if err
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "a", "b" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test $add action", ( done )->
+				
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update2" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "a", "b", "c" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test $rem action", ( done )->
+				
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update3" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "b", "c" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test $reset action", ( done )->
+				
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update4" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "x", "y" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "delete test item", ( done )->
+				
+				table.del _G[ "insert1" ].id, ( err )->
+					throw err if err
+					_ItemCount--
+					done()
+					return
+				return
 
 		return			

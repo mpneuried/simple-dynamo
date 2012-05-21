@@ -2,11 +2,11 @@
   var SimpleDynamo, dynDB, _, _CONFIG, _ref, _ref2, _tables, _utils;
   _CONFIG = require("./config.js");
   _ = require("underscore");
-  if (((_ref = process.env) != null ? _ref.AWS_AKI : void 0) != null) {
-    _CONFIG.aws.accessKeyId = process.env.AWS_AKI;
+  if (((_ref = process.env) != null ? _ref.AWS_ACCESS_KEY_ID : void 0) != null) {
+    _CONFIG.aws.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
   }
-  if (((_ref2 = process.env) != null ? _ref2.AWS_SAK : void 0) != null) {
-    _CONFIG.aws.secretAccessKey = process.env.AWS_SAK;
+  if (((_ref2 = process.env) != null ? _ref2.AWS_SECRET_ACCESS_KEY : void 0) != null) {
+    _CONFIG.aws.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
   }
   SimpleDynamo = require("../lib/dynamo/");
   dynDB = null;

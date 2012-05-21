@@ -4,8 +4,8 @@ _ = require("underscore")
 
 
 # read replace AWS keys from environment
-_CONFIG.aws.accessKeyId = process.env.AWS_AKI if process.env?.AWS_AKI?
-_CONFIG.aws.secretAccessKey = process.env.AWS_SAK if process.env?.AWS_SAK?
+_CONFIG.aws.accessKeyId = process.env.AWS_ACCESS_KEY_ID if process.env?.AWS_ACCESS_KEY_ID?
+_CONFIG.aws.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY if process.env?.AWS_SECRET_ACCESS_KEY?
 
 # import module to test
 SimpleDynamo = require "../lib/dynamo/"

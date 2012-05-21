@@ -29,6 +29,20 @@
           }
         ]
       },
+      "Rooms": {
+        name: "test_rooms",
+        hashKey: "id",
+        hashKeyType: "S",
+        attributes: [
+          {
+            key: "name",
+            type: "string"
+          }, {
+            key: "users",
+            type: "array"
+          }
+        ]
+      },
       "Todos": {
         name: "test_todos",
         hashKey: "id",
@@ -37,8 +51,7 @@
         attributes: [
           {
             key: "title",
-            type: "string",
-            required: true
+            type: "string"
           }, {
             key: "done",
             type: "number"
@@ -100,6 +113,20 @@
           }, {
             key: "age",
             type: "number"
+          }
+        ]
+      },
+      "C_Rooms": {
+        name: "test_rooms",
+        combineTableTo: "test_combined",
+        hashKey: "id",
+        attributes: [
+          {
+            key: "name",
+            type: "string"
+          }, {
+            key: "users",
+            type: "array"
           }
         ]
       },

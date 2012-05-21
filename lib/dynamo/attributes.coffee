@@ -101,14 +101,14 @@ class Attributes
 							if not _.isString( val )
 								error = new Error
 								error.name = "validation-error"
-								error.message = "Wrong type of `#{ key }`. Please use pass this key as a `String`"
+								error.message = "Wrong type of `#{ key }`. Please pass this key as a `String`"
 								@table._error( cb, error )
 								return
 						when "number"
 							if not _.isNumber( val )
 								error = new Error
 								error.name = "validation-error"
-								error.message = "Wrong type of `#{ key }`. Please use pass this key as a `Number`"
+								error.message = "Wrong type of `#{ key }`. Please pass this key as a `Number`"
 								@table._error( cb, error )
 								return
 						when "array"
@@ -116,14 +116,14 @@ class Attributes
 								if not _.isArray( val )
 									error = new Error
 									error.name = "validation-error"
-									error.message = "Wrong type of `#{ key }`. Please use pass this key as an `Array`"
+									error.message = "Wrong type of `#{ key }`. Please pass this key as an `Array`"
 									@table._error( cb, error )
 									return
 							else
 								if not ( val[ "$add" ]? or val[ "$rem" ]? or val[ "$reset" ]? ) and not _.isArray( val )
 									error = new Error
 									error.name = "validation-error"
-									error.message = "Wrong type of `#{ key }`. Please use pass this key as an `Array` or an Object of actions"
+									error.message = "Wrong type of `#{ key }`. Please pass this key as an `Array` or an Object of actions"
 									@table._error( cb, error )
 									return
 

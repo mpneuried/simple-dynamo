@@ -1,14 +1,14 @@
 (function() {
-  module.exports = function(testTitle, _basicTable, _overwriteTable, _logTable1, _logTable2) {
+  module.exports = function(testTitle, _basicTable, _overwriteTable, _logTable1, _logTable2, _setTable) {
     var SimpleDynamo, dynDB, should, table, _, _CONFIG, _DATA, _ref, _ref2, _utils;
     _CONFIG = require("../../config.js");
     _ = require("underscore");
     should = require('should');
-    if (((_ref = process.env) != null ? _ref.AWS_AKI : void 0) != null) {
-      _CONFIG.aws.accessKeyId = process.env.AWS_AKI;
+    if (((_ref = process.env) != null ? _ref.AWS_ACCESS_KEY_ID : void 0) != null) {
+      _CONFIG.aws.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
     }
-    if (((_ref2 = process.env) != null ? _ref2.AWS_SAK : void 0) != null) {
-      _CONFIG.aws.secretAccessKey = process.env.AWS_SAK;
+    if (((_ref2 = process.env) != null ? _ref2.AWS_SECRET_ACCESS_KEY : void 0) != null) {
+      _CONFIG.aws.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
     }
     SimpleDynamo = require("../../../lib/dynamo/");
     _utils = SimpleDynamo.utils;
@@ -422,6 +422,99 @@
             }
             items.length.should.equal(_ItemCount2);
             return done();
+          });
+        });
+      });
+      describe("" + testTitle + " Set Tests", function() {
+        var _C, _D, _G, _ItemCount;
+        _C = _CONFIG.tables[_setTable];
+        _D = _DATA[_setTable];
+        _G = {};
+        _ItemCount = 0;
+        table = null;
+        it("get table", function(done) {
+          table = dynDB.get(_setTable);
+          should.exist(table);
+          done();
+        });
+        it("create the test item", function(done) {
+          table.set(_.clone(_D["insert1"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["a"]);
+            _ItemCount++;
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("test raw reset", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update1"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["a", "b"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("test $add action", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update2"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["a", "b", "c"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("test $rem action", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update3"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["b", "c"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("test $reset action", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update4"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["x", "y"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        return it("delete test item", function(done) {
+          table.del(_G["insert1"].id, function(err) {
+            if (err) {
+              throw err;
+            }
+            _ItemCount--;
+            done();
           });
         });
       });

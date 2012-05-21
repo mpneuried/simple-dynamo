@@ -20,6 +20,16 @@ module.exports  =
 				{ key: "age", type: "number" }
 			]
 
+		"Rooms":
+			name: "test_rooms"
+			hashKey:  "id"
+			hashKeyType: "S"
+
+			attributes: [
+				{ key: "name", type: "string" }
+				{ key: "users", type: "array" }
+			]
+
 		"Todos":
 			name: "test_todos"
 			hashKey:  "id"
@@ -28,7 +38,7 @@ module.exports  =
 			overwriteExistingHash: false
 
 			attributes: [
-				{ key: "title", type: "string", required: true }
+				{ key: "title", type: "string" }
 				{ key: "done", type: "number" }
 			]
 
@@ -76,6 +86,17 @@ module.exports  =
 				{ key: "name", type: "string", required: true }
 				{ key: "email", type: "string" }
 				{ key: "age", type: "number" }
+			]
+
+		"C_Rooms":
+			name: "test_rooms"
+			combineTableTo: "test_combined"
+
+			hashKey:  "id"
+
+			attributes: [
+				{ key: "name", type: "string" }
+				{ key: "users", type: "array" }
 			]
 
 		"C_Todos":
