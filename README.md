@@ -56,6 +56,8 @@ Method to generate a custom hash key.
 Option to combine multiple models into one dynamo-table. Makes sense if you want to pay only one table. Combinations are not allowed for tables of different types ( Hash-table and HashRange-table ) and you have to use the same hashKey and rangeKey. The module will handle all interactions with the models transparent, so you only have to define this option.
 - **overwriteExistingHash**: *( `Boolean` optional: default = true )*  
 Overwrite a item on `create` of an existing hash. 
+- **removeMissing**: *( `Boolean` optional: default = true )*  
+On `true` during an update all keys not found in data will be removed. Otherwise they will be untouched.  
 **Method Arguments**  
   - **attributes**: The given attributes on create  
   - **cb**: Callback method to pass the custom generates id/hash. `cb( "my-special-hash" )`
@@ -70,7 +72,7 @@ An array of attribute Objects. Which will be validated
   - **key**: *( `String` required )*  
   Column/Attribute name/key
   - **type**: *( `String` required )*  
-  Datatype. possible values are `string` = String and `number` = Numeric
+  Datatype. possible values are `string` = String, `number` = Numeric and `array` = Array/Set of **Strings**
   - **required**: *( `Boolean` optional: default = `false` )*  
   Validate the attribute to be required. *( Not implemented yet ! )*
    
@@ -198,6 +200,27 @@ Method to retrieve the instance of a table object.
 tblTodos = sdManager.get( 'Todos' )
 ```
 
+### Destroy a table ( Table DESTROY ):
+
+destroy table at AWS. This removes the table from AWS will all the data
+
+**`Table.destroy( fnCallback )` Arguments** : 
+
+- **fnCallback**: *( `String` required )*  
+Callback method.
+**Method Arguments**  
+  - **err**: Usually `null`. On an error a object with `error` and `msg`
+
+**Example**
+
+```
+tblTodos.del ( err )->
+	if err
+		console.error( "destroy ERROR", err )
+	else
+		console.log( "table destroyed" )
+```
+
 ### Write a new item ( INSERT ):
 
 Create a new item in a select table. You can also add some attributes not defined in the table-definition, which will be saved, too.
@@ -256,12 +279,15 @@ tblTodos.get 'myTodoId', ( err, todo )->
 update an existing item.  
 An item always will be replaced. This means, if you remove some elements, the will be removed from the db, too
 
-**`Table.set( id, data, fnCallback )` Arguments** : 
+**`Table.set( id, data, options, fnCallback )` Arguments** : 
 
 - **id**: *( `String|Number` required )*  
 The id of an element.
 - **data**: *( `Object` required )*  
 The data to update. You can redefine the range key. If you pass the hash key it will be ignored
+- **options**: *( `Object` optional )*  
+For update you can define some options.
+  - **removeMissing**: On `true` all keys not found in data will be removed. Otherwise they will be untouched.
 - **fnCallback**: *( `String` required )*  
 Callback method.
 **Method Arguments**  
@@ -346,26 +372,65 @@ tblTodos.find , ( err, items )->
 ```
 
 
-### Destroy a table ( Table DESTROY ):
+### Working with sets ( UPDATE Set ):
 
-destroy table at AWS. This removes the table from AWS will all the data
+Dynamo has the ability to work with sets. That means you can save a Set of Strings as an Array.  
+During an update you have the ability to add or remove a single value out of the set. Or you can reset the whole set.  
 
-**`Table.destroy( fnCallback )` Arguments** : 
+But you can only perform one action per key and you obnly can use the functionalty if defined through the table-definition ( `type:"array"` ).
 
-- **fnCallback**: *( `String` required )*  
-Callback method.
-**Method Arguments**  
-  - **err**: Usually `null`. On an error a object with `error` and `msg`
+Existing values will be ignored.
 
-**Example**
+The following key variants are availible:
+
+- `"key":[ "a", "b", "c" ]'`: Resets the hole value of the key
+- `"key":{ "$add": [ "d", "e" ] }`: Add some values to the set
+- `"key":{ "$rem": [ "a", "b" ] }`: remove some values
+- `"key":{ "$reset": [ "x", "y" ] }`: reset the hole value. Same as `"key":[ "x", "y" ]'`
+
+**Examples**
 
 ```
-tblTodos.del ( err )->
-	if err
-		console.error( "destroy ERROR", err )
-	else
-		console.log( "table destroyed" )
+# Source "key: [ "a", "b", "c" ]"
+
+data = 
+    key: [ "x", "y", "z" ]
+
+tblSets.set 'mySetsId', data, ( err, setData )->
+    # Result "key: [ "x", "y", "z" ]"
+    console.log( setData )
 ```
+```
+# Source "key: [ "a", "b", "c" ]"
+
+data = 
+    key: { "$add": [ "a", "d", "e" ] }
+
+tblSets.set 'mySetsId', data, ( err, setData )->
+    # Result "key: [ "a", "b", "c", "d", "e" ]"
+    console.log( setData )
+```
+```
+# Source "key: [ "a", "b", "c" ]"
+
+data = 
+    key: { "$rem": [ "a", "b", "x" ] }
+
+tblSets.set 'mySetsId', data, ( err, setData )->
+    # Result "key: [ "c" ]"
+    console.log( setData )
+```
+```
+# Source "key: [ "a", "b", "c" ]"
+
+data = 
+    key: { "$reset": [ "x", "y", "z" ] }
+
+tblSets.set 'mySetsId', data, ( err, setData )->
+    # Result "key: [ "x", "y", "z" ]"
+    console.log( setData )
+```
+
 
 ## Work in progress
 

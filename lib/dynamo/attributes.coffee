@@ -29,7 +29,6 @@ Helper =
 
 	obj2dyn: ( attrs )->
 		obj = {}
-
 		Object.keys(attrs).forEach (key)-> obj[ key ] = Helper.val2dyn( attrs[ key ] )
 
 		obj
@@ -85,7 +84,7 @@ class Attributes
 	get: ( key )=>
 		@attrs[ key ] or null
 
-	validateAttributes: ( attrs, cb )=>
+	validateAttributes: ( isCreate, attrs, cb )=>
 		if not utils.params( attrs, @_required_attrs )
 			# table not existend
 			error = new Error
@@ -112,11 +111,27 @@ class Attributes
 								error.message = "Wrong type of `#{ key }`. Please use pass this key as a `Number`"
 								@table._error( cb, error )
 								return
+						when "array"
+							if isCreate
+								if not _.isArray( val )
+									error = new Error
+									error.name = "validation-error"
+									error.message = "Wrong type of `#{ key }`. Please use pass this key as an `Array`"
+									@table._error( cb, error )
+									return
+							else
+								if not ( val[ "$add" ]? or val[ "$rem" ]? or val[ "$reset" ]? ) and not _.isArray( val )
+									error = new Error
+									error.name = "validation-error"
+									error.message = "Wrong type of `#{ key }`. Please use pass this key as an `Array` or an Object of actions"
+									@table._error( cb, error )
+									return
+
 
 			cb( null, attrs )
 		return
 
-	updateAttrsFn: ( _current, _new )=>
+	updateAttrsFn: ( _current, _new, options = {} )=>
 		self = @
 		return ->
 			_tbl = self.table
@@ -125,14 +140,29 @@ class Attributes
 			@_todel = _.difference( _kc, _kn )
 			# do not update the hashkey
 			for _k, _v of _new when _k isnt _tbl.hashKey
-				if _current[ _k ]? and _current[ _k ] isnt _v
-					# existend and not changed
-					@put( _k, _v )
-				else if not _current[ _k ]? 
-					# new attribute
-					@put( _k, _v )
 
-			@remove( _k ) for _k in @_todel
+				_attr = self.get( _k )
+
+				if _attr?.type is "array" and not _.isArray( _new[ _k ] )
+					val = _new[ _k ]
+					if val[ "$add" ]?
+						@add( _k, val[ "$add" ] )
+					if val[ "$rem" ]?
+						@remove( _k, val[ "$rem" ] )
+					if val[ "$reset" ]?
+						@put( _k, val[ "$reset" ] )
+
+				else 
+					if _current[ _k ]? and _current[ _k ] isnt _v
+						# existend and not changed
+						@put( _k, _v )
+					else if not _current[ _k ]? 
+						# new attribute
+						@put( _k, _v )
+
+			console.log "options.removeMissing",options.removeMissing
+			if options.removeMissing
+				@remove( _k ) for _k in @_todel
 
 			return
 

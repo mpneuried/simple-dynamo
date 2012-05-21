@@ -37,8 +37,8 @@ CONFIG =
 
 					attributes: [
 						{ key: "name", type: "string", required: true }
-						{ key: "age", type: "number" }
-						{ key: "lastlogin", type: "number" }
+						{ key: "users", type: "array" }
+						{ key: "foo", type: "array" }
 					]
 
 				"Messages":

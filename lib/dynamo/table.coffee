@@ -132,8 +132,16 @@ module.exports = class DynamoTable extends EventEmitter
 				when 2
 					_create = false
 					[ _id, attributes ] = args
+				when 3
+					_create = false
+					[ _id, options, attributes ] = args
+				
+			_defOpt =
+				removeMissing: if @_model_settings.removeMissing? then @_model_settings.removeMissing else true
 
-			@_attrs.validateAttributes attributes, ( err, attributes )=>
+			options = _.extend( _defOpt, options or {} )
+
+			@_attrs.validateAttributes _create, attributes, ( err, attributes )=>
 				if err
 					@_error( cb, err )
 				else
@@ -147,7 +155,7 @@ module.exports = class DynamoTable extends EventEmitter
 								cb( null, _obj )
 							return
 					else
-						@_update _id, attributes, ( err, _curr, _old, _deletedKeys )=>
+						@_update _id, attributes, options, ( err, _curr, _old, _deletedKeys )=>
 							if err
 								@_error( cb,err )
 							else
@@ -258,21 +266,22 @@ module.exports = class DynamoTable extends EventEmitter
 			return
 		return
 
-	_update: ( id, attributes, cb )=>
+	_update: ( id, attributes, options= {}, cb )=>
 
 		@get id, ( err, current )=>
 			if err
 				cb err
 			else
 				item = @external.get( @_deFixHash( id ) )
-				_upd = item.update( @_attrs.updateAttrsFn( current, attributes ) )
+				_upd = item.update( @_attrs.updateAttrsFn( current, attributes, options ) )
 				_upd.returning( "UPDATED_NEW" )
-
+				console.log "REQ",_upd
 				#_upd = @_checkSetOptions( _upd, attributes )
 
 				# only save if data has changed
 				if _upd.AttributeUpdates?
 					_upd.save ( err, _saved )=>
+						console.log "RET",err, _saved
 						if err
 							cb err
 						else
@@ -325,7 +334,7 @@ module.exports = class DynamoTable extends EventEmitter
 
 	_dynamoItem2JSONSingle: ( item, convertAttrs = false )=>
 		if convertAttrs
-			_obj = attributesHelper.dyn2obj( item.Item or item )
+			_obj = attributesHelper.dyn2obj( item?.Item or item )
 		else
 			_obj = item
 

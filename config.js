@@ -44,11 +44,11 @@
                 type: "string",
                 required: true
               }, {
-                key: "age",
-                type: "number"
+                key: "users",
+                type: "array"
               }, {
-                key: "lastlogin",
-                type: "number"
+                key: "foo",
+                type: "array"
               }
             ]
           },
