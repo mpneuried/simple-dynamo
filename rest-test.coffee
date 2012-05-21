@@ -17,8 +17,8 @@ root._CONFIG_TYPE = argv.config
 root._CONFIG_PORT = argv.port
 root._CONFIG = require( "./config" )
 
-_CONFIG.aws.accessKeyId = process.env.AWS_AKI if process.env?.AWS_AKI?
-_CONFIG.aws.secretAccessKey = process.env.AWS_SAK if process.env?.AWS_SAK?
+_CONFIG.aws.accessKeyId = process.env.AWS_ACCESS_KEY_ID if process.env?.AWS_ACCESS_KEY_ID?
+_CONFIG.aws.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY if process.env?.AWS_SECRET_ACCESS_KEY?
 
 app = express.createServer()
 app.use(express.bodyParser())

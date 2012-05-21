@@ -18,7 +18,7 @@ CONFIG =
 
 					hashKey:  "_id"
 
-					overwriteDoubleHash: false
+					overwriteExistingHash: false
 					# overwriteExisting
 
 					attributes: [
@@ -33,7 +33,7 @@ CONFIG =
 
 					hashKey:  "_id"
 
-					overwriteDoubleHash: false
+					overwriteExistingHash: false
 
 					attributes: [
 						{ key: "name", type: "string", required: true }

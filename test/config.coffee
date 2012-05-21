@@ -25,7 +25,7 @@ module.exports  =
 			hashKey:  "id"
 			hashKeyType: "S"
 
-			overwriteDoubleHash: false
+			overwriteExistingHash: false
 
 			attributes: [
 				{ key: "title", type: "string", required: true }
@@ -85,7 +85,7 @@ module.exports  =
 			hashKey:  "id"
 			hashKeyType: "S"
 
-			overwriteDoubleHash: false
+			overwriteExistingHash: false
 
 			attributes: [
 				{ key: "title", type: "string", required: true }

@@ -53,12 +53,12 @@ module.exports = class DynamoTable extends EventEmitter
 			else
 				null
 
-		@__defineGetter__ "overwriteDoubleHash", =>
+		@__defineGetter__ "overwriteExistingHash", =>
 
-			if @_model_settings?.overwriteDoubleHash?
-				@_model_settings.overwriteDoubleHash
-			else if @defaults.overwriteDoubleHash?
-				@defaults.overwriteDoubleHash
+			if @_model_settings?.overwriteExistingHash?
+				@_model_settings.overwriteExistingHash
+			else if @defaults.overwriteExistingHash?
+				@defaults.overwriteExistingHash
 			else
 				false
 
@@ -451,7 +451,7 @@ module.exports = class DynamoTable extends EventEmitter
 				val
 
 	_checkSetOptions: ( _upd, attributes )=>
-		if not @overwriteDoubleHash
+		if not @overwriteExistingHash
 
 			_pred = {}
 			_pred[ @hashKey ] = { "==": null }
