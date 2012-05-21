@@ -2,6 +2,7 @@ uuid = require 'node-uuid'
 _ = require "underscore"
 Attributes = require( "./attributes" )
 attributesHelper = Attributes.helper
+utils = require "./utils"
 
 EventEmitter = require( "events" ).EventEmitter
 
@@ -103,11 +104,20 @@ module.exports = class DynamoTable extends EventEmitter
 				return
 		return
 
-	get: ( _id, cb )=>
+	get: ( args..., cb )=>
 		if @_isExistend( cb )
+			options = null
+			switch args.length
+				when 1
+					[ _id ] = args
+				when 2
+					[ _id, options ] = args
+
+			options = @_getOptions( options )
+			
 			query = @_deFixHash( _id ) 
 			
-			@_get query, ( err, _item )=>
+			@_get query, options, ( err, _item )=>
 				if err
 					@_error( cb, err )
 				else
@@ -124,22 +134,25 @@ module.exports = class DynamoTable extends EventEmitter
 
 	set: ( args..., cb )=>
 		if @_isExistend( cb )
+			options = null
 			switch args.length
 				when 1
 					_create = true
 					_id = null
 					[ attributes ] = args
 				when 2
-					_create = false
-					[ _id, attributes ] = args
+					if _.isString( args[ 0 ] ) or _.isNumber( args[ 0 ] )
+						_create = false
+						[ _id, attributes ] = args
+					else
+						_create = true
+						_id = null
+						[ attributes, options ] = args
 				when 3
 					_create = false
-					[ _id, options, attributes ] = args
-				
-			_defOpt =
-				removeMissing: if @_model_settings.removeMissing? then @_model_settings.removeMissing else true
-
-			options = _.extend( _defOpt, options or {} )
+					[ _id, attributes, options ] = args
+			
+			options = @_getOptions( options )
 
 			@_attrs.validateAttributes _create, attributes, ( err, attributes )=>
 				if err
@@ -152,6 +165,8 @@ module.exports = class DynamoTable extends EventEmitter
 							else
 								_obj = @_dynamoItem2JSON( _item, true )
 								@emit( "create", _obj )
+								if options?.fields?.length
+									_obj = utils.reduceObj( _obj, options?.fields )
 								cb( null, _obj )
 							return
 					else
@@ -172,12 +187,18 @@ module.exports = class DynamoTable extends EventEmitter
 										_oldRem[ _k ] = _v
 									_new = _.extend( _oldRem, _obj )
 									@emit( "update", _new, _old )
+									
+									if options?.fields?.length
+										_new = utils.reduceObj( _new, options?.fields )
 									cb( null, _new )
 								else
 									# fix hash key
 									_curr[ @hashKey ] = _curr[ @hashKey ].replace( @_regexRemCT, "" )
 									# nothing changed
 									@emit( "update", _curr, _curr )
+
+									if options?.fields?.length
+										_curr = utils.reduceObj( _curr, options?.fields )
 									cb( null, _curr )
 							return
 		return
@@ -199,12 +220,21 @@ module.exports = class DynamoTable extends EventEmitter
 	find: ( args..., cb )=>
 		if @_isExistend( cb )
 			# fix args if no query is passed
+			options = null
+			cursor = null
 			switch args.length
 				when 1
-					cursor = null
 					[ query ] = args
 				when 2
-					[ query, cursor ] = args
+					[ query, _x ] = args
+					if _.isString( _x ) or _.isNumber( _x )
+						cursor = _x
+					else
+						options = _x
+				when 3
+					[ query, cursor, options ] = args
+
+			options = @_getOptions( options )
 
 			if cursor?
 				cursor = @_deFixHash( cursor )
@@ -223,6 +253,8 @@ module.exports = class DynamoTable extends EventEmitter
 
 			if @_isExistend( cb )
 				_query = @_attrs.getQuery( @external, query, cursor )
+				if options?.fields?.length
+					_query.get( options?.fields )
 				_query.fetch ( err, _items )=>
 					if err
 						@_error( cb, err )
@@ -242,6 +274,13 @@ module.exports = class DynamoTable extends EventEmitter
 			cb( err )
 		return
 
+	_getOptions: ( options = {} )=>
+		_defOpt =
+			removeMissing: if @_model_settings.removeMissing? then @_model_settings.removeMissing else true
+			fields: null
+
+		_.extend( _defOpt, options or {} )
+
 	# short helper to check if the databe is existend in AWS and return a error to callback if not existend
 	_isExistend: ( cb )=>
 		if @existend
@@ -256,8 +295,11 @@ module.exports = class DynamoTable extends EventEmitter
 
 			false
 
-	_get: ( query, cb )=>
+	_get: ( query, options, cb )=>
 		_item = @external.get( query )
+		if options?.fields?.length
+			_item.get( options.fields )
+		console.log options, options?.fields?.length
 		_item.fetch ( err, item )=>
 			if err
 				cb err
@@ -275,13 +317,11 @@ module.exports = class DynamoTable extends EventEmitter
 				item = @external.get( @_deFixHash( id ) )
 				_upd = item.update( @_attrs.updateAttrsFn( current, attributes, options ) )
 				_upd.returning( "UPDATED_NEW" )
-				console.log "REQ",_upd
 				#_upd = @_checkSetOptions( _upd, attributes )
 
 				# only save if data has changed
 				if _upd.AttributeUpdates?
 					_upd.save ( err, _saved )=>
-						console.log "RET",err, _saved
 						if err
 							cb err
 						else

@@ -49,6 +49,14 @@ module.exports =
 		else
 			_.identity( ar )
 
+	# *reduce the keys of an object to the keys listed in the `keys array*  
+	# **obj:** { Object } *object to reduce*  
+	# **keys:** { Array } *Array of valid keys*  
+	reduceObj: ( obj, keys )->
+		ret = {}
+		ret[ key ] = val for key, val of obj when keys.indexOf( key ) >= 0
+		ret
+	
 	# ## extend
 	#
 	# jquery extend method.

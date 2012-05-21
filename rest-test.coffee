@@ -150,12 +150,14 @@ app.get "/:table/", ( req, res )->
 	else
 		_q = JSON.parse( req.query?.q  or "{}" )
 
+	_o = JSON.parse( req.query?.o  or "{}" )
+
 	_tbl = dynDB.get( _t )
 	if not _tbl
 		res.json "table '#{ _t }' not found", 404
 		return
 
-	_tbl.find _q, req.query?.c, ( err, data )->
+	_tbl.find _q, req.query?.c, _o, ( err, data )->
 
 		if err
 			res.json err, 500
@@ -169,12 +171,14 @@ app.put "/:table/", ( req, res )->
 	_t = req.params.table
 	_data = req.body
 
+	_o = JSON.parse( req.query?.o  or "{}" )
+
 	_tbl = dynDB.get( _t )
 	if not _tbl
 		res.json "table '#{ _t }' not found", 404
 		return
 
-	_tbl.set _data, ( err, success )->
+	_tbl.set _data, _o, ( err, success )->
 		if err
 			res.json err, 500
 		else
@@ -191,7 +195,9 @@ app.get "/:table/:id", ( req, res )->
 		res.json "table '#{ _t }' not found", 404
 		return
 
-	_tbl.get _id, ( err, success )->
+	_o = JSON.parse( req.query?.o or "{}" )
+
+	_tbl.get _id, _o, ( err, success )->
 
 		if err
 			res.json err, 500
@@ -205,12 +211,14 @@ app.post "/:table/:id", ( req, res )->
 	_id = req.params.id
 	_data = req.body
 
+	_o = JSON.parse( req.query?.o or "{}" )
+
 	_tbl = dynDB.get( _t )
 	if not _tbl
 		res.json "table '#{ _t }' not found", 404
 		return
 
-	_tbl.set _id, _data, ( err, success )->
+	_tbl.set _id, _data, _o, ( err, success )->
 		if err
 			res.json err, 500
 		else

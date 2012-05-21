@@ -122,7 +122,7 @@
     });
   });
   app.get("/:table/", function(req, res) {
-    var key, val, _key, _q, _ref3, _ref4, _ref5, _regexQuery, _regexQueryType, _t, _tbl;
+    var key, val, _key, _o, _q, _ref3, _ref4, _ref5, _ref6, _regexQuery, _regexQueryType, _t, _tbl;
     _t = req.params.table;
     if (0) {
       _regexQuery = /\w+(\^|\*|!|<|>)$/i;
@@ -163,12 +163,13 @@
     } else {
       _q = JSON.parse(((_ref4 = req.query) != null ? _ref4.q : void 0) || "{}");
     }
+    _o = JSON.parse(((_ref5 = req.query) != null ? _ref5.o : void 0) || "{}");
     _tbl = dynDB.get(_t);
     if (!_tbl) {
       res.json("table '" + _t + "' not found", 404);
       return;
     }
-    _tbl.find(_q, (_ref5 = req.query) != null ? _ref5.c : void 0, function(err, data) {
+    _tbl.find(_q, (_ref6 = req.query) != null ? _ref6.c : void 0, _o, function(err, data) {
       if (err) {
         res.json(err, 500);
       } else {
@@ -178,15 +179,16 @@
     });
   });
   app.put("/:table/", function(req, res) {
-    var _data, _t, _tbl;
+    var _data, _o, _ref3, _t, _tbl;
     _t = req.params.table;
     _data = req.body;
+    _o = JSON.parse(((_ref3 = req.query) != null ? _ref3.o : void 0) || "{}");
     _tbl = dynDB.get(_t);
     if (!_tbl) {
       res.json("table '" + _t + "' not found", 404);
       return;
     }
-    _tbl.set(_data, function(err, success) {
+    _tbl.set(_data, _o, function(err, success) {
       if (err) {
         res.json(err, 500);
       } else {
@@ -195,7 +197,7 @@
     });
   });
   app.get("/:table/:id", function(req, res) {
-    var _id, _t, _tbl;
+    var _id, _o, _ref3, _t, _tbl;
     _t = req.params.table;
     _id = req.params.id;
     _tbl = dynDB.get(_t);
@@ -203,7 +205,8 @@
       res.json("table '" + _t + "' not found", 404);
       return;
     }
-    _tbl.get(_id, function(err, success) {
+    _o = JSON.parse(((_ref3 = req.query) != null ? _ref3.o : void 0) || "{}");
+    _tbl.get(_id, _o, function(err, success) {
       if (err) {
         res.json(err, 500);
       } else {
@@ -212,16 +215,17 @@
     });
   });
   app.post("/:table/:id", function(req, res) {
-    var _data, _id, _t, _tbl;
+    var _data, _id, _o, _ref3, _t, _tbl;
     _t = req.params.table;
     _id = req.params.id;
     _data = req.body;
+    _o = JSON.parse(((_ref3 = req.query) != null ? _ref3.o : void 0) || "{}");
     _tbl = dynDB.get(_t);
     if (!_tbl) {
       res.json("table '" + _t + "' not found", 404);
       return;
     }
-    _tbl.set(_id, _data, function(err, success) {
+    _tbl.set(_id, _data, _o, function(err, success) {
       if (err) {
         res.json(err, 500);
       } else {

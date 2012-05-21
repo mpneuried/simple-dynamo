@@ -206,7 +206,7 @@ destroy table at AWS. This removes the table from AWS will all the data
 
 **`Table.destroy( fnCallback )` Arguments** : 
 
-- **fnCallback**: *( `String` required )*  
+- **fnCallback**: *( `Function` required )*  
 Callback method.
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
@@ -225,11 +225,13 @@ tblTodos.del ( err )->
 
 Create a new item in a select table. You can also add some attributes not defined in the table-definition, which will be saved, too.
 
-**`Table.set( data, fnCallback )` Arguments** : 
+**`Table.set( data, options, fnCallback )` Arguments** : 
 
 - **data**: *( `Object` required )*  
 The data to save. You can define the hash and/or range key. If not the module will generate a hash/range automatically.
-- **fnCallback**: *( `String` required )*  
+- **options**: *( `Object` optional )*  
+  - **fields**: *( `Array` )* An array of fields to receive
+- **fnCallback**: *( `Function` required )*  
 Callback method.
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
@@ -258,8 +260,10 @@ Get an existing element by id/hash
 
 - **id**: *( `String|Number` required )*  
 The id of an element.
-- **fnCallback**: *( `String` required )*  
+- **fnCallback**: *( `Function` required )*  
 Callback method.
+- **options**: *( `Object` optional )*  
+  - **fields**: *( `Array` )* An array of fields to receive
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
   - **item**: the database item as simple object. If not found `null`
@@ -288,7 +292,8 @@ The data to update. You can redefine the range key. If you pass the hash key it 
 - **options**: *( `Object` optional )*  
 For update you can define some options.
   - **removeMissing**: On `true` all keys not found in data will be removed. Otherwise they will be untouched.
-- **fnCallback**: *( `String` required )*  
+  - **fields**: *( `Array` )* An array of fields to receive
+- **fnCallback**: *( `Function` required )*  
 Callback method.
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
@@ -317,7 +322,7 @@ delete an item by id/hash
 
 - **id**: *( `String|Number` required )*  
 The id of an element.
-- **fnCallback**: *( `String` required )*  
+- **fnCallback**: *( `Function` required )*  
 Callback method.
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
@@ -340,7 +345,9 @@ run a query on a table. The module automatically trys to do a `Dynamo.db scan` o
 
 - **query**: *( `Object` required )*  
 A query object. How to build … have a look at [Jed's Predicates ](https://github.com/jed/dynamo/wiki/High-level-API#wiki-predicates)
-- **fnCallback**: *( `String` required )*  
+- **options**: *( `Object` optional )*  
+  - **fields**: *( `Array` )* An array of fields to receive
+- **fnCallback**: *( `Function` required )*  
 Callback method.
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`

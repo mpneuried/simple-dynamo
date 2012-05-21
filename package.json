@@ -3,7 +3,7 @@
 	"description": "Abstraction of Amazons Dynamo DB Service.",
 	"keywords": [ "dynamo", "aws", "amazon", "model", "abstraction", "db", "simple" ],
 	"tags": [ "dynamo", "aws", "amazon", "model", "abstraction", "db", "simple" ],
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"author": "mpneuried",
 	"main": "./lib/dynamo/index.js",
 	"engines": {
