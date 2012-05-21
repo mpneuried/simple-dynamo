@@ -160,7 +160,6 @@ class Attributes
 						# new attribute
 						@put( _k, _v )
 
-			console.log "options.removeMissing",options.removeMissing
 			if options.removeMissing
 				@remove( _k ) for _k in @_todel
 

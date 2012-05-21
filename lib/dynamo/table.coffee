@@ -299,7 +299,6 @@ module.exports = class DynamoTable extends EventEmitter
 		_item = @external.get( query )
 		if options?.fields?.length
 			_item.get( options.fields )
-		console.log options, options?.fields?.length
 		_item.fetch ( err, item )=>
 			if err
 				cb err
