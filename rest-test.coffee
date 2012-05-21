@@ -6,11 +6,10 @@ DynamoManager = require "./lib/dynamo/"
 
 root.argv = require('optimist')
 	.default('host', "127.0.0.1")
-	.default('port', "8010")
+	.default('port')
 	.default('config', "LOCAL")
 	.alias('config', "c")
 	.argv
-
 
 # get config
 root._CONFIG_TYPE = argv.config
@@ -257,4 +256,5 @@ _randrange = ( lowVal, highVal )->
 
 
 
-app.listen(3000)
+app.listen(_CONFIG.server.port)
+console.log "Server started on #{ _CONFIG.server.port }"

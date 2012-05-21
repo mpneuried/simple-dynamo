@@ -1,7 +1,7 @@
 CONFIG = 
 	"_BASIC":
 		server:
-			port: 8010
+			port: 3000
 			host: null
 
 		aws:

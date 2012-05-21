@@ -4,7 +4,7 @@
   CONFIG = {
     "_BASIC": {
       server: {
-        port: 8010,
+        port: 3000,
         host: null
       },
       aws: {
@@ -18,7 +18,7 @@
             name: "users",
             combineTableTo: "combined",
             hashKey: "_id",
-            overwriteDoubleHash: false,
+            overwriteExistingHash: false,
             attributes: [
               {
                 key: "name",
@@ -37,7 +37,7 @@
             name: "rooms",
             combineTableTo: "combined",
             hashKey: "_id",
-            overwriteDoubleHash: false,
+            overwriteExistingHash: false,
             attributes: [
               {
                 key: "name",

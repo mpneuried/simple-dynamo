@@ -48,9 +48,13 @@ class Attributes
 
 	prepare: =>
 		@attrs or= {}
+		@_required_attrs = []
+
 		_hKey = @table.hashKey
 		_rKey = @table.rangeKey
 		for _attr in @raw
+			@_required_attrs.push( _attr.key ) if _attr.required
+
 			_outE = _.clone( _attr )
 			if _outE.key is _hKey
 				_outE.isHash = true
@@ -65,6 +69,8 @@ class Attributes
 				type: @table.hashKeyType
 				required: true
 
+			#@_required_attrs.push( _hKey )
+
 		if @table.hasRange and not @attrs[ _rKey ]
 			@attrs[ _rKey ] = 
 				key: _rKey
@@ -72,14 +78,43 @@ class Attributes
 				type: @table.rangeKeyType
 				required: true
 
+			#@_required_attrs.push( _rKey )
+
 		return
 
 	get: ( key )=>
 		@attrs[ key ] or null
 
 	validateAttributes: ( attrs, cb )=>
-		# TODO implement validation
-		cb( null, attrs )
+		if not utils.params( attrs, @_required_attrs )
+			# table not existend
+			error = new Error
+			error.name = "validation-error"
+			error.message = "Missing key. Please make sure to add all required keys ( #{ @_required_attrs } )"
+			@table._error( cb, error )
+		else
+			for key, val of attrs
+				_attr = @get( key )
+				if _attr
+					# check the type of the attributes
+					switch _attr.type
+						when "string"
+							if not _.isString( val )
+								error = new Error
+								error.name = "validation-error"
+								error.message = "Wrong type of `#{ key }`. Please use pass this key as a `String`"
+								@table._error( cb, error )
+								return
+						when "number"
+							if not _.isNumber( val )
+								error = new Error
+								error.name = "validation-error"
+								error.message = "Wrong type of `#{ key }`. Please use pass this key as a `Number`"
+								@table._error( cb, error )
+								return
+
+			cb( null, attrs )
+		return
 
 	updateAttrsFn: ( _current, _new )=>
 		self = @

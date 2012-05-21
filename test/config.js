@@ -33,7 +33,7 @@
         name: "test_todos",
         hashKey: "id",
         hashKeyType: "S",
-        overwriteDoubleHash: false,
+        overwriteExistingHash: false,
         attributes: [
           {
             key: "title",
@@ -108,7 +108,7 @@
         combineTableTo: "test_combined",
         hashKey: "id",
         hashKeyType: "S",
-        overwriteDoubleHash: false,
+        overwriteExistingHash: false,
         attributes: [
           {
             key: "title",

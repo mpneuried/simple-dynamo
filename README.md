@@ -71,7 +71,7 @@ An array of attribute Objects. Which will be validated
   Column/Attribute name/key
   - **type**: *( `String` required )*  
   Datatype. possible values are `string` = String and `number` = Numeric
-  - **key**: *( `Boolean` optional: default = `false` )*  
+  - **required**: *( `Boolean` optional: default = `false` )*  
   Validate the attribute to be required. *( Not implemented yet ! )*
    
   

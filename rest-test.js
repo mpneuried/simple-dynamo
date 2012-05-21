@@ -5,15 +5,15 @@
   express = require('express');
   root.utils = require("./lib/utils");
   DynamoManager = require("./lib/dynamo/");
-  root.argv = require('optimist')["default"]('host', "127.0.0.1")["default"]('port', "8010")["default"]('config', "LOCAL").alias('config', "c").argv;
+  root.argv = require('optimist')["default"]('host', "127.0.0.1")["default"]('port')["default"]('config', "LOCAL").alias('config', "c").argv;
   root._CONFIG_TYPE = argv.config;
   root._CONFIG_PORT = argv.port;
   root._CONFIG = require("./config");
-  if (((_ref = process.env) != null ? _ref.AWS_AKI : void 0) != null) {
-    _CONFIG.aws.accessKeyId = process.env.AWS_AKI;
+  if (((_ref = process.env) != null ? _ref.AWS_ACCESS_KEY_ID : void 0) != null) {
+    _CONFIG.aws.accessKeyId = process.env.AWS_ACCESS_KEY_ID;
   }
-  if (((_ref2 = process.env) != null ? _ref2.AWS_SAK : void 0) != null) {
-    _CONFIG.aws.secretAccessKey = process.env.AWS_SAK;
+  if (((_ref2 = process.env) != null ? _ref2.AWS_SECRET_ACCESS_KEY : void 0) != null) {
+    _CONFIG.aws.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
   }
   app = express.createServer();
   app.use(express.bodyParser());
@@ -268,5 +268,6 @@
   _randrange = function(lowVal, highVal) {
     return Math.floor(Math.random() * (highVal - lowVal + 1)) + lowVal;
   };
-  app.listen(3000);
+  app.listen(_CONFIG.server.port);
+  console.log("Server started on " + _CONFIG.server.port);
 }).call(this);
