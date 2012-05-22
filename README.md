@@ -438,6 +438,10 @@ tblSets.set 'mySetsId', data, ( err, setData )->
     console.log( setData )
 ```
 
+## Todos
+
+- `Tabel.mget( [ id1, id, .. ] )` Add a mget mehtod for batch get
+- Eventually change the combine-table id behavior to return the real id and force a to predefine the `name` as prefix on create. 
 
 ## Work in progress
 
