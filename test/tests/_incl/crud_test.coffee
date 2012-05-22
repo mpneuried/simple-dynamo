@@ -17,7 +17,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 	_DATA = require "../../testdata.js"
 
 	dynDB = null
-	table = null
+	tableG = null
 
 	describe "----- #{ testTitle } TESTS -----", ->
 		before ( done )->
@@ -39,8 +39,8 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				dynDB.connect ( err )->
 					throw err if err
 
-					table = dynDB.get( _basicTable )
-					table.should.exist
+					tableG = dynDB.get( _basicTable )
+					tableG.should.exist
 
 					done()
 					return
@@ -62,7 +62,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "list existing items", ( done )->
 				
-				table.find ( err, items )->
+				tableG.find ( err, items )->
 					throw err if err
 					items.should.an.instanceof( Array )
 					_ItemCount = items.length
@@ -73,7 +73,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "create an item", ( done )->
 				
-				table.set _.clone( _D[ "insert1" ] ), ( err, item )->
+				tableG.set _.clone( _D[ "insert1" ] ), ( err, item )->
 					throw err if err
 
 					item.id.should.exist
@@ -94,7 +94,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "create a second item", ( done )->
 				
-				table.set _.clone( _D[ "insert2" ] ), ( err, item )->
+				tableG.set _.clone( _D[ "insert2" ] ), ( err, item )->
 					throw err if err
 
 					item.id.should.exist
@@ -117,7 +117,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "create a third item", ( done )->
 				
-				table.set _.clone( _D[ "insert3" ] ), ( err, item )->
+				tableG.set _.clone( _D[ "insert3" ] ), ( err, item )->
 					throw err if err
 
 					item.id.should.exist
@@ -138,7 +138,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "list existing items after insert(s)", ( done )->
 				
-				table.find ( err, items )->
+				tableG.find ( err, items )->
 					throw err if err
 
 					items.should.an.instanceof( Array )
@@ -149,7 +149,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "delete the first inserted item", ( done )->
 				
-				table.del _G[ "insert1" ][ _C.hashKey ], ( err )->
+				tableG.del _G[ "insert1" ][ _C.hashKey ], ( err )->
 					throw err if err
 					_ItemCount--
 					done()
@@ -157,7 +157,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "try to get deleted item", ( done )->
-				table.get _G[ "insert1" ][ _C.hashKey ], ( err, item )->
+				tableG.get _G[ "insert1" ][ _C.hashKey ], ( err, item )->
 					throw err if err
 
 					should.not.exist( item )
@@ -167,7 +167,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "update second item", ( done )->
-				table.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], ( err, item )->
+				tableG.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], ( err, item )->
 					throw err if err
 
 					item.id.should.exist
@@ -189,7 +189,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "delete the second inserted item", ( done )->
 				
-				table.del _G[ "insert2" ][ _C.hashKey ], ( err )->
+				tableG.del _G[ "insert2" ][ _C.hashKey ], ( err )->
 					throw err if err
 					_ItemCount--
 					done()
@@ -198,7 +198,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "delete the third inserted item", ( done )->
 				
-				table.del _G[ "insert3" ][ _C.hashKey ], ( err )->
+				tableG.del _G[ "insert3" ][ _C.hashKey ], ( err )->
 					throw err if err
 					_ItemCount--
 					done()
@@ -207,7 +207,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "check item count after update(s) and delete(s)", ( done )->
 				
-				table.find ( err, items )->
+				tableG.find ( err, items )->
 					throw err if err
 
 					items.should.an.instanceof( Array )
@@ -495,7 +495,6 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "test $rem action", ( done )->
-				
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update3" ] ), ( err, item )->
 					throw err if err
 

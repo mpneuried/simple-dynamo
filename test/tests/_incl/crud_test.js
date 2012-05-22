@@ -1,6 +1,6 @@
 (function() {
   module.exports = function(testTitle, _basicTable, _overwriteTable, _logTable1, _logTable2, _setTable) {
-    var SimpleDynamo, dynDB, should, table, _, _CONFIG, _DATA, _ref, _ref2, _utils;
+    var SimpleDynamo, dynDB, should, tableG, _, _CONFIG, _DATA, _ref, _ref2, _utils;
     _CONFIG = require("../../config.js");
     _ = require("underscore");
     should = require('should');
@@ -14,7 +14,7 @@
     _utils = SimpleDynamo.utils;
     _DATA = require("../../testdata.js");
     dynDB = null;
-    table = null;
+    tableG = null;
     return describe("----- " + testTitle + " TESTS -----", function() {
       before(function(done) {
         return done();
@@ -34,8 +34,8 @@
             if (err) {
               throw err;
             }
-            table = dynDB.get(_basicTable);
-            table.should.exist;
+            tableG = dynDB.get(_basicTable);
+            tableG.should.exist;
             done();
           });
         });
@@ -51,7 +51,7 @@
         _G = {};
         _ItemCount = 0;
         it("list existing items", function(done) {
-          table.find(function(err, items) {
+          tableG.find(function(err, items) {
             if (err) {
               throw err;
             }
@@ -62,7 +62,7 @@
           });
         });
         it("create an item", function(done) {
-          table.set(_.clone(_D["insert1"]), function(err, item) {
+          tableG.set(_.clone(_D["insert1"]), function(err, item) {
             if (err) {
               throw err;
             }
@@ -79,7 +79,7 @@
           });
         });
         it("create a second item", function(done) {
-          table.set(_.clone(_D["insert2"]), function(err, item) {
+          tableG.set(_.clone(_D["insert2"]), function(err, item) {
             if (err) {
               throw err;
             }
@@ -98,7 +98,7 @@
           });
         });
         it("create a third item", function(done) {
-          table.set(_.clone(_D["insert3"]), function(err, item) {
+          tableG.set(_.clone(_D["insert3"]), function(err, item) {
             if (err) {
               throw err;
             }
@@ -115,7 +115,7 @@
           });
         });
         it("list existing items after insert(s)", function(done) {
-          table.find(function(err, items) {
+          tableG.find(function(err, items) {
             if (err) {
               throw err;
             }
@@ -125,7 +125,7 @@
           });
         });
         it("delete the first inserted item", function(done) {
-          table.del(_G["insert1"][_C.hashKey], function(err) {
+          tableG.del(_G["insert1"][_C.hashKey], function(err) {
             if (err) {
               throw err;
             }
@@ -134,7 +134,7 @@
           });
         });
         it("try to get deleted item", function(done) {
-          table.get(_G["insert1"][_C.hashKey], function(err, item) {
+          tableG.get(_G["insert1"][_C.hashKey], function(err, item) {
             if (err) {
               throw err;
             }
@@ -143,7 +143,7 @@
           });
         });
         it("update second item", function(done) {
-          table.set(_G["insert2"][_C.hashKey], _D["update2"], function(err, item) {
+          tableG.set(_G["insert2"][_C.hashKey], _D["update2"], function(err, item) {
             if (err) {
               throw err;
             }
@@ -161,7 +161,7 @@
           });
         });
         it("delete the second inserted item", function(done) {
-          table.del(_G["insert2"][_C.hashKey], function(err) {
+          tableG.del(_G["insert2"][_C.hashKey], function(err) {
             if (err) {
               throw err;
             }
@@ -170,7 +170,7 @@
           });
         });
         it("delete the third inserted item", function(done) {
-          table.del(_G["insert3"][_C.hashKey], function(err) {
+          tableG.del(_G["insert3"][_C.hashKey], function(err) {
             if (err) {
               throw err;
             }
@@ -179,7 +179,7 @@
           });
         });
         it("check item count after update(s) and delete(s)", function(done) {
-          table.find(function(err, items) {
+          tableG.find(function(err, items) {
             if (err) {
               throw err;
             }
@@ -190,7 +190,7 @@
         });
       });
       describe("" + testTitle + " Overwrite Tests", function() {
-        var _C, _D, _G, _ItemCount;
+        var table, _C, _D, _G, _ItemCount;
         table = null;
         _C = _CONFIG.tables[_overwriteTable];
         _D = _DATA[_overwriteTable];
@@ -426,7 +426,7 @@
         });
       });
       describe("" + testTitle + " Set Tests", function() {
-        var _C, _D, _G, _ItemCount;
+        var table, _C, _D, _G, _ItemCount;
         _C = _CONFIG.tables[_setTable];
         _D = _DATA[_setTable];
         _G = {};

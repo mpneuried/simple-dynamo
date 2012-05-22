@@ -223,6 +223,7 @@ module.exports = class DynamoTable extends EventEmitter
 			# fix args if no query is passed
 			options = null
 			cursor = null
+			query = {}
 			switch args.length
 				when 1
 					[ query ] = args
@@ -241,7 +242,7 @@ module.exports = class DynamoTable extends EventEmitter
 				cursor = @_deFixHash( cursor )
 
 			if @isCombinedTable
-				if query[ @hashKey ]
+				if query?[ @hashKey ]
 					_op = _.first( Object.keys( query[ @hashKey ] ) )
 					_val = query[ @hashKey ][ _op ]
 					switch _op
@@ -325,7 +326,7 @@ module.exports = class DynamoTable extends EventEmitter
 						if err
 							cb err
 						else
-							cb( null, _saved.Attributes, current, _upd._todel )
+							cb( null, _saved.Attributes or {}, current, _upd._todel )
 						return
 				else
 					cb( null, current, null )

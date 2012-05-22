@@ -137,7 +137,10 @@ class Attributes
 			_tbl = self.table
 			_kc = _.without( Object.keys( _current ), _tbl.hashKey, _tbl.rangeKey )
 			_kn = _.without( Object.keys( _new ), _tbl.hashKey, _tbl.rangeKey )
-			@_todel = _.difference( _kc, _kn )
+			if options.removeMissing
+				@_todel = _.difference( _kc, _kn )
+			else
+				@_todel = []
 			# do not update the hashkey
 			for _k, _v of _new when _k isnt _tbl.hashKey
 
@@ -160,7 +163,7 @@ class Attributes
 						# new attribute
 						@put( _k, _v )
 
-			if options.removeMissing
+			if @_todel.length
 				@remove( _k ) for _k in @_todel
 
 			return
