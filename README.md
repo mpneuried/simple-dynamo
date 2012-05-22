@@ -390,10 +390,10 @@ Existing values will be ignored.
 
 The following key variants are availible:
 
-- `"key":[ "a", "b", "c" ]'`: Resets the hole value of the key
+- `"key":[ "a", "b", "c" ]'`: Resets the whole value of the key
 - `"key":{ "$add": [ "d", "e" ] }`: Add some values to the set
 - `"key":{ "$rem": [ "a", "b" ] }`: remove some values
-- `"key":{ "$reset": [ "x", "y" ] }`: reset the hole value. Same as `"key":[ "x", "y" ]'`
+- `"key":{ "$reset": [ "x", "y" ] }`: reset the whole value. Same as `"key":[ "x", "y" ]'`
 
 **Examples**
 
@@ -441,7 +441,9 @@ tblSets.set 'mySetsId', data, ( err, setData )->
 ## Todos
 
 - `Tabel.mget( [ id1, id, .. ] )` Add a mget mehtod for batch get
-- Eventually change the combine-table id behavior to return the real id and force a to predefine the `name` as prefix on create. 
+- Eventually change the combine-table id behavior to return the real id and force a to predefine the `name` as prefix on create.
+- Rename `cursor` to  `startId`
+- handle `throughput exceed`with a retry
 
 ## Work in progress
 
