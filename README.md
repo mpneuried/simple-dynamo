@@ -17,8 +17,6 @@ A special feature is the *combineTableTo* options for tables. It adds the abilit
   npm install simple-dynamo@git://github.com/mpneuried/dynamo_connector.git
 ```
 
-Or just require the `node_cache.js` file to get the superclass
-
 ## Examples
 
 ### Initialize module:
@@ -57,7 +55,7 @@ Option to combine multiple models into one dynamo-table. Makes sense if you want
 - **overwriteExistingHash**: *( `Boolean` optional: default = true )*  
 Overwrite a item on `create` of an existing hash. 
 - **removeMissing**: *( `Boolean` optional: default = true )*  
-On `true` during an update all keys not found in data will be removed. Otherwise they will be untouched.  
+On `true` during an update all keys not found in data will be removed. Otherwise it won't be touched.  
 **Method Arguments**  
   - **attributes**: The given attributes on create  
   - **cb**: Callback method to pass the custom generates id/hash. `cb( "my-special-hash" )`
@@ -67,7 +65,7 @@ Method to generate a custom range key.
   - **attributes**: The given attributes on create  
   - **cb**: Callback method to pass the custom generates id/hash. `cb( "my-special-range" )`
 - **attributes**: *( `Array of Objects` required )*  
-An array of attribute Objects. Which will be validated
+An array of attribute Objects. Which will be validated  
 **Attributes keys**
   - **key**: *( `String` required )*  
   Column/Attribute name/key
@@ -168,7 +166,7 @@ to create all missing tables just call `.createAll()`.
 
 This is not necessary if you know the tables has been created in the past.
 
-**Note! The generating of tables could take a time**
+**Note! The generating of tables could take a few Minutes**
 
 **`Manager.generateAll( fnCallback )` Arguments** : 
 
@@ -207,7 +205,7 @@ destroy table at AWS. This removes the table from AWS will all the data
 **`Table.destroy( fnCallback )` Arguments** : 
 
 - **fnCallback**: *( `Function` required )*  
-Callback method.
+Callback method.  
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
 
@@ -232,7 +230,7 @@ The data to save. You can define the hash and/or range key. If not the module wi
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive
 - **fnCallback**: *( `Function` required )*  
-Callback method.
+Callback method.  
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
   - **item**: the save item as simple object
@@ -260,10 +258,10 @@ Get an existing element by id/hash
 
 - **id**: *( `String|Number` required )*  
 The id of an element.
-- **fnCallback**: *( `Function` required )*  
-Callback method.
 - **options**: *( `Object` optional )*  
-  - **fields**: *( `Array` )* An array of fields to receive
+  - **fields**: *( `Array` )* An array of fields to receive  
+- **fnCallback**: *( `Function` required )*  
+Callback method.  
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
   - **item**: the database item as simple object. If not found `null`
@@ -291,10 +289,10 @@ The id of an element.
 The data to update. You can redefine the range key. If you pass the hash key it will be ignored
 - **options**: *( `Object` optional )*  
 For update you can define some options.
-  - **removeMissing**: On `true` all keys not found in data will be removed. Otherwise they will be untouched.
+  - **removeMissing**: On `true` all keys not found in data will be removed. Otherwise it won't be touched.
   - **fields**: *( `Array` )* An array of fields to receive
 - **fnCallback**: *( `Function` required )*  
-Callback method.
+Callback method.  
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
   - **item**: the database item as simple object. If not found `null`
@@ -323,7 +321,7 @@ delete an item by id/hash
 - **id**: *( `String|Number` required )*  
 The id of an element.
 - **fnCallback**: *( `Function` required )*  
-Callback method.
+Callback method.  
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
 
@@ -348,7 +346,7 @@ A query object. How to build … have a look at [Jed's Predicates ](https://gith
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive
 - **fnCallback**: *( `Function` required )*  
-Callback method.
+Callback method.  
 **Method Arguments**  
   - **err**: Usually `null`. On an error a object with `error` and `msg`
   - **items**: an array of objects found
@@ -444,6 +442,8 @@ tblSets.set 'mySetsId', data, ( err, setData )->
 - Eventually change the combine-table id behavior to return the real id and force a to predefine the `name` as prefix on create.
 - Rename `cursor` to  `startId`
 - handle `throughput exceed`with a retry
+- add/fix the `limit` feature
+- add/fix the `cursor` feature
 
 ## Work in progress
 

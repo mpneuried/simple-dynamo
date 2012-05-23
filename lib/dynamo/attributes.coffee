@@ -177,7 +177,7 @@ class Attributes
 			table.scan( _q )
 		else
 			_q = table.query( _q )
-			_q.limit( 4 )
+			#_q.limit( 4 )
 			#_q.cursor( cursor )
 			_q
 
