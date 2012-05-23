@@ -439,11 +439,12 @@ tblSets.set 'mySetsId', data, ( err, setData )->
 ## Todos
 
 - `Tabel.mget( [ id1, id, .. ] )` Add a mget mehtod for batch get
-- Eventually change the combine-table id behavior to return the real id and force a to predefine the `name` as prefix on create.
+- Change the combine-table id behavior to return the real id and force a to predefine the `name` as prefix on create.
 - Rename `cursor` to  `startId`
 - handle `throughput exceed`with a retry
 - add/fix the `limit` feature
 - add/fix the `cursor` feature
+- allow override of overwriteExisting on create
 
 ## Work in progress
 
