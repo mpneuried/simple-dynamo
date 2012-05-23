@@ -177,8 +177,8 @@ module.exports = class DynamoTable extends EventEmitter
 							else
 								if _old
 									# fix hash key
-									_old[ @hashKey ] = _old[ @hashKey ].replace( @_regexRemCT, "" )
-
+									if @isCombinedTable
+										_old[ @hashKey ] = @_fixCombinedHash( _old[ @hashKey ] )
 									# update done
 									_obj = @_dynamoItem2JSON( _curr, true )
 									
@@ -194,7 +194,8 @@ module.exports = class DynamoTable extends EventEmitter
 									cb( null, _new )
 								else
 									# fix hash key
-									_curr[ @hashKey ] = _curr[ @hashKey ].replace( @_regexRemCT, "" )
+									if @isCombinedTable
+										_curr[ @hashKey ] = @_fixCombinedHash( _curr[ @hashKey ] )
 									# nothing changed
 									@emit( "update", _curr, _curr )
 
@@ -275,6 +276,16 @@ module.exports = class DynamoTable extends EventEmitter
 		else
 			cb( err )
 		return
+
+	_fixCombinedHash: ( hash )=>
+		if @isCombinedTable
+			_i = @name.length
+			if hash[0.._i-1] is @name
+				hash.slice( _i )
+			else
+				hash
+		else
+			hash
 
 	_getOptions: ( options = {} )=>
 		_defOpt =
@@ -394,7 +405,7 @@ module.exports = class DynamoTable extends EventEmitter
 
 		# remove prefix from hashKey if it's a combined table
 		if @isCombinedTable and _attrs[ _hName ]?
-			_attrs[ @hashKey ] = _attrs[ _hName ].replace( @_regexRemCT, "" )
+			_attrs[ @hashKey ] = @_fixCombinedHash( _attrs[ @hashKey ] )
 
 		_attrs
 

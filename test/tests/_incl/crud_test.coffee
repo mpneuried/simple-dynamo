@@ -72,8 +72,28 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "create an item", ( done )->
-				
 				tableG.set _.clone( _D[ "insert1" ] ), ( err, item )->
+					throw err if err
+					item.id.should.exist
+					item.name.should.exist
+					item.email.should.exist
+					item.age.should.exist
+
+					item.id.should.equal( _D[ "insert1" ].id )
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.email.should.equal( _D[ "insert1" ].email )
+					item.age.should.equal( _D[ "insert1" ].age )
+
+					_ItemCount++
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "try to get the item and check the content", ( done )->
+				
+				tableG.get _G[ "insert1" ][ _C.hashKey ], ( err, item )->
 					throw err if err
 
 					item.id.should.exist
@@ -81,12 +101,10 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					item.email.should.exist
 					item.age.should.exist
 
+					item.id.should.equal( _D[ "insert1" ].id )
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.email.should.equal( _D[ "insert1" ].email )
 					item.age.should.equal( _D[ "insert1" ].age )
-
-					_ItemCount++
-					_G[ "insert1" ] = item
 
 					done()
 					return

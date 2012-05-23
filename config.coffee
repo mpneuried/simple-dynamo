@@ -47,14 +47,14 @@ CONFIG =
 					rangeKey:  "_t"
 					rangeKeyType:  "N"
 
-					fnCreateHash: ( attributes, cb )=>
+					fnCreateHash: ( attributes, cb )->
 						cb( attributes.user_id )
 						return
 
 					attributes: [
-						key: "_t", type: "number", required: true
-					,	key: "user_id", type: "string", required: true
-					,	key: "lastlogin", type: "number"
+						{ key: "_t", type: "number", required: true }
+					,	{ key: "user_id", type: "string", required: true }
+					,	{ key: "lastlogin", type: "number" }
 					]
 
 
@@ -66,7 +66,7 @@ CONFIG =
 					rangeKey: "t"
 					rangeKeyType: "N"
 
-					fnCreateHash: ( attributes, cb )=>
+					fnCreateHash: ( attributes, cb )->
 						cb( attributes.user )
 						return
 
@@ -83,7 +83,7 @@ CONFIG =
 					rangeKey: "t"
 					rangeKeyType: "N"
 
-					fnCreateHash: ( attributes, cb )=>
+					fnCreateHash: ( attributes, cb )->
 						cb( attributes.user )
 						return
 
@@ -100,7 +100,7 @@ CONFIG =
 					rangeKey: "t"
 					rangeKeyType: "N"
 
-					fnCreateHash: ( attributes, cb )=>
+					fnCreateHash: ( attributes, cb )->
 						cb( attributes.user )
 						return
 
@@ -120,7 +120,7 @@ CONFIG =
 					rangeKey: "t"
 					rangeKeyType: "N"
 
-					fnCreateHash: ( attributes, cb )=>
+					fnCreateHash: ( attributes, cb )->
 						cb( attributes.user )
 						return
 
@@ -139,7 +139,7 @@ CONFIG =
 					rangeKey: "t"
 					rangeKeyType: "N"
 
-					fnCreateHash: ( attributes, cb )=>
+					fnCreateHash: ( attributes, cb )->
 						cb( attributes.user )
 						return
 
@@ -158,7 +158,7 @@ CONFIG =
 					rangeKey: "t"
 					rangeKeyType: "N"
 
-					fnCreateHash: ( attributes, cb )=>
+					fnCreateHash: ( attributes, cb )->
 						cb( attributes.user )
 						return
 

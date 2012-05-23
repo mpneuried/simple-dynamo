@@ -6,7 +6,7 @@ module.exports  =
 		scanWarning: false
 
 	test:
-		deleteTablesOnEnd: false
+		deleteTablesOnEnd: true
 		singleCreateTableTest: "Employees"
 
 	tables: 
@@ -50,7 +50,7 @@ module.exports  =
 			rangeKey: "t"
 			rangeKeyType: "N"
 
-			fnCreateHash: ( attributes, cb )=>
+			fnCreateHash: ( attributes, cb )->
 				cb( attributes.user )
 				return
 
@@ -67,7 +67,7 @@ module.exports  =
 			rangeKey: "t"
 			rangeKeyType: "N"
 
-			fnCreateHash: ( attributes, cb )=>
+			fnCreateHash: ( attributes, cb )->
 				cb( attributes.user )
 				return
 
@@ -123,7 +123,7 @@ module.exports  =
 			rangeKey: "t"
 			rangeKeyType: "N"
 
-			fnCreateHash: ( attributes, cb )=>
+			fnCreateHash: ( attributes, cb )->
 				cb( attributes.user )
 				return
 
@@ -142,7 +142,7 @@ module.exports  =
 			rangeKey: "t"
 			rangeKeyType: "N"
 
-			fnCreateHash: ( attributes, cb )=>
+			fnCreateHash: ( attributes, cb )->
 				cb( attributes.user )
 				return
 
