@@ -145,6 +145,23 @@
     });
   });
 
+  app.get("/:table/_create", function(req, res) {
+    var _t, _tbl;
+    _t = req.params.table;
+    _tbl = dynDB.get(_t);
+    if (!_tbl) {
+      res.json("table '" + _t + "' not found", 404);
+      return;
+    }
+    _tbl.generate(function(err, result) {
+      if (err) {
+        res.json(err, 500);
+      } else {
+        res.json(result);
+      }
+    });
+  });
+
   app.get("/:table/", function(req, res) {
     var key, val, _key, _o, _q, _ref2, _ref3, _ref4, _ref5, _regexQuery, _regexQueryType, _t, _tbl;
     _t = req.params.table;

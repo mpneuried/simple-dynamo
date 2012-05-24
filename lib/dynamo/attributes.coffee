@@ -169,17 +169,25 @@ class Attributes
 			return
 
 
-	getQuery: ( table, query, cursor )=>
+	getQuery: ( table, query, startAt, options={} )=>
 		[ _q, isScan ] = @fixPredicates( query )
 		if isScan
 			console.warn "WARNING! Dynamo-Scan on `#{ table.TableName }`. Query:", _q if @table.mng.options.scanWarning
 
-			table.scan( _q )
+			_q = table.scan( _q )
 		else
 			_q = table.query( _q )
-			#_q.limit( 4 )
-			#_q.cursor( cursor )
-			_q
+
+		if startAt?
+			_q.startAt( startAt )
+
+		if options?.limit?
+			_q.limit( options.limit )
+
+		if options?.fields?.length
+			_q.get( options?.fields )
+
+		_q
 
 	fixPredicates: ( predicates = {} )=>
 		_fixed = {}
@@ -248,7 +256,7 @@ class Attributes
 					value
 			when "boolean"
 				if _vt not in [ "boolean", "undefined" ]
-					Boolean( 10 )
+					Boolean( value )
 				else
 					value
 

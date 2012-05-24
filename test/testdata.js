@@ -174,7 +174,7 @@
     },
     "C_Employees": {
       "insert1": {
-        id: "1234567890",
+        id: "emp1234567890",
         name: "First employee",
         email: "first@employee.com",
         age: 20
@@ -190,6 +190,12 @@
         email: "third@employee.com",
         age: 78
       },
+      "insert4": {
+        id: "9999999",
+        name: "Invalid employee",
+        email: "invalid@employee.com",
+        age: 99
+      },
       "update2": {
         name: "Second employee Update",
         email: "second@employee.com",
@@ -198,12 +204,12 @@
     },
     "C_Todos": {
       "insert1": {
-        id: "12345678911",
+        id: "tds12345678911",
         title: "First",
         done: 0
       },
       "insert2": {
-        id: "12345678911",
+        id: "tds12345678911",
         title: "Second",
         done: 0
       }

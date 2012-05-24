@@ -77,7 +77,7 @@ module.exports  =
 			]
 
 		"C_Employees":
-			name: "employees"
+			name: "emp"
 			combineTableTo: "test_combined"
 
 			hashKey:  "id"
@@ -89,7 +89,7 @@ module.exports  =
 			]
 
 		"C_Rooms":
-			name: "test_rooms"
+			name: "roo"
 			combineTableTo: "test_combined"
 
 			hashKey:  "id"
@@ -100,7 +100,7 @@ module.exports  =
 			]
 
 		"C_Todos":
-			name: "todos"
+			name: "tds"
 			combineTableTo: "test_combined"
 
 			hashKey:  "id"
@@ -114,7 +114,7 @@ module.exports  =
 			]
 
 		"C_Logs1":
-			name: "test_log1"
+			name: "lg1"
 			combineTableTo: "test_rangecombined"
 
 			hashKey:  "id"
@@ -124,7 +124,7 @@ module.exports  =
 			rangeKeyType: "N"
 
 			fnCreateHash: ( attributes, cb )->
-				cb( attributes.user )
+				cb( "lg1" + attributes.user )
 				return
 
 			attributes: [
@@ -133,7 +133,7 @@ module.exports  =
 			]
 
 		"C_Logs2":
-			name: "test_log2"
+			name: "lg2"
 			combineTableTo: "test_rangecombined"
 			
 			hashKey:  "id"
@@ -143,7 +143,7 @@ module.exports  =
 			rangeKeyType: "N"
 
 			fnCreateHash: ( attributes, cb )->
-				cb( attributes.user )
+				cb( "lg2" + attributes.user )
 				return
 
 			attributes: [

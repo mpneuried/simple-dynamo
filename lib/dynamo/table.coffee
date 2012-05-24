@@ -160,7 +160,7 @@ module.exports = class DynamoTable extends EventEmitter
 					@_error( cb, err )
 				else
 					if _create
-						@_create attributes, ( err, _item )=>
+						@_create attributes, options, ( err, _item )=>
 							if err
 								@_error( cb, err )
 							else
@@ -176,9 +176,6 @@ module.exports = class DynamoTable extends EventEmitter
 								@_error( cb,err )
 							else
 								if _old
-									# fix hash key
-									if @isCombinedTable
-										_old[ @hashKey ] = @_fixCombinedHash( _old[ @hashKey ] )
 									# update done
 									_obj = @_dynamoItem2JSON( _curr, true )
 									
@@ -193,9 +190,6 @@ module.exports = class DynamoTable extends EventEmitter
 										_new = utils.reduceObj( _new, options?.fields )
 									cb( null, _new )
 								else
-									# fix hash key
-									if @isCombinedTable
-										_curr[ @hashKey ] = @_fixCombinedHash( _curr[ @hashKey ] )
 									# nothing changed
 									@emit( "update", _curr, _curr )
 
@@ -223,7 +217,7 @@ module.exports = class DynamoTable extends EventEmitter
 		if @_isExistend( cb )
 			# fix args if no query is passed
 			options = null
-			cursor = null
+			startAt = null
 			query = {}
 			switch args.length
 				when 1
@@ -231,23 +225,25 @@ module.exports = class DynamoTable extends EventEmitter
 				when 2
 					[ query, _x ] = args
 					if _.isString( _x ) or _.isNumber( _x )
-						cursor = _x
+						startAt = _x
 					else
 						options = _x
 				when 3
-					[ query, cursor, options ] = args
+					[ query, startAt, options ] = args
 
 			options = @_getOptions( options )
 
-			if cursor?
-				cursor = @_deFixHash( cursor )
+			if startAt?
+				startAt = @_deFixHash( startAt )
 
 			if @isCombinedTable
 				if query?[ @hashKey ]
 					_op = _.first( Object.keys( query[ @hashKey ] ) )
 					_val = query[ @hashKey ][ _op ]
+					_val = @_deFixHash( _val )?[ @hashKey ] or _val
+					console.log 
 					switch _op
-						when "==" then _val = @name + @combinedHashDelimiter + _val
+						when "==" then _val = _val
 					
 					query[ @hashKey ][ _op ] = _val
 
@@ -255,9 +251,8 @@ module.exports = class DynamoTable extends EventEmitter
 					query[ @hashKey ] = { "startsWith" : @name }
 
 			if @_isExistend( cb )
-				_query = @_attrs.getQuery( @external, query, cursor )
-				if options?.fields?.length
-					_query.get( options?.fields )
+				_query = @_attrs.getQuery( @external, query, startAt, options )
+				
 				_query.fetch ( err, _items )=>
 					if err
 						@_error( cb, err )
@@ -291,6 +286,7 @@ module.exports = class DynamoTable extends EventEmitter
 		_defOpt =
 			removeMissing: if @_model_settings.removeMissing? then @_model_settings.removeMissing else true
 			fields: null
+			overwriteExistingHash: @overwriteExistingHash
 
 		_.extend( _defOpt, options or {} )
 
@@ -346,19 +342,22 @@ module.exports = class DynamoTable extends EventEmitter
 
 		return
 
-	_create: ( attributes = {}, cb )=>
+	_create: ( attributes = {}, options, cb )=>
 
-		@_createId attributes, ( attributes )=>
-			_upd = @external.put( attributes )
+		@_createId attributes, ( err, attributes )=>
+			if err
+				cb err
+			else
+				_upd = @external.put( attributes )
 
-			_upd = @_checkSetOptions( _upd, attributes )
+				_upd = @_checkSetOptions( _upd, attributes, options )
 
-			_upd.save ( err )=>
-				if err
-					cb err
-				else
-					cb( null, _upd )
-				return
+				_upd.save ( err )=>
+					if err
+						cb err
+					else
+						cb( null, _upd )
+					return
 
 			return
 
@@ -403,10 +402,6 @@ module.exports = class DynamoTable extends EventEmitter
 			if _attrs[ _hName ]? and _attrs[ _rName ]
 				_attrs[ _hName ] = _attrs[ _hName ] + @hashRangeDelimiter + _attrs[ _rName ]
 
-		# remove prefix from hashKey if it's a combined table
-		if @isCombinedTable and _attrs[ _hName ]?
-			_attrs[ @hashKey ] = @_fixCombinedHash( _attrs[ @hashKey ] )
-
 		_attrs
 
 	_deFixHash: ( attrs )=>
@@ -426,26 +421,31 @@ module.exports = class DynamoTable extends EventEmitter
 			_attrs[ _hName ] =  @_convertValue( _h, _hType )
 			_attrs[ _rName ] =  @_convertValue( _r, _rType )
 
-		# add prefix to hashKey if it's a combined table
-		if @isCombinedTable
-			_attrs[ _hName ] = @name + @combinedHashDelimiter + _attrs[ _hName ]
-
 		_attrs
+
+	_validateHash: ( hash )=>
+		_pre = @name + @combinedHashDelimiter
+		_l = _pre.length
+		hash.slice( 0,_l ) is _pre
 
 	_createId: ( attributes, cb )=>
 		@_createHashKey attributes, ( attributes )=>
 			# add prefix to hashKey if it's a combined table
 			if @isCombinedTable
-				_hName = @hashKey
-				attributes[ _hName ] = @name + @combinedHashDelimiter + attributes[ _hName ]
+				if not @_validateHash( attributes[ @hashKey ] )
+					error = new Error
+					error.name = "combined-hash-invalid"
+					error.message = "The hash of a combined-table has to start with the `name` of this table defined in the configuartion. Please try `#{ @name + @combinedHashDelimiter + attributes[ @hashKey ] }`"
+					@_error( cb, error )
+					return
 
 			# create range attribute if defined in shema
 			if @hasRange
 				@_createRangeKey attributes, ( attributes )=>
-					cb( attributes )
+					cb( null, attributes )
 					return
 			else
-				cb( attributes )
+				cb( null, attributes )
 			return
 
 		return
@@ -497,7 +497,10 @@ module.exports = class DynamoTable extends EventEmitter
 		return
 
 	_defaultHashKey: =>
-		uuid.v1()
+		if @isCombinedTable
+			@name + @combinedHashDelimiter + uuid.v1()
+		else		
+			uuid.v1()
 
 	_defaultRangeKey: =>
 		Date.now()
@@ -511,8 +514,8 @@ module.exports = class DynamoTable extends EventEmitter
 			else
 				val
 
-	_checkSetOptions: ( _upd, attributes )=>
-		if not @overwriteExistingHash
+	_checkSetOptions: ( _upd, attributes, options )=>
+		if not options?.overwriteExistingHash or not @overwriteExistingHash
 
 			_pred = {}
 			_pred[ @hashKey ] = { "==": null }

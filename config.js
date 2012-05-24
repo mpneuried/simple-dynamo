@@ -15,8 +15,26 @@
       dynamo: {
         region: "eu-west-1",
         tables: {
-          "Users": {
+          "User": {
             name: "users",
+            hashKey: "_id",
+            overwriteExistingHash: false,
+            attributes: [
+              {
+                key: "name",
+                type: "string",
+                required: true
+              }, {
+                key: "age",
+                type: "number"
+              }, {
+                key: "lastlogin",
+                type: "number"
+              }
+            ]
+          },
+          "Users": {
+            name: "u",
             combineTableTo: "combined",
             hashKey: "_id",
             overwriteExistingHash: false,
@@ -35,7 +53,7 @@
             ]
           },
           "Rooms": {
-            name: "rooms",
+            name: "r",
             combineTableTo: "combined",
             hashKey: "_id",
             overwriteExistingHash: false,
@@ -186,7 +204,7 @@
             rangeKey: "t",
             rangeKeyType: "N",
             fnCreateHash: function(attributes, cb) {
-              cb(attributes.user);
+              cb("cmt" + attributes.user);
             },
             attributes: [
               {

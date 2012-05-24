@@ -126,6 +126,20 @@ app.get "/:table/_meta", ( req, res )->
 		return
 	return
 
+app.get "/:table/_create", ( req, res )->
+	_t = req.params.table
+	_tbl = dynDB.get( _t )
+	if not _tbl
+		res.json "table '#{ _t }' not found", 404
+		return
+	_tbl.generate ( err, result )->
+		if err
+			res.json err, 500
+		else
+			res.json result
+		return
+	return
+
 app.get "/:table/", ( req, res )->
 	_t = req.params.table
 

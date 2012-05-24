@@ -51,7 +51,8 @@ The type of the `rangeKey`. Possible values are: `S` = String and `N` = Numeric
 - **fnCreateHash**: *( `Function` optional: default = `new UUID` )*  
 Method to generate a custom hash key.  
 - **combineTableTo**: *( `String` optional )*
-Option to combine multiple models into one dynamo-table. Makes sense if you want to pay only one table. Combinations are not allowed for tables of different types ( Hash-table and HashRange-table ) and you have to use the same hashKey and rangeKey. The module will handle all interactions with the models transparent, so you only have to define this option.
+Option to combine multiple models into one dynamo-table. Makes sense if you want to pay only one table. Combinations are not allowed for tables of different types ( Hash-table and HashRange-table ) and you have to use the same hashKey and rangeKey. The module will handle all interactions with the models transparent, so you only have to define this option.  
+*Note:* If you use this feature and predefine the id/hash you have to add the `name` of the table in front of every id/hash.
 - **overwriteExistingHash**: *( `Boolean` optional: default = true )*  
 Overwrite a item on `create` of an existing hash. 
 - **removeMissing**: *( `Boolean` optional: default = true )*  
@@ -226,9 +227,11 @@ Create a new item in a select table. You can also add some attributes not define
 **`Table.set( data, options, fnCallback )` Arguments** : 
 
 - **data**: *( `Object` required )*  
-The data to save. You can define the hash and/or range key. If not the module will generate a hash/range automatically.
+The data to save. You can define the hash and/or range key. If not the module will generate a hash/range automatically.  
+*Note:* If the used table uses the combined feature and you define the hash-key it's necessary to add the `name` out of the table-config in front of every hash.
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive
+  - **overwriteExistingHash**: *( `Boolean` optional: default = true )*  Overwrite a item it already exists. 
 - **fnCallback**: *( `Function` required )*  
 Callback method.  
 **Method Arguments**  
@@ -339,12 +342,15 @@ tblTodos.del 'myTodoId', ( err )->
 
 run a query on a table. The module automatically trys to do a `Dynamo.db scan` or `Dynamo query`.
 
-**`Table.find( query, fnCallback )` Arguments** : 
+**`Table.find( query, startAt, options, fnCallback )` Arguments** : 
 
-- **query**: *( `Object` required )*  
+- **query**: *( `Object` : default = `{}` all )*  
 A query object. How to build … have a look at [Jed's Predicates ](https://github.com/jed/dynamo/wiki/High-level-API#wiki-predicates)
+- **startAt**: *( `String|Number` optional )*  
+To realize a paging you can define a `startAt`. Usually the last item of a list. If you define `startAt` with the last item of the previous find you get the next collection of items without the given `startAt` item
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive
+  - **limit**: *( `Number` )* Define the max. items to return
 - **fnCallback**: *( `Function` required )*  
 Callback method.  
 **Method Arguments**  
@@ -359,9 +365,9 @@ tblTodos.find {}, ( err, items )->
 	if err
 		console.error( "delete ERROR", err )
 	else
-		console.log( "found items", items )
+		console.log( "all existend items", items )
 ```
-**Advanced Example**
+**Advanced Examples**
 
 ```
 # create a query to read all todos from last hour
@@ -374,6 +380,23 @@ tblTodos.find , ( err, items )->
 		console.error( "delete ERROR", err )
 	else
 		console.log( "found items", items )
+```
+
+```
+# read 4 todos from last hour beginning starting with a known id
+_query = 
+	id: { "!=": null }
+	_t: { "<": ( Date.now() - ( 1000 * 60 * 60 ) ) }
+
+_startAt = "myid_todoItem12"
+
+_options = { "limit": 4, "fields": [ "id", "_t", "title" ] }
+
+tblTodos.find _query, _startAt, _options, ( err, items )->
+	if err
+		console.error( "delete ERROR", err )
+	else
+		console.log( "4 found items", items )
 ```
 
 
@@ -439,12 +462,7 @@ tblSets.set 'mySetsId', data, ( err, setData )->
 ## Todos
 
 - `Tabel.mget( [ id1, id, .. ] )` Add a mget mehtod for batch get
-- Change the combine-table id behavior to return the real id and force a to predefine the `name` as prefix on create.
-- Rename `cursor` to  `startId`
 - handle `throughput exceed`with a retry
-- add/fix the `limit` feature
-- add/fix the `cursor` feature
-- allow override of overwriteExisting on create
 
 ## Work in progress
 

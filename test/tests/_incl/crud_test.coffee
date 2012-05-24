@@ -154,6 +154,19 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					return
 				return
 
+			if _basicTable.slice( 0,2 ) is "C_"
+				it "insert a invalid item to combined table", ( done )->
+				
+					tableG.set _.clone( _D[ "insert4" ] ), ( err, item )->
+						err.should.exist
+						err.name.should.equal( "combined-hash-invalid" )
+
+						should.not.exist( item )
+
+						done()
+						return
+					return
+
 			it "list existing items after insert(s)", ( done )->
 				
 				tableG.find ( err, items )->
@@ -309,10 +322,15 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			table2 = null
 			_D1 = _DATA[ _logTable1 ]
 			_D2 = _DATA[ _logTable2 ]
+			_C1 = _CONFIG.tables[ _logTable1 ]
+			_C2 = _CONFIG.tables[ _logTable2 ]
 			_G1 = []
 			_G2 = []
 			_ItemCount1 = 0
 			_ItemCount2 = 0
+
+			last = null
+			pre_last = null
 			
 			it "get table 1", ( done )->
 				table1 = dynDB.get( _logTable1 )
@@ -331,10 +349,13 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				for insert in _D1.inserts
 					_throtteldSet = _.throttle( table1.set, 250 )
 					aFns.push _.bind( ( insert, cba )->
+						tbl = @
 						_throtteldSet _.clone( insert ), ( err, item )->
 							throw err if err
-
-							item.id.should.equal( insert.user + "::" + insert.t )
+							if tbl.isCombinedTable
+								item.id.should.equal( tbl.name + tbl.combinedHashDelimiter + insert.user + "::" + insert.t )
+							else
+								item.id.should.equal( insert.user + "::" + insert.t )
 							item.user.should.equal( insert.user )
 							item.title.should.equal( insert.title )
 							_ItemCount1++
@@ -351,10 +372,13 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				for insert in _D2.inserts
 					_throtteldSet = _.throttle( table2.set, 250 )
 					aFns.push _.bind( ( insert, cba )->
+						tbl = @
 						_throtteldSet _.clone( insert ), ( err, item )->
 							throw err if err
-
-							item.id.should.equal( insert.user + "::" + insert.t )
+							if tbl.isCombinedTable
+								item.id.should.equal( tbl.name + tbl.combinedHashDelimiter + insert.user + "::" + insert.t )
+							else
+								item.id.should.equal( insert.user + "::" + insert.t )
 							item.user.should.equal( insert.user )
 							item.title.should.equal( insert.title )
 							_ItemCount2++
@@ -367,9 +391,15 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					done()
 
 			it "get a range of table 1", ( done )->
-				_q = 
-					id: { "==": "A" }
-					t: { ">=": 5 }
+				if _logTable1.slice( 0,2 ) is "C_"
+					_q = 
+						id: { "==": "#{ _C1.name }A" }
+						t: { ">=": 5 }
+				else
+					_q = 
+						id: { "==": "A" }
+						t: { ">=": 5 }
+				
 
 				table1.find _q, ( err, items )->
 					throw err if err
@@ -378,9 +408,14 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					done()
 
 			it "get a range of table 2", ( done )->
-				_q = 
-					id: { "==": "D" }
-					t: { ">=": 3 }
+				if _logTable2.slice( 0,2 ) is "C_"
+					_q = 
+						id: { "==": "#{ _C2.name }D" }
+						t: { ">=": 3 }
+				else
+					_q = 
+						id: { "==": "D" }
+						t: { ">=": 3 }
 
 				table2.find _q, ( err, items )->
 					throw err if err
@@ -395,6 +430,54 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					throw err if err
 
 					item.should.eql( _item )
+					done()
+
+			it "should return only 3 items", (done) ->
+				_count = 3
+				if _logTable2.slice( 0,2 ) is "C_"
+					_q = 
+						id: { "==": "#{ _C2.name }A" }
+						t: { ">=": 0 }
+				else
+					_q = 
+						id: { "==": "A" }
+						t: { ">=": 0 }
+
+				_o = 
+					limit: _count
+
+				table2.find _q, _o, ( err, items )->
+					throw err if err
+
+					should.exist items
+					items.length.should.equal _count
+					last = items[_count - 1]
+					pre_last = items[_count - 2]
+					done()
+
+			it "should return the next 3 by `startAt`", (done) ->
+				_count = 3
+				if _logTable2.slice( 0,2 ) is "C_"
+					_q = 
+						id: { "==": "#{ _C2.name }A" }
+						t: { ">=": 0 }
+				else
+					_q = 
+						id: { "==": "A" }
+						t: { ">=": 0 }
+				_o = 
+					limit: _count
+
+				_c = pre_last.id
+
+				table2.find _q, _c, _o, ( err, items )->
+					throw err if err
+
+					predicted_first = items[0]
+					predicted_first.should.eql last
+					items.length.should.equal _count
+					last = items[_count - 1]
+					pre_last = items[_count - 2]
 					done()
 
 			it "delete whole data from table 1", ( done )->

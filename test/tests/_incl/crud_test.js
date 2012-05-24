@@ -133,6 +133,16 @@
             done();
           });
         });
+        if (_basicTable.slice(0, 2) === "C_") {
+          it("insert a invalid item to combined table", function(done) {
+            tableG.set(_.clone(_D["insert4"]), function(err, item) {
+              err.should.exist;
+              err.name.should.equal("combined-hash-invalid");
+              should.not.exist(item);
+              done();
+            });
+          });
+        }
         it("list existing items after insert(s)", function(done) {
           tableG.find(function(err, items) {
             if (err) {
@@ -265,15 +275,19 @@
         });
       });
       describe("" + testTitle + " Range Tests", function() {
-        var table1, table2, _D1, _D2, _G1, _G2, _ItemCount1, _ItemCount2;
+        var last, pre_last, table1, table2, _C1, _C2, _D1, _D2, _G1, _G2, _ItemCount1, _ItemCount2;
         table1 = null;
         table2 = null;
         _D1 = _DATA[_logTable1];
         _D2 = _DATA[_logTable2];
+        _C1 = _CONFIG.tables[_logTable1];
+        _C2 = _CONFIG.tables[_logTable2];
         _G1 = [];
         _G2 = [];
         _ItemCount1 = 0;
         _ItemCount2 = 0;
+        last = null;
+        pre_last = null;
         it("get table 1", function(done) {
           table1 = dynDB.get(_logTable1);
           should.exist(table1);
@@ -292,11 +306,17 @@
             insert = _ref2[_i];
             _throtteldSet = _.throttle(table1.set, 250);
             aFns.push(_.bind(function(insert, cba) {
+              var tbl;
+              tbl = this;
               return _throtteldSet(_.clone(insert), function(err, item) {
                 if (err) {
                   throw err;
                 }
-                item.id.should.equal(insert.user + "::" + insert.t);
+                if (tbl.isCombinedTable) {
+                  item.id.should.equal(tbl.name + tbl.combinedHashDelimiter + insert.user + "::" + insert.t);
+                } else {
+                  item.id.should.equal(insert.user + "::" + insert.t);
+                }
                 item.user.should.equal(insert.user);
                 item.title.should.equal(insert.title);
                 _ItemCount1++;
@@ -317,11 +337,17 @@
             insert = _ref2[_i];
             _throtteldSet = _.throttle(table2.set, 250);
             aFns.push(_.bind(function(insert, cba) {
+              var tbl;
+              tbl = this;
               return _throtteldSet(_.clone(insert), function(err, item) {
                 if (err) {
                   throw err;
                 }
-                item.id.should.equal(insert.user + "::" + insert.t);
+                if (tbl.isCombinedTable) {
+                  item.id.should.equal(tbl.name + tbl.combinedHashDelimiter + insert.user + "::" + insert.t);
+                } else {
+                  item.id.should.equal(insert.user + "::" + insert.t);
+                }
                 item.user.should.equal(insert.user);
                 item.title.should.equal(insert.title);
                 _ItemCount2++;
@@ -336,14 +362,25 @@
         });
         it("get a range of table 1", function(done) {
           var _q;
-          _q = {
-            id: {
-              "==": "A"
-            },
-            t: {
-              ">=": 5
-            }
-          };
+          if (_logTable1.slice(0, 2) === "C_") {
+            _q = {
+              id: {
+                "==": "" + _C1.name + "A"
+              },
+              t: {
+                ">=": 5
+              }
+            };
+          } else {
+            _q = {
+              id: {
+                "==": "A"
+              },
+              t: {
+                ">=": 5
+              }
+            };
+          }
           return table1.find(_q, function(err, items) {
             if (err) {
               throw err;
@@ -354,14 +391,25 @@
         });
         it("get a range of table 2", function(done) {
           var _q;
-          _q = {
-            id: {
-              "==": "D"
-            },
-            t: {
-              ">=": 3
-            }
-          };
+          if (_logTable2.slice(0, 2) === "C_") {
+            _q = {
+              id: {
+                "==": "" + _C2.name + "D"
+              },
+              t: {
+                ">=": 3
+              }
+            };
+          } else {
+            _q = {
+              id: {
+                "==": "D"
+              },
+              t: {
+                ">=": 3
+              }
+            };
+          }
           return table2.find(_q, function(err, items) {
             if (err) {
               throw err;
@@ -378,6 +426,81 @@
               throw err;
             }
             item.should.eql(_item);
+            return done();
+          });
+        });
+        it("should return only 3 items", function(done) {
+          var _count, _o, _q;
+          _count = 3;
+          if (_logTable2.slice(0, 2) === "C_") {
+            _q = {
+              id: {
+                "==": "" + _C2.name + "A"
+              },
+              t: {
+                ">=": 0
+              }
+            };
+          } else {
+            _q = {
+              id: {
+                "==": "A"
+              },
+              t: {
+                ">=": 0
+              }
+            };
+          }
+          _o = {
+            limit: _count
+          };
+          return table2.find(_q, _o, function(err, items) {
+            if (err) {
+              throw err;
+            }
+            should.exist(items);
+            items.length.should.equal(_count);
+            last = items[_count - 1];
+            pre_last = items[_count - 2];
+            return done();
+          });
+        });
+        it("should return the next 3 by `startAt`", function(done) {
+          var _c, _count, _o, _q;
+          _count = 3;
+          if (_logTable2.slice(0, 2) === "C_") {
+            _q = {
+              id: {
+                "==": "" + _C2.name + "A"
+              },
+              t: {
+                ">=": 0
+              }
+            };
+          } else {
+            _q = {
+              id: {
+                "==": "A"
+              },
+              t: {
+                ">=": 0
+              }
+            };
+          }
+          _o = {
+            limit: _count
+          };
+          _c = pre_last.id;
+          return table2.find(_q, _c, _o, function(err, items) {
+            var predicted_first;
+            if (err) {
+              throw err;
+            }
+            predicted_first = items[0];
+            predicted_first.should.eql(last);
+            items.length.should.equal(_count);
+            last = items[_count - 1];
+            pre_last = items[_count - 2];
             return done();
           });
         });
