@@ -284,7 +284,7 @@ module.exports = class DynamoTable extends EventEmitter
 
 	_getOptions: ( options = {} )=>
 		_defOpt =
-			removeMissing: if @_model_settings.removeMissing? then @_model_settings.removeMissing else true
+			removeMissing: if @_model_settings.removeMissing? then @_model_settings.removeMissing else false
 			fields: null
 			overwriteExistingHash: @overwriteExistingHash
 

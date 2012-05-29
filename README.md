@@ -53,9 +53,9 @@ Method to generate a custom hash key.
 - **combineTableTo**: *( `String` optional )*
 Option to combine multiple models into one dynamo-table. Makes sense if you want to pay only one table. Combinations are not allowed for tables of different types ( Hash-table and HashRange-table ) and you have to use the same hashKey and rangeKey. The module will handle all interactions with the models transparent, so you only have to define this option.  
 *Note:* If you use this feature and predefine the id/hash you have to add the `name` of the table in front of every id/hash.
-- **overwriteExistingHash**: *( `Boolean` optional: default = true )*  
+- **overwriteExistingHash**: *( `Boolean` optional: default = false )*  
 Overwrite a item on `create` of an existing hash. 
-- **removeMissing**: *( `Boolean` optional: default = true )*  
+- **removeMissing**: *( `Boolean` optional: default = false )*  
 On `true` during an update all keys not found in data will be removed. Otherwise it won't be touched.  
 **Method Arguments**  
   - **attributes**: The given attributes on create  

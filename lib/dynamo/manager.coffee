@@ -15,7 +15,7 @@ module.exports = class DynamoManager extends EventEmitter
 		throughput:
 			read: 10
 			write: 5
-		overwriteExistingHash: true
+		overwriteExistingHash: false
 
 	constructor: ( @options, @tableSettings )->
 
