@@ -652,6 +652,48 @@
             done();
           });
         });
+        it("test $add action with string", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update5"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["x", "y", "z"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("test $rem action with string", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update6"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["y", "z"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("test $reset action with string", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update7"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["y"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
         return it("delete test item", function(done) {
           table.del(_G["insert1"].id, function(err) {
             if (err) {

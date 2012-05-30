@@ -267,7 +267,11 @@ module.exports = class DynamoTable extends EventEmitter
 
 	_error: ( cb, err )=>
 		if ERRORMAPPING[ err.name ]?
-			cb( ERRORMAPPING[ err.name ] )
+			_err = ERRORMAPPING[ err.name ]
+			error = new Error
+			error.name = _err.name
+			error.message = _err.message
+			cb( error )
 		else
 			cb( err )
 		return

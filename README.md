@@ -417,6 +417,9 @@ The following key variants are availible:
 - `"key":{ "$add": [ "d", "e" ] }`: Add some values to the set
 - `"key":{ "$rem": [ "a", "b" ] }`: remove some values
 - `"key":{ "$reset": [ "x", "y" ] }`: reset the whole value. Same as `"key":[ "x", "y" ]'`
+- `"key":{ "$add": "d"}`: Add a single value to the set
+- `"key":{ "$rem": "a" }`: remove a single value
+- `"key":{ "$reset": "y" }`: reset the whole set to a single value. Same as `"key":[ "y" ]'`
 
 **Examples**
 

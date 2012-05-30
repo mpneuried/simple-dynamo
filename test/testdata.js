@@ -64,6 +64,24 @@
         users: {
           "$reset": ["x", "y"]
         }
+      },
+      "update5": {
+        name: "First",
+        users: {
+          "$add": "z"
+        }
+      },
+      "update6": {
+        name: "First",
+        users: {
+          "$rem": "x"
+        }
+      },
+      "update7": {
+        name: "First",
+        users: {
+          "$reset": "y"
+        }
       }
     },
     "Logs1": {
@@ -239,6 +257,24 @@
         name: "C_First",
         users: {
           "$reset": ["x", "y"]
+        }
+      },
+      "update5": {
+        name: "First",
+        users: {
+          "$add": "z"
+        }
+      },
+      "update6": {
+        name: "First",
+        users: {
+          "$rem": "x"
+        }
+      },
+      "update7": {
+        name: "First",
+        users: {
+          "$reset": "y"
         }
       }
     },

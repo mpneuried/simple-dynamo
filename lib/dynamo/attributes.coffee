@@ -149,11 +149,11 @@ class Attributes
 				if _attr?.type is "array" and not _.isArray( _new[ _k ] )
 					val = _new[ _k ]
 					if val[ "$add" ]?
-						@add( _k, val[ "$add" ] )
+						@add( _k, ( if _.isArray( val[ "$add" ] ) then val[ "$add" ] else [ val[ "$add" ] ] ) )
 					if val[ "$rem" ]?
-						@remove( _k, val[ "$rem" ] )
+						@remove( _k, ( if _.isArray( val[ "$rem" ] ) then val[ "$rem" ] else [ val[ "$rem" ] ] ) )
 					if val[ "$reset" ]?
-						@put( _k, val[ "$reset" ] )
+						@put( _k, ( if _.isArray( val[ "$reset" ] ) then val[ "$reset" ] else [ val[ "$reset" ] ] ) )
 
 				else 
 					if _current[ _k ]? and _current[ _k ] isnt _v

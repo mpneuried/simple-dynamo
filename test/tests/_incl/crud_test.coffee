@@ -595,6 +595,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					return
 				return
 
+
 			it "test $rem action", ( done )->
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update3" ] ), ( err, item )->
 					throw err if err
@@ -623,6 +624,60 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "x", "y" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test $add action with string", ( done )->
+				
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update5" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "x", "y", "z" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test $rem action with string", ( done )->
+				
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update6" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "y", "z" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test $reset action with string", ( done )->
+				
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update7" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "y" ] )
 
 					_G[ "insert1" ] = item
 
