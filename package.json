@@ -10,6 +10,7 @@
 		"node": ">=0.6.0"
 	},
 	"scripts": {
+		"start": "node rest-test.js",
 		"pretest": "mocha ./test/setup.js",
 		"test": "mocha ./test/tests/*.js",
 		"posttest": "mocha ./test/teardown.js"

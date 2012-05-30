@@ -260,19 +260,19 @@
         }
       },
       "update5": {
-        name: "First",
+        name: "C_First",
         users: {
           "$add": "z"
         }
       },
       "update6": {
-        name: "First",
+        name: "C_First",
         users: {
           "$rem": "x"
         }
       },
       "update7": {
-        name: "First",
+        name: "C_First",
         users: {
           "$reset": "y"
         }
