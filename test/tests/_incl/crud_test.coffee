@@ -198,7 +198,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "update second item", ( done )->
-				tableG.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], ( err, item )->
+				tableG.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], removeMissing: true, ( err, item )->
 					throw err if err
 
 					item.id.should.exist

@@ -172,7 +172,9 @@
           });
         });
         it("update second item", function(done) {
-          tableG.set(_G["insert2"][_C.hashKey], _D["update2"], function(err, item) {
+          tableG.set(_G["insert2"][_C.hashKey], _D["update2"], {
+            removeMissing: true
+          }, function(err, item) {
             if (err) {
               throw err;
             }

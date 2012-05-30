@@ -1,6 +1,8 @@
 simple-dynamo
 ===========
 
+[![Build Status](https://secure.travis-ci.org/mpneuried/simple-dynamo.png?branch=master)](http://travis-ci.org/mpneuried/simple-dynamo)
+
 **simple-dynamo** is a abstraction layer to Jed Schmidt's [dynamo](https://github.com/jed/dynamo) Node.js driver.
 
 It provides a absolute simple JSON-CRUD Interface without any knowledge of Dynamos specialties.
