@@ -261,14 +261,23 @@ module.exports = class DynamoTable extends EventEmitter
 					query[ @hashKey ] = { "startsWith" : @name }
 
 			if @_isExistend( cb )
-				_query = @_attrs.getQuery( @external, query, startAt, options )
+				[ _query, isScan ] = @_attrs.getQuery( @external, query, startAt, options )
 				
-				_query.fetch ( err, _items )=>
+				_fnHandle = ( err, _items )=>
 					if err
 						@_error( cb, err )
 					else
 						cb null, @_dynamoItem2JSON( _items, false )
 					return
+				
+				if isScan
+					_query.fetch _fnHandle
+				else
+					_fetchOpts = 
+						consistent: options.consistent
+
+					_query.fetch _fetchOpts, _fnHandle
+
 				return
 
 	destroy: ( cb )=>
@@ -301,7 +310,8 @@ module.exports = class DynamoTable extends EventEmitter
 			removeMissing: if @_model_settings.removeMissing? then @_model_settings.removeMissing else false
 			fields: null
 			overwriteExistingHash: @overwriteExistingHash
-
+			consistent: if @_model_settings.consistent? then @_model_settings.consistent else false
+			
 		_.extend( _defOpt, options or {} )
 
 	# short helper to check if the databe is existend in AWS and return a error to callback if not existend
@@ -322,7 +332,11 @@ module.exports = class DynamoTable extends EventEmitter
 		_item = @external.get( query )
 		if options?.fields?.length
 			_item.get( options.fields )
-		_item.fetch ( err, item )=>
+
+		_fetchOpts = 
+			consistent: options.consistent
+
+		_item.fetch _fetchOpts, ( err, item )=>
 			if err
 				cb err
 			else

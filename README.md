@@ -58,7 +58,9 @@ Option to combine multiple models into one dynamo-table. Makes sense if you want
 - **overwriteExistingHash**: *( `Boolean` optional: default = false )*  
 Overwrite a item on `create` of an existing hash. 
 - **removeMissing**: *( `Boolean` optional: default = false )*  
-On `true` during an update all keys not found in data will be removed. Otherwise it won't be touched.  
+On `true` during an update all keys not found in data will be removed. Otherwise it won't be touched. 
+- **consistent**: *( `Boolean` optional: default = false )*  
+Do consistend reads on `table.get()` and `table.find()` as default   
 **Method Arguments**  
   - **attributes**: The given attributes on create  
   - **cb**: Callback method to pass the custom generates id/hash. `cb( "my-special-hash" )`
@@ -233,7 +235,7 @@ The data to save. You can define the hash and/or range key. If not the module wi
 *Note:* If the used table uses the combined feature and you define the hash-key it's necessary to add the `name` out of the table-config in front of every hash.
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive
-  - **overwriteExistingHash**: *( `Boolean` optional: default = true )*  Overwrite a item it already exists. 
+  - **overwriteExistingHash**: *( `Boolean` optional: default = [tableConfig.overwriteExistingHash] )*  Overwrite a item it already exists. 
 - **fnCallback**: *( `Function` required )*  
 Callback method.  
 **Method Arguments**  
@@ -264,7 +266,8 @@ Get an existing element by id/hash
 - **id**: *( `String|Number|Array` required )*  
 The id of an element. If the used table is a range table you have to use an array `[hash,range]` as combined id. Otherwise you will get an error. 
 - **options**: *( `Object` optional )*  
-  - **fields**: *( `Array` )* An array of fields to receive  
+  - **fields**: *( `Array` )* An array of fields to receive. If nothing is defined all fields are returned.
+  - **consistent**: *( `Boolean` optional: default = [tableConfig.consistent] )* do a consitent read  
 - **fnCallback**: *( `Function` required )*  
 Callback method.  
 **Method Arguments**  
@@ -362,6 +365,8 @@ If the used table is a range table you have to use an array `[hash,range]` as co
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive
   - **limit**: *( `Number` )* Define the max. items to return
+  - **consistent**: *( `Boolean` optional: default = [tableConfig.consistent] )* do a consitent read.  
+  **Note! This is only availible for real query's through range-tables. This means if you query by hash and range ( e.g. Advanced Examples )**
 - **fnCallback**: *( `Function` required )*  
 Callback method.  
 **Method Arguments**  

@@ -190,7 +190,7 @@ class Attributes
 		if options?.fields?.length
 			_q.get( options?.fields )
 
-		_q
+		return [ _q, isScan ]
 
 	fixPredicates: ( predicates = {} )=>
 		_fixed = {}
