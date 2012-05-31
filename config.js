@@ -73,21 +73,13 @@
           },
           "Messages": {
             name: "messages",
-            hashKey: "_id",
+            hashKey: "user_id",
             rangeKey: "_t",
             rangeKeyType: "N",
-            fnCreateHash: function(attributes, cb) {
-              cb(attributes.user_id);
-            },
             attributes: [
               {
                 key: "_t",
-                type: "number",
-                required: true
-              }, {
-                key: "user_id",
-                type: "string",
-                required: true
+                type: "number"
               }, {
                 key: "lastlogin",
                 type: "number"

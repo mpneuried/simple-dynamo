@@ -69,7 +69,7 @@ app.get "/many/:table", ( req, res )->
 	users = [ "A", "B", "C", "D" ]
 
 	_fnInsert = ( cb )->
-		_item = { title: randomString( 10 ), user: users[ _randrange( 0,3 ) ] }
+		_item = { message: randomString( 10 ), user_id: users[ _randrange( 0,3 ) ], _t: Date.now() }
 		_tbl.set _item, ( err, item )->
 			if err
 				console.log "ERROR", err
@@ -202,7 +202,10 @@ app.put "/:table/", ( req, res )->
 
 app.get "/:table/:id", ( req, res )->
 	_t = req.params.table
-	_id = req.params.id
+	try
+		_id = JSON.parse( req.params.id )
+	catch _err
+		_id = req.params.id
 
 	_tbl = dynDB.get( _t )
 	if not _tbl
@@ -225,6 +228,11 @@ app.post "/:table/:id", ( req, res )->
 	_id = req.params.id
 	_data = req.body
 
+	try
+		_id = JSON.parse( req.params.id )
+	catch _err
+		_id = req.params.id
+
 	_o = JSON.parse( req.query?.o or "{}" )
 
 	_tbl = dynDB.get( _t )
@@ -243,6 +251,11 @@ app.post "/:table/:id", ( req, res )->
 app.del "/:table/:id", ( req, res )->
 	_t = req.params.table
 	_id = req.params.id
+
+	try
+		_id = JSON.parse( req.params.id )
+	catch _err
+		_id = req.params.id
 
 	_tbl = dynDB.get( _t )
 	if not _tbl

@@ -315,10 +315,11 @@
                   throw err;
                 }
                 if (tbl.isCombinedTable) {
-                  item.id.should.equal(tbl.name + tbl.combinedHashDelimiter + insert.user + "::" + insert.t);
+                  item.id.should.equal(tbl.name + tbl.combinedHashDelimiter + insert.user);
                 } else {
-                  item.id.should.equal(insert.user + "::" + insert.t);
+                  item.id.should.equal(insert.user);
                 }
+                item.t.should.equal(insert.t);
                 item.user.should.equal(insert.user);
                 item.title.should.equal(insert.title);
                 _ItemCount1++;
@@ -346,10 +347,11 @@
                   throw err;
                 }
                 if (tbl.isCombinedTable) {
-                  item.id.should.equal(tbl.name + tbl.combinedHashDelimiter + insert.user + "::" + insert.t);
+                  item.id.should.equal(tbl.name + tbl.combinedHashDelimiter + insert.user);
                 } else {
-                  item.id.should.equal(insert.user + "::" + insert.t);
+                  item.id.should.equal(insert.user);
                 }
+                item.t.should.equal(insert.t);
                 item.user.should.equal(insert.user);
                 item.title.should.equal(insert.title);
                 _ItemCount2++;
@@ -423,7 +425,7 @@
         it("get a single item of table 1", function(done) {
           var _item;
           _item = _G1[4];
-          return table1.get(_item.id, function(err, item) {
+          return table1.get([_item.id, _item.t], function(err, item) {
             if (err) {
               throw err;
             }
@@ -492,7 +494,7 @@
           _o = {
             limit: _count
           };
-          _c = pre_last.id;
+          _c = [pre_last.id, pre_last.t];
           return table2.find(_q, _c, _o, function(err, items) {
             var predicted_first;
             if (err) {
@@ -513,7 +515,7 @@
             item = _G1[_i];
             _throtteldDel = _.throttle(table1.del, 250);
             aFns.push(_.bind(function(item, cba) {
-              return _throtteldDel(item.id, function(err) {
+              return _throtteldDel([item.id, item.t], function(err) {
                 if (err) {
                   throw err;
                 }
@@ -533,7 +535,7 @@
             item = _G2[_i];
             _throtteldDel = _.throttle(table2.del, 250);
             aFns.push(_.bind(function(item, cba) {
-              return _throtteldDel(item.id, function(err) {
+              return _throtteldDel([item.id, item.t], function(err) {
                 if (err) {
                   throw err;
                 }

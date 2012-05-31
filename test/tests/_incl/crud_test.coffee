@@ -353,9 +353,10 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 						_throtteldSet _.clone( insert ), ( err, item )->
 							throw err if err
 							if tbl.isCombinedTable
-								item.id.should.equal( tbl.name + tbl.combinedHashDelimiter + insert.user + "::" + insert.t )
+								item.id.should.equal( tbl.name + tbl.combinedHashDelimiter + insert.user )
 							else
-								item.id.should.equal( insert.user + "::" + insert.t )
+								item.id.should.equal( insert.user )
+							item.t.should.equal( insert.t )
 							item.user.should.equal( insert.user )
 							item.title.should.equal( insert.title )
 							_ItemCount1++
@@ -376,9 +377,10 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 						_throtteldSet _.clone( insert ), ( err, item )->
 							throw err if err
 							if tbl.isCombinedTable
-								item.id.should.equal( tbl.name + tbl.combinedHashDelimiter + insert.user + "::" + insert.t )
+								item.id.should.equal( tbl.name + tbl.combinedHashDelimiter + insert.user )
 							else
-								item.id.should.equal( insert.user + "::" + insert.t )
+								item.id.should.equal( insert.user)
+							item.t.should.equal( insert.t )
 							item.user.should.equal( insert.user )
 							item.title.should.equal( insert.title )
 							_ItemCount2++
@@ -426,7 +428,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "get a single item of table 1", ( done )->
 				_item = _G1[ 4 ]
 
-				table1.get _item.id, ( err, item )->
+				table1.get [ _item.id, _item.t ], ( err, item )->
 					throw err if err
 
 					item.should.eql( _item )
@@ -468,7 +470,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				_o = 
 					limit: _count
 
-				_c = pre_last.id
+				_c = [ pre_last.id, pre_last.t ]
 
 				table2.find _q, _c, _o, ( err, items )->
 					throw err if err
@@ -485,7 +487,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				for item in _G1
 					_throtteldDel = _.throttle( table1.del, 250 )
 					aFns.push _.bind( ( item, cba )->
-						_throtteldDel item.id, ( err )->
+						_throtteldDel [ item.id, item.t ], ( err )->
 							throw err if err
 							_ItemCount1--
 							cba()
@@ -499,7 +501,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				for item in _G2
 					_throtteldDel = _.throttle( table2.del, 250 )
 					aFns.push _.bind( ( item, cba )->
-						_throtteldDel item.id, ( err )->
+						_throtteldDel [ item.id, item.t ], ( err )->
 							throw err if err
 							_ItemCount2--
 							cba()

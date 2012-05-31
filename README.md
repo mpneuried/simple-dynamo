@@ -261,8 +261,8 @@ Get an existing element by id/hash
 
 **`Table.get( id, fnCallback )` Arguments** : 
 
-- **id**: *( `String|Number` required )*  
-The id of an element.
+- **id**: *( `String|Number|Array` required )*  
+The id of an element. If the used table is a range table you have to use an array `[hash,range]` as combined id. Otherwise you will get an error. 
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive  
 - **fnCallback**: *( `Function` required )*  
@@ -281,6 +281,14 @@ tblTodos.get 'myTodoId', ( err, todo )->
 		console.log( todo )
 ```
 
+```
+tblRangeTodos.get [ 'myHash', 'myRange' ], ( err, todo )->
+	if err
+		console.error( "get ERROR", err )
+	else
+		console.log( todo )
+```
+
 ### Update an item ( UPDATE ):
 
 update an existing item.  
@@ -288,8 +296,8 @@ An item always will be replaced. This means, if you remove some elements, the wi
 
 **`Table.set( id, data, options, fnCallback )` Arguments** : 
 
-- **id**: *( `String|Number` required )*  
-The id of an element.
+- **id**: *( `String|Number|Array` required )*  
+The id of an element. If the used table is a range table you have to use an array `[hash,range]` as combined id. Otherwise you will get an error. 
 - **data**: *( `Object` required )*  
 The data to update. You can redefine the range key. If you pass the hash key it will be ignored
 - **options**: *( `Object` optional )*  
@@ -323,8 +331,8 @@ delete an item by id/hash
 
 **`Table.del( id, fnCallback )` Arguments** : 
 
-- **id**: *( `String|Number` required )*  
-The id of an element.
+- **id**: *( `String|Number|Array` required )*  
+The id of an element. If the used table is a range table you have to use an array `[hash,range]` as combined id. Otherwise you will get an error. 
 - **fnCallback**: *( `Function` required )*  
 Callback method.  
 **Method Arguments**  
@@ -348,8 +356,9 @@ run a query on a table. The module automatically trys to do a `Dynamo.db scan` o
 
 - **query**: *( `Object` : default = `{}` all )*  
 A query object. How to build … have a look at [Jed's Predicates ](https://github.com/jed/dynamo/wiki/High-level-API#wiki-predicates)
-- **startAt**: *( `String|Number` optional )*  
-To realize a paging you can define a `startAt`. Usually the last item of a list. If you define `startAt` with the last item of the previous find you get the next collection of items without the given `startAt` item
+- **startAt**: *( `String|Number|Array` optional )*  
+To realize a paging you can define a `startAt`. Usually the last item of a list. If you define `startAt` with the last item of the previous find you get the next collection of items without the given `startAt` item.  
+If the used table is a range table you have to use an array `[hash,range]` as combined `startAt`. Otherwise you will get an error. 
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive
   - **limit**: *( `Number` )* Define the max. items to return

@@ -27,9 +27,6 @@ module.exports = class DynamoTable extends EventEmitter
 		@__defineGetter__ "combinedHashDelimiter", =>
 			""
 
-		@__defineGetter__ "hashRangeDelimiter", =>
-			"::"
-
 		@__defineGetter__ "existend", =>
 			@external?
 
@@ -115,8 +112,11 @@ module.exports = class DynamoTable extends EventEmitter
 
 			options = @_getOptions( options )
 			
-			query = @_deFixHash( _id ) 
-			
+			query = @_deFixHash( _id, cb ) 
+			if query instanceof Error
+				@_error( cb, query )
+				return
+
 			@_get query, options, ( err, _item )=>
 				if err
 					@_error( cb, err )
@@ -142,7 +142,7 @@ module.exports = class DynamoTable extends EventEmitter
 					_id = null
 					[ attributes ] = args
 				when 2
-					if _.isString( args[ 0 ] ) or _.isNumber( args[ 0 ] )
+					if _.isString( args[ 0 ] ) or _.isNumber( args[ 0 ] ) or _.isArray( args[ 0 ] )
 						_create = false
 						[ _id, attributes ] = args
 					else
@@ -202,14 +202,18 @@ module.exports = class DynamoTable extends EventEmitter
 	del: ( _id, cb )=>
 		if @_isExistend( cb )
 			query = @_deFixHash( _id ) 
+
+			if query instanceof Error
+				@_error( cb, query )
+			else
 			
-			@_del query, ( err, success )=>
-				if err
-					@_error( cb, err )
-				else
-					@emit( "delete", _id )
-					cb null, success
-				return
+				@_del query, ( err, success )=>
+					if err
+						@_error( cb, err )
+					else
+						@emit( "delete", _id )
+						cb null, success
+					return
 
 		return
 
@@ -235,13 +239,19 @@ module.exports = class DynamoTable extends EventEmitter
 
 			if startAt?
 				startAt = @_deFixHash( startAt )
+				if startAt instanceof Error
+					@_error( cb, startAt )
+					return
+
 
 			if @isCombinedTable
 				if query?[ @hashKey ]
 					_op = _.first( Object.keys( query[ @hashKey ] ) )
 					_val = query[ @hashKey ][ _op ]
 					_val = @_deFixHash( _val )?[ @hashKey ] or _val
-					console.log 
+					if _val instanceof Error
+						@_error( cb, _val )
+						return
 					switch _op
 						when "==" then _val = _val
 					
@@ -326,7 +336,11 @@ module.exports = class DynamoTable extends EventEmitter
 			if err
 				cb err
 			else
-				item = @external.get( @_deFixHash( id ) )
+				_id = @_deFixHash( id ) 
+				if _id instanceof Error
+					@_error( cb, _id )
+					return
+				item = @external.get( _id )
 				_upd = item.update( @_attrs.updateAttrsFn( current, attributes, options ) )
 				_upd.returning( "UPDATED_NEW" )
 				#_upd = @_checkSetOptions( _upd, attributes )
@@ -370,12 +384,11 @@ module.exports = class DynamoTable extends EventEmitter
 	_del: ( query, cb )=>
 		_item = @external.get( query )
 
-		_item.destroy ( err, success )=>
-				if err
-					cb err
-				else
-					cb null, success
-				return
+		_item.destroy returnvalues: true, ( err, item )=>
+			if err
+				cb err
+			else
+				cb null, item or null
 			return
 		return
 
@@ -396,32 +409,29 @@ module.exports = class DynamoTable extends EventEmitter
 		@_fixHash( _obj )
 
 	_fixHash: ( attrs )=>
-		
-		_attrs = _.clone( attrs )		
-		_hName = @hashKey
-
-		if @hasRange
-			_rName = @rangeKey
-
-			if _attrs[ _hName ]? and _attrs[ _rName ]
-				_attrs[ _hName ] = _attrs[ _hName ] + @hashRangeDelimiter + _attrs[ _rName ]
-
-		_attrs
+		attrs
 
 	_deFixHash: ( attrs )=>
-		if _.isObject( attrs )
-			_attrs = _.clone( attrs )
-		else
+		
+		if _.isString( attrs ) or _.isNumber( attrs ) or _.isArray( attrs )
 			_hName = @hashKey
 			_attrs = {}
-			_attrs[ _hName ] = attrs
-
+			_attrs[ _hName ] = _.clone( attrs )
+		else
+			_attrs = _.clone( attrs )
+		
 		if @hasRange
 			_hType = @hashKeyType
 			_rName = @rangeKey
 			_rType = @rangeKeyType
 
-			[ _h, _r ] = _attrs[ _hName ].split( @hashRangeDelimiter )
+			if not _.isArray( _attrs[ _hName ] )
+				error = new Error
+				error.name = "invalid-range-call"
+				error.message = "If you try to get a hash/range item you have to pass a Array of `[hash,range]` as id."
+				return error
+
+			[ _h, _r ] = _attrs[ _hName ]
 			_attrs[ _hName ] =  @_convertValue( _h, _hType )
 			_attrs[ _rName ] =  @_convertValue( _r, _rType )
 

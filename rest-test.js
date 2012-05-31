@@ -81,8 +81,9 @@
     _fnInsert = function(cb) {
       var _item;
       _item = {
-        title: randomString(10),
-        user: users[_randrange(0, 3)]
+        message: randomString(10),
+        user_id: users[_randrange(0, 3)],
+        _t: Date.now()
       };
       return _tbl.set(_item, function(err, item) {
         if (err) {
@@ -242,7 +243,11 @@
   app.get("/:table/:id", function(req, res) {
     var _id, _o, _ref2, _t, _tbl;
     _t = req.params.table;
-    _id = req.params.id;
+    try {
+      _id = JSON.parse(req.params.id);
+    } catch (_err) {
+      _id = req.params.id;
+    }
     _tbl = dynDB.get(_t);
     if (!_tbl) {
       res.json("table '" + _t + "' not found", 404);
@@ -263,6 +268,11 @@
     _t = req.params.table;
     _id = req.params.id;
     _data = req.body;
+    try {
+      _id = JSON.parse(req.params.id);
+    } catch (_err) {
+      _id = req.params.id;
+    }
     _o = JSON.parse(((_ref2 = req.query) != null ? _ref2.o : void 0) || "{}");
     _tbl = dynDB.get(_t);
     if (!_tbl) {
@@ -282,6 +292,11 @@
     var _id, _t, _tbl;
     _t = req.params.table;
     _id = req.params.id;
+    try {
+      _id = JSON.parse(req.params.id);
+    } catch (_err) {
+      _id = req.params.id;
+    }
     _tbl = dynDB.get(_t);
     if (!_tbl) {
       res.json("table '" + _t + "' not found", 404);

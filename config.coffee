@@ -56,17 +56,12 @@ CONFIG =
 
 				"Messages":
 					name: "messages"
-					hashKey:  "_id"
+					hashKey:  "user_id"
 					rangeKey:  "_t"
 					rangeKeyType:  "N"
 
-					fnCreateHash: ( attributes, cb )->
-						cb( attributes.user_id )
-						return
-
 					attributes: [
-						{ key: "_t", type: "number", required: true }
-					,	{ key: "user_id", type: "string", required: true }
+						{ key: "_t", type: "number" }
 					,	{ key: "lastlogin", type: "number" }
 					]
 
