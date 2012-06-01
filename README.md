@@ -16,7 +16,7 @@ A special feature is the *combineTableTo* options for tables. It adds the abilit
 ## Install
 
 ```
-  npm install simple-dynamo@git://github.com/mpneuried/dynamo_connector.git
+  npm install simple-dynamo
 ```
 
 ## Examples
@@ -482,6 +482,8 @@ tblSets.set 'mySetsId', data, ( err, setData )->
 
 - `Tabel.mget( [ id1, id, .. ] )` Add a mget mehtod for batch get
 - handle `throughput exceed`with a retry
+- add conditionals as option to `table.set()`
+- implement events for all table and manager actions. Currently availible events are undocumented
 
 ## Work in progress
 
