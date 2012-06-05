@@ -42,7 +42,8 @@ describe "----- TEARDOWN -----", ->
 					tableName = @name
 					@destroy ( err )->
 						console.log "#{ tableName } deleted"
-						throw err if err
+
+						console.log err if err
 						
 						# delay each destroy to throttle control plane requests
 						_.delay( cba, 2000, err )

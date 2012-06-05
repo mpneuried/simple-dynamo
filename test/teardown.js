@@ -55,7 +55,7 @@
             return this.destroy(function(err) {
               console.log("" + tableName + " deleted");
               if (err) {
-                throw err;
+                console.log(err);
               }
               _.delay(cba, 2000, err);
             });
