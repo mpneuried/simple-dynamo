@@ -31,8 +31,8 @@ dynDB.connect ( err )=>
 
 # listen to events
 dynDB
-	.on "new-table", ( table )=>
-		console.log "new-table", table.name
+	.on "new-table", ( name, table )=>
+		console.log "new-table", name, table.name
 		table.on "create-status", ( status )=>
 			console.log "create-status", table.name, status
 			return

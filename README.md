@@ -520,6 +520,7 @@ To provide a API to react on different events you can listen to a bunch of event
 
 - `new-table`: Table object initialized and ready to use. This means only the client model is ready. Eventually you have to create the table first.  
 **Event Arguments**  
+	- **name**: the name og the table, like you would use with `Manager.get()
 	- **Table**: the `Table` object
 - `table-generated`: Fired after all a new tables has been generated.
 **Event Arguments**  

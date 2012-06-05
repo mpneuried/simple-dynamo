@@ -43,8 +43,8 @@
     }
   });
 
-  dynDB.on("new-table", function(table) {
-    console.log("new-table", table.name);
+  dynDB.on("new-table", function(name, table) {
+    console.log("new-table", name, table.name);
     table.on("create-status", function(status) {
       console.log("create-status", table.name, status);
     });

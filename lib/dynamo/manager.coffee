@@ -98,7 +98,7 @@ module.exports = class DynamoManager extends EventEmitter
 					external: _ext
 
 				@_tables[ tableName ] = new Table( table, _opt )
-				@emit( "new-table", @_tables[ tableName ] )
+				@emit( "new-table", tableName, @_tables[ tableName ] )
 
 			@_connected = true
 			cb( null )
