@@ -50,6 +50,8 @@ module.exports  =
 			rangeKey: "t"
 			rangeKeyType: "N"
 
+			overwriteExistingHash: true
+
 			fnCreateHash: ( attributes, cb )->
 				cb( attributes.user )
 				return
@@ -66,6 +68,8 @@ module.exports  =
 
 			rangeKey: "t"
 			rangeKeyType: "N"
+
+			overwriteExistingHash: true
 
 			fnCreateHash: ( attributes, cb )->
 				cb( attributes.user )

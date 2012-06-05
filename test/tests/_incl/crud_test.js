@@ -153,6 +153,36 @@
             done();
           });
         });
+        it("try to get two items at once (mget)", function(done) {
+          tableG.mget([_G["insert1"][_C.hashKey], _G["insert2"][_C.hashKey]], function(err, items) {
+            var aPred, item, _i, _len;
+            if (err) {
+              throw err;
+            }
+            items.should.have.length(2);
+            aPred = [_G["insert1"], _G["insert2"]];
+            for (_i = 0, _len = items.length; _i < _len; _i++) {
+              item = items[_i];
+              aPred.should.includeEql(item);
+            }
+            done();
+          });
+        });
+        it("try to get two items plus a unkown at once (mget)", function(done) {
+          tableG.mget([_G["insert1"][_C.hashKey], _G["insert2"][_C.hashKey], "xxxxxx"], function(err, items) {
+            var aPred, item, _i, _len;
+            if (err) {
+              throw err;
+            }
+            items.should.have.length(2);
+            aPred = [_G["insert1"], _G["insert2"]];
+            for (_i = 0, _len = items.length; _i < _len; _i++) {
+              item = items[_i];
+              aPred.should.includeEql(item);
+            }
+            done();
+          });
+        });
         it("delete the first inserted item", function(done) {
           tableG.del(_G["insert1"][_C.hashKey], function(err) {
             if (err) {
@@ -362,6 +392,36 @@
           }
           return _utils.runSeries(aFns, function(err) {
             return done();
+          });
+        });
+        it("try to get two items at once (mget)", function(done) {
+          table1.mget([[_G1[1][_C1.hashKey], _G1[1][_C1.rangeKey]], [_G1[5][_C1.hashKey], _G1[5][_C1.rangeKey]]], function(err, items) {
+            var aPred, item, _i, _len;
+            if (err) {
+              throw err;
+            }
+            items.should.have.length(2);
+            aPred = [_G1[1], _G1[5]];
+            for (_i = 0, _len = items.length; _i < _len; _i++) {
+              item = items[_i];
+              aPred.should.includeEql(item);
+            }
+            done();
+          });
+        });
+        it("try to get two items plus a unkown at once (mget)", function(done) {
+          table2.mget([[_G2[1][_C2.hashKey], _G2[1][_C2.rangeKey]], [_G2[5][_C2.hashKey], _G2[5][_C2.rangeKey]], [_G2[3][_C2.hashKey], 999]], function(err, items) {
+            var aPred, item, _i, _len;
+            if (err) {
+              throw err;
+            }
+            items.should.have.length(2);
+            aPred = [_G2[1], _G2[5]];
+            for (_i = 0, _len = items.length; _i < _len; _i++) {
+              item = items[_i];
+              aPred.should.includeEql(item);
+            }
+            done();
           });
         });
         it("get a range of table 1", function(done) {

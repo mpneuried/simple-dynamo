@@ -163,15 +163,15 @@ CONFIG =
 
 					combineTableTo: "test_rangecombined"
 
-					rangeKey: "t"
+					rangeKey: "_t"
 					rangeKeyType: "N"
 
 					fnCreateHash: ( attributes, cb )->
-						cb( "cmt" + attributes.user )
+						cb( "cmt" + attributes.user_id )
 						return
 
 					attributes: [
-						{ key: "user", type: "string", required: true }
+						{ key: "user_id", type: "string", required: true }
 						{ key: "title", type: "string" }
 					]
 

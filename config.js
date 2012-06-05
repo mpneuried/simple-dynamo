@@ -193,14 +193,14 @@
             hashKey: "id",
             hashKeyType: "S",
             combineTableTo: "test_rangecombined",
-            rangeKey: "t",
+            rangeKey: "_t",
             rangeKeyType: "N",
             fnCreateHash: function(attributes, cb) {
-              cb("cmt" + attributes.user);
+              cb("cmt" + attributes.user_id);
             },
             attributes: [
               {
-                key: "user",
+                key: "user_id",
                 type: "string",
                 required: true
               }, {

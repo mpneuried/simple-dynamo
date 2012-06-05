@@ -178,6 +178,32 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					return
 				return
 
+			it "try to get two items at once (mget)", ( done )->
+				tableG.mget [ _G[ "insert1" ][ _C.hashKey ], _G[ "insert2" ][ _C.hashKey ] ], ( err, items )->
+					throw err if err
+
+					items.should.have.length( 2 )
+					aPred = [ _G[ "insert1" ], _G[ "insert2" ] ]
+					for item in items
+						aPred.should.includeEql( item )
+
+					done()
+					return
+				return
+
+			it "try to get two items plus a unkown at once (mget)", ( done )->
+				tableG.mget [ _G[ "insert1" ][ _C.hashKey ], _G[ "insert2" ][ _C.hashKey ], "xxxxxx" ], ( err, items )->
+					throw err if err
+
+					items.should.have.length( 2 )
+					aPred = [ _G[ "insert1" ], _G[ "insert2" ] ]
+					for item in items
+						aPred.should.includeEql( item )
+
+					done()
+					return
+				return
+
 			it "delete the first inserted item", ( done )->
 				
 				tableG.del _G[ "insert1" ][ _C.hashKey ], ( err )->
@@ -391,6 +417,33 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 				_utils.runSeries aFns, ( err )->
 					done()
+
+
+			it "try to get two items at once (mget)", ( done )->
+				table1.mget [ [ _G1[ 1 ][ _C1.hashKey ],_G1[ 1 ][ _C1.rangeKey ] ] , [ _G1[ 5 ][ _C1.hashKey ],_G1[ 5 ][ _C1.rangeKey ] ] ], ( err, items )->
+					throw err if err
+
+					items.should.have.length( 2 )
+					aPred = [ _G1[ 1 ], _G1[ 5 ] ]
+					for item in items
+						aPred.should.includeEql( item )
+
+					done()
+					return
+				return
+
+			it "try to get two items plus a unkown at once (mget)", ( done )->
+				table2.mget [ [ _G2[ 1 ][ _C2.hashKey ],_G2[ 1 ][ _C2.rangeKey ] ] , [ _G2[ 5 ][ _C2.hashKey ],_G2[ 5 ][ _C2.rangeKey ] ], [ _G2[ 3 ][ _C2.hashKey ], 999 ] ], ( err, items )->
+					throw err if err
+
+					items.should.have.length( 2 )
+					aPred = [ _G2[ 1 ], _G2[ 5 ] ]
+					for item in items
+						aPred.should.includeEql( item )
+
+					done()
+					return
+				return
 
 			it "get a range of table 1", ( done )->
 				if _logTable1.slice( 0,2 ) is "C_"

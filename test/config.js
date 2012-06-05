@@ -65,6 +65,7 @@
         hashKeyType: "S",
         rangeKey: "t",
         rangeKeyType: "N",
+        overwriteExistingHash: true,
         fnCreateHash: function(attributes, cb) {
           cb(attributes.user);
         },
@@ -85,6 +86,7 @@
         hashKeyType: "S",
         rangeKey: "t",
         rangeKeyType: "N",
+        overwriteExistingHash: true,
         fnCreateHash: function(attributes, cb) {
           cb(attributes.user);
         },

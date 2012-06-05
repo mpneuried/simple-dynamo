@@ -126,11 +126,45 @@ module.exports = class DynamoTable extends EventEmitter
 						@emit( "get", _obj )
 						cb( null, _obj )
 					else
-						@emit( "get-empty", _obj )
+						@emit( "get-empty" )
 						cb null, null
 				return
 
 		return
+
+	mget: ( args..., cb )=>
+		if @_isExistend( cb )
+			options = null
+			switch args.length
+				when 1
+					[ _ids ] = args
+				when 2
+					[ _ids, options ] = args
+
+			options = @_getOptions( options )
+
+			mQuery = []
+			for _id in _ids
+				query = @_deFixHash( _id, cb ) 
+				if query instanceof Error
+					@_error( cb, query )
+					return
+				else
+					mQuery.push( query )
+
+			@_mget mQuery, options, ( err, _item )=>
+				if err
+					@_error( cb, err )
+				else
+					if _item.length
+						_obj = @_dynamoItem2JSON( _item, false )
+						@emit( "mget", _obj )
+						cb( null, _obj )
+					else
+						@emit( "mget-empty" )
+						cb null, []
+				return
+			return
 
 	set: ( args..., cb )=>
 		if @_isExistend( cb )
@@ -211,7 +245,7 @@ module.exports = class DynamoTable extends EventEmitter
 					if err
 						@_error( cb, err )
 					else
-						@emit( "delete", _id )
+						@emit( "delete", success )
 						cb null, success
 					return
 
@@ -342,6 +376,25 @@ module.exports = class DynamoTable extends EventEmitter
 			else
 				cb null, item
 			return
+		return
+
+	_mget: ( mquery, options, cb )=>
+		
+		_self = @
+
+		_batch = @mng.client.get ->
+			if options?.fields?.length
+				@get _self.tableName, mquery, options.fields
+			else
+				@get _self.tableName, mquery
+
+		_batch.fetch ( err, items )=>
+			if err
+				cb err
+			else
+				cb null, items[ @tableName ] or []
+			return
+
 		return
 
 	_update: ( id, attributes, options= {}, cb )=>

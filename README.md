@@ -82,7 +82,7 @@ An array of attribute Objects. Which will be validated
   
 **Example**
 
-```
+```coffee
 # import module
 SimpleDynamo = require "simple-dynamo"
 
@@ -157,7 +157,7 @@ Callback method. Single arguments on return is the error object. On success the 
  
 **Example**
 
-```
+```coffee
 sdManager.connect ( err )->
 	if err
 		console.error( "connect ERROR", err )
@@ -180,7 +180,7 @@ Callback method. Single arguments on return is the error object. On success the 
 
 **Example**
 
-```
+```coffee
 sdManager.generateAll ( err )->
 	if err
 		console.error( "connect ERROR", err )
@@ -199,7 +199,7 @@ Method to retrieve the instance of a table object.
 
 **Example**
 
-```
+```coffee
 tblTodos = sdManager.get( 'Todos' )
 ```
 
@@ -216,7 +216,7 @@ Callback method.
 
 **Example**
 
-```
+```coffee
 tblTodos.del ( err )->
 	if err
 		console.error( "destroy ERROR", err )
@@ -244,7 +244,7 @@ Callback method.
 
 **Example**
 
-```
+```coffee
 data = 
 	title: "My First Todo"
 	done: 0
@@ -276,7 +276,7 @@ Callback method.
 
 **Example**
 
-```
+```coffee
 tblTodos.get 'myTodoId', ( err, todo )->
 	if err
 		console.error( "get ERROR", err )
@@ -284,12 +284,46 @@ tblTodos.get 'myTodoId', ( err, todo )->
 		console.log( todo )
 ```
 
-```
+```coffee
 tblRangeTodos.get [ 'myHash', 'myRange' ], ( err, todo )->
 	if err
 		console.error( "get ERROR", err )
 	else
 		console.log( todo )
+```
+
+### Get many items in one request ( MGET ):
+
+Get an many existing elements by id/hash
+
+**`Table.mget( [ id1, id2, .. ], options, fnCallback )` Arguments** : 
+
+- **ids**: *( `Array` required )*  
+An array of id of an elements. If the used table is a range table you have to use an array of arrays `[hash,range]` as combined id. Otherwise you will get an error. 
+- **options**: *( `Object` optional )*  
+  - **fields**: *( `Array` )* An array of fields to receive. If nothing is defined all fields are returned.
+- **fnCallback**: *( `Function` required )*  
+Callback method.  
+**Method Arguments**  
+  - **err**: Usually `null`. On an error a object with `error` and `msg`
+  - **items**: the database items as a array of simple objects. Only existing items will be received. 
+
+**Example**
+
+```coffee
+tblTodos.mget [ 'myTodoIdA', 'myTodoIdB' ], ( err, todos )->
+	if err
+		console.error( "get ERROR", err )
+	else
+		console.log( todos )
+```
+
+```coffee
+tblRangeTodos.mget [ [ 'myHash', 1 ], [ 'myHash', 2 ] ], ( err, todos )->
+	if err
+		console.error( "get ERROR", err )
+	else
+		console.log( todos )
 ```
 
 ### Update an item ( UPDATE ):
@@ -315,7 +349,7 @@ Callback method.
 
 **Example**
 
-```
+```coffee
 data = 
 	title: "My First Update"
 	done: 1
@@ -343,7 +377,7 @@ Callback method.
 
 **Example**
 
-```
+```coffee
 tblTodos.del 'myTodoId', ( err )->
 	if err
 		console.error( "delete ERROR", err )
@@ -376,7 +410,7 @@ Callback method.
 
 **Example**
 
-```
+```coffee
 tblTodos.find {}, ( err, items )->
 	if err
 		console.error( "delete ERROR", err )
@@ -385,7 +419,7 @@ tblTodos.find {}, ( err, items )->
 ```
 **Advanced Examples**
 
-```
+```coffee
 # create a query to read all todos from last hour
 _query = 
 	id: { "!=": null }
@@ -398,7 +432,7 @@ tblTodos.find , ( err, items )->
 		console.log( "found items", items )
 ```
 
-```
+```coffee
 # read 4 todos from last hour beginning starting with a known id
 _query = 
 	id: { "!=": null }
@@ -437,7 +471,7 @@ The following key variants are availible:
 
 **Examples**
 
-```
+```coffee
 # Source "key: [ "a", "b", "c" ]"
 
 data = 
@@ -478,12 +512,49 @@ tblSets.set 'mySetsId', data, ( err, setData )->
     console.log( setData )
 ```
 
+##Events
+
+To provide a API to react on different events you can listen to a bunch of events.
+
+###Manager Events
+
+- `new-table`: Table object initialized and ready to use. This means only the client model is ready. Eventually you have to create the table first.  
+**Event Arguments**  
+	- **Table**: the `Table` object
+- `table-generated`: Fired after all a new tables has been generated.
+**Event Arguments**  
+	- **Meta**: the tables meta-data
+- `all-tables-generated`: Fired after all tables are generated.  
+
+
+###Table Events
+
+- `create-status`: fired on table create.  
+**Event Arguments**  
+	- **status**: describes the state of table creation. Possible values are: `already-active`, `waiting`, `active`
+- `get`: fired after a table.get.  
+**Event Arguments**  
+	- **item**: the item
+- `get-empty`: fired after a table.get with an empty result.  
+- `mget`: fired after a table.mget.  
+**Event Arguments**  
+	- **items**: the items
+- `mget-empty`: fired after a table.mget with no results.  
+- `create`: fired after a item has been created.  
+**Event Arguments**  
+	- **item**: the created item
+- `update`: fired after a item has been updated.  
+**Event Arguments**  
+	- **item_new**: the item after the update
+	- **item_old**: the item before the update
+- `delete`: fired after a item has been deleted.  
+**Event Arguments**  
+	- **item_old**: the item before the delete
+
 ## Todos
 
-- `Tabel.mget( [ id1, id, .. ] )` Add a mget mehtod for batch get
 - handle `throughput exceed`with a retry
 - add conditionals as option to `table.set()`
-- implement events for all table and manager actions. Currently availible events are undocumented
 
 ## Work in progress
 

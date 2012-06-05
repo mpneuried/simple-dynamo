@@ -240,6 +240,32 @@
     });
   });
 
+  app.get("/mget/:table/:ids", function(req, res) {
+    var _ids, _o, _ref2, _t, _tbl;
+    _t = req.params.table;
+    try {
+      _ids = JSON.parse(req.params.ids);
+    } catch (_err) {
+      _ids = req.params.ids;
+    }
+    _tbl = dynDB.get(_t);
+    if (!_tbl) {
+      res.json("table '" + _t + "' not found", 404);
+      return;
+    }
+    _o = JSON.parse(((_ref2 = req.query) != null ? _ref2.o : void 0) || "{}");
+    if (_.isString(_ids)) {
+      _ids = _ids.split(",");
+    }
+    _tbl.mget(_ids, _o, function(err, success) {
+      if (err) {
+        res.json(err, 500);
+      } else {
+        res.json(success);
+      }
+    });
+  });
+
   app.get("/:table/:id", function(req, res) {
     var _id, _o, _ref2, _t, _tbl;
     _t = req.params.table;

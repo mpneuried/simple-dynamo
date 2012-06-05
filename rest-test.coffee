@@ -200,6 +200,33 @@ app.put "/:table/", ( req, res )->
 		return
 	return
 
+app.get "/mget/:table/:ids", ( req, res )->
+	_t = req.params.table
+	try
+		_ids = JSON.parse( req.params.ids )
+	catch _err
+		_ids = req.params.ids
+
+	_tbl = dynDB.get( _t )
+	if not _tbl
+		res.json "table '#{ _t }' not found", 404
+		return
+
+	_o = JSON.parse( req.query?.o or "{}" )
+
+
+	if _.isString( _ids )
+		_ids = _ids.split( "," )
+
+	_tbl.mget _ids, _o, ( err, success )->
+
+		if err
+			res.json err, 500
+		else
+			res.json success
+		return
+	return
+
 app.get "/:table/:id", ( req, res )->
 	_t = req.params.table
 	try
