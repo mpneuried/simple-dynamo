@@ -131,16 +131,11 @@ class Attributes
 			cb( null, attrs )
 		return
 
-	updateAttrsFn: ( _current, _new, options = {} )=>
+	updateAttrsFn: ( _new, options = {} )=>
 		self = @
 		return ->
 			_tbl = self.table
-			_kc = _.without( Object.keys( _current ), _tbl.hashKey, _tbl.rangeKey )
-			_kn = _.without( Object.keys( _new ), _tbl.hashKey, _tbl.rangeKey )
-			if options.removeMissing
-				@_todel = _.difference( _kc, _kn )
-			else
-				@_todel = []
+
 			# do not update the hashkey
 			for _k, _v of _new when _k isnt _tbl.hashKey
 
@@ -159,17 +154,15 @@ class Attributes
 						@put( _k, _vA )
 
 				else 
-					if _current[ _k ]? and _current[ _k ] isnt _v
-						# existend and not changed
+					if _v is null
+						# remove attribute
+						@remove( _k )
+					else
+						# update or create attribute
 						@put( _k, _v )
-					else if not _current[ _k ]? 
-						# new attribute
-						@put( _k, _v )
-
-			if @_todel.length
-				@remove( _k ) for _k in @_todel
 
 			return
+		return
 
 
 	getQuery: ( table, query, startAt, options={} )=>
@@ -180,6 +173,9 @@ class Attributes
 			_q = table.scan( _q )
 		else
 			_q = table.query( _q )
+
+			if options?.forward?
+				_q.reverse( not options.forward )
 
 		if startAt?
 			_q.startAt( startAt )

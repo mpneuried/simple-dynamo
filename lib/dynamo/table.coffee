@@ -205,31 +205,20 @@ module.exports = class DynamoTable extends EventEmitter
 								cb( null, _obj )
 							return
 					else
-						@_update _id, attributes, options, ( err, _curr, _old, _deletedKeys )=>
+						@_update _id, attributes, options, ( err, item )=>
 							if err
 								@_error( cb,err )
 							else
-								if _old
-									# update done
-									_obj = @_dynamoItem2JSON( _curr, true )
-									
-									# remove the deleted key from old to fix the mixin with new values
-									_oldRem = {}
-									for _k, _v of _old when _k not in _deletedKeys
-										_oldRem[ _k ] = _v
-									_new = _.extend( _oldRem, _obj )
-									@emit( "update", _new, _old )
-									
-									if options?.fields?.length
-										_new = utils.reduceObj( _new, options?.fields )
-									cb( null, _new )
-								else
-									# nothing changed
-									@emit( "update", _curr, _curr )
-
-									if options?.fields?.length
-										_curr = utils.reduceObj( _curr, options?.fields )
-									cb( null, _curr )
+								# update done
+								_obj = @_dynamoItem2JSON( item, true )
+								
+								# remove the deleted key from old to fix the mixin with new values
+								
+								@emit( "update", item )
+								
+								if options?.fields?.length
+									_reducedItem = utils.reduceObj( item, options.fields )
+								cb( null, _reducedItem or item )
 							return
 		return
 
@@ -345,6 +334,7 @@ module.exports = class DynamoTable extends EventEmitter
 			fields: null
 			overwriteExistingHash: @overwriteExistingHash
 			consistent: if @_model_settings.consistent? then @_model_settings.consistent else false
+			forward: if @_model_settings.forward? then @_model_settings.forward else true
 			
 		_.extend( _defOpt, options or {} )
 
@@ -399,31 +389,25 @@ module.exports = class DynamoTable extends EventEmitter
 
 	_update: ( id, attributes, options= {}, cb )=>
 
-		@get id, ( err, current )=>
-			if err
-				cb err
-			else
-				_id = @_deFixHash( id ) 
-				if _id instanceof Error
-					@_error( cb, _id )
-					return
-				item = @external.get( _id )
-				_upd = item.update( @_attrs.updateAttrsFn( current, attributes, options ) )
-				_upd.returning( "UPDATED_NEW" )
-				#_upd = @_checkSetOptions( _upd, attributes )
+		_id = @_deFixHash( id ) 
+		if _id instanceof Error
+			@_error( cb, _id )
+			return
+		item = @external.get( _id )
+		_upd = item.update( @_attrs.updateAttrsFn( attributes, options ) )
+		_upd.returning( "ALL_NEW" )
+		#_upd = @_checkSetOptions( _upd, attributes )
 
-				# only save if data has changed
-				if _upd.AttributeUpdates?
-					_upd.save ( err, _saved )=>
-						if err
-							cb err
-						else
-							cb( null, _saved.Attributes or {}, current, _upd._todel )
-						return
+		# only save if data has changed
+		if _upd.AttributeUpdates?
+			_upd.save ( err, _saved )=>
+				if err
+					cb err
 				else
-					cb( null, current, null )
-
+					cb( null, _saved.Attributes or {} )
 				return
+		else
+			cb( null, null )
 
 		return
 
@@ -495,7 +479,7 @@ module.exports = class DynamoTable extends EventEmitter
 			if not _.isArray( _attrs[ _hName ] )
 				error = new Error
 				error.name = "invalid-range-call"
-				error.message = "If you try to get a hash/range item you have to pass a Array of `[hash,range]` as id."
+				error.message = "If you try to access a hash/range item you have to pass a Array of `[hash,range]` as id."
 				return error
 
 			[ _h, _r ] = _attrs[ _hName ]
