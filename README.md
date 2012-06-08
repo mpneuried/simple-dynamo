@@ -551,6 +551,10 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.3.1
+
+- bugfix `option.forward` on `find.()`
+ 
 ### 0.3.0
 - changed update behavior. Now there is not get before set.
 - Event `update`, no longer with new and old value. Just the new value. This is a victim to the removal of get before set.

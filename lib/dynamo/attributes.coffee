@@ -174,8 +174,8 @@ class Attributes
 		else
 			_q = table.query( _q )
 
-			if options?.forward?
-				_q.reverse( not options.forward )
+			if not options?.forward
+				_q.reverse()
 
 		if startAt?
 			_q.startAt( startAt )
