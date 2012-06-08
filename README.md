@@ -396,6 +396,7 @@ If the used table is a range table you have to use an array `[hash,range]` as co
 - **options**: *( `Object` optional )*  
   - **fields**: *( `Array` )* An array of fields to receive
   - **limit**: *( `Number` )* Define the max. items to return
+  - **forward**: *( `Boolean` default = true  )* define the direction `acs` or `desc` for range querys. 
   - **consistent**: *( `Boolean` optional: default = [tableConfig.consistent] )* do a consitent read.  
   **Note! This is only availible for real query's through range-tables. This means if you query by hash and range ( e.g. Advanced Examples )**
 - **fnCallback**: *( `Function` required )*  
@@ -555,6 +556,7 @@ To provide a API to react on different events you can listen to a bunch of event
 - Event `update`, no longer with new and old value. Just the new value. This is a victim to the removal of get before set.
 - added option `conditionals` to update. So you can define conditions to your update
 - removed option `removeMissing`. Now you have to set a attribute to `null` to remove it.
+- added `forward` option to `.find()` to define the direction of a range query
 
 ## Todos
 
