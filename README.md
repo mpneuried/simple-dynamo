@@ -1,9 +1,8 @@
 simple-dynamo
 ===========
+is a abstraction layer to Jed Schmidt's [dynamo](https://github.com/jed/dynamo) Node.js driver.
 
 [![Build Status](https://secure.travis-ci.org/mpneuried/simple-dynamo.png?branch=master)](http://travis-ci.org/mpneuried/simple-dynamo)
-
-**simple-dynamo** is a abstraction layer to Jed Schmidt's [dynamo](https://github.com/jed/dynamo) Node.js driver.
 
 It provides a absolute simple JSON-CRUD Interface without any knowledge of Dynamos specialties.
 
@@ -327,7 +326,7 @@ tblRangeTodos.mget [ [ 'myHash', 1 ], [ 'myHash', 2 ] ], ( err, todos )->
 ### Update an item ( UPDATE ):
 
 update an existing item.  
-An item always will be replaced. This means, if you remove some elements, the will be removed from the db, too
+To remove a attribute you have to set the value to `null`
 
 **`Table.set( id, data, options, fnCallback )` Arguments** : 
 
@@ -548,6 +547,14 @@ To provide a API to react on different events you can listen to a bunch of event
 - `delete`: fired after a item has been deleted.  
 **Event Arguments**  
 	- **item_old**: the item before the delete
+	
+## Changelogs
+
+### 0.3.0
+- changed update behavior. Now there is not get before set.
+- Event `update`, no longer with new and old value. Just the new value. This is a victim to the removal of get before set.
+- added option `conditionals` to update. So you can define conditions to your update
+- removed option `removeMissing`. Now you have to set a attribute to `null` to remove it.
 
 ## Todos
 

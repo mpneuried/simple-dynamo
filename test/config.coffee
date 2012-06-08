@@ -6,7 +6,7 @@ module.exports  =
 		scanWarning: false
 
 	test:
-		deleteTablesOnEnd: false
+		deleteTablesOnEnd: true
 		singleCreateTableTest: "Employees"
 
 	tables: 
