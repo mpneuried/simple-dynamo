@@ -4,7 +4,8 @@ module.exports =
 		"insert2": { name: "Second employee", email: "second@employee.com", age: 30, additional: "more ... " }
 		"insert3": { name: "Third employee", email: "third@employee.com", age: 78 }
 
-		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35 }
+		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35, additional: null }
+		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35 }
 
 	"Todos": 
 		"insert1": { id: "123456", title: "First", done: 0 }
@@ -58,7 +59,8 @@ module.exports =
 		"insert3": { name: "Third employee", email: "third@employee.com", age: 78 }
 		"insert4": { id:"9999999", name: "Invalid employee", email: "invalid@employee.com", age: 99 }
 
-		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35 }
+		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35, additional: null }
+		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35 }
 
 	"C_Todos": 
 		"insert1": { id: "tds12345678911", title: "First", done: 0 }

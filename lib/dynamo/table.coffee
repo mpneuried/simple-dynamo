@@ -214,11 +214,11 @@ module.exports = class DynamoTable extends EventEmitter
 								
 								# remove the deleted key from old to fix the mixin with new values
 								
-								@emit( "update", item )
+								@emit( "update", _obj )
 								
 								if options?.fields?.length
-									_reducedItem = utils.reduceObj( item, options.fields )
-								cb( null, _reducedItem or item )
+									_reducedItem = utils.reduceObj( _obj, options.fields )
+								cb( null, _reducedItem or _obj )
 							return
 		return
 
@@ -330,11 +330,11 @@ module.exports = class DynamoTable extends EventEmitter
 
 	_getOptions: ( options = {} )=>
 		_defOpt =
-			removeMissing: if @_model_settings.removeMissing? then @_model_settings.removeMissing else false
 			fields: null
 			overwriteExistingHash: @overwriteExistingHash
 			consistent: if @_model_settings.consistent? then @_model_settings.consistent else false
 			forward: if @_model_settings.forward? then @_model_settings.forward else true
+			conditionals: null
 			
 		_.extend( _defOpt, options or {} )
 
@@ -396,11 +396,13 @@ module.exports = class DynamoTable extends EventEmitter
 		item = @external.get( _id )
 		_upd = item.update( @_attrs.updateAttrsFn( attributes, options ) )
 		_upd.returning( "ALL_NEW" )
-		#_upd = @_checkSetOptions( _upd, attributes )
+		
+		_upd = @_checkSetOptions( "update", _upd, attributes, options )
 
 		# only save if data has changed
 		if _upd.AttributeUpdates?
 			_upd.save ( err, _saved )=>
+				
 				if err
 					cb err
 				else
@@ -419,7 +421,7 @@ module.exports = class DynamoTable extends EventEmitter
 			else
 				_upd = @external.put( attributes )
 
-				_upd = @_checkSetOptions( _upd, attributes, options )
+				_upd = @_checkSetOptions( "create", _upd, attributes, options )
 
 				_upd.save ( err )=>
 					if err
@@ -579,12 +581,16 @@ module.exports = class DynamoTable extends EventEmitter
 			else
 				val
 
-	_checkSetOptions: ( _upd, attributes, options )=>
-		if not options?.overwriteExistingHash or not @overwriteExistingHash
+	_checkSetOptions: ( type, _upd, attributes, options )=>
+		if type is "create" and ( not options?.overwriteExistingHash or not @overwriteExistingHash )
 
 			_pred = {}
 			_pred[ @hashKey ] = { "==": null }
 			_upd.when _pred
+
+		if type is "update"
+			if not _.isEmpty( options.conditionals )
+				_upd.when( options.conditionals )
 
 		_upd
 

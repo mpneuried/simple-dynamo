@@ -9,7 +9,7 @@
       scanWarning: false
     },
     test: {
-      deleteTablesOnEnd: true,
+      deleteTablesOnEnd: false,
       singleCreateTableTest: "Employees"
     },
     tables: {

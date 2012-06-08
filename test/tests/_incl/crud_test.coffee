@@ -224,21 +224,62 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "update second item", ( done )->
-				tableG.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], removeMissing: true, ( err, item )->
+				tableG.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], fields: [ "id", "name", "age" ], ( err, item )->
 					throw err if err
 
 					item.id.should.exist
 					item.name.should.exist
-					item.email.should.exist
 					item.age.should.exist
+					should.not.exist( item.email )
 					should.not.exist( item.additional )
 
 					item.id.should.equal( _G[ "insert2" ].id )
 					item.name.should.equal( _D[ "update2" ].name )
-					item.email.should.equal( _G[ "insert2" ].email )
 					item.age.should.equal( _D[ "update2" ].age )
 
 					_G[ "insert2" ] = item
+
+					done()
+					return
+				return
+
+			it "update third item with successfull conditonal", ( done )->
+
+				_opt = 
+					fields: [ "id", "name", "age" ]
+					conditionals: 
+						"age": { "==": 78 }
+
+				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
+					console.log "UPDATE THRId", err, item
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.age.should.exist
+					should.not.exist( item.email )
+					should.not.exist( item.additional )
+
+					item.id.should.equal( _G[ "insert3" ].id )
+					item.name.should.equal( _D[ "update3" ].name )
+					item.age.should.equal( _D[ "update3" ].age )
+
+					_G[ "insert3" ] = item
+
+					done()
+					return
+				return
+
+			it "update third item with failing conditonal", ( done )->
+
+				_opt = 
+					fields: [ "id", "name", "age" ]
+					conditionals: 
+						"age": { "==": 123 }
+
+				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
+					err.should.exist
+					err.name.should.equal( "conditional-check-failed" )
 
 					done()
 					return

@@ -203,21 +203,63 @@
         });
         it("update second item", function(done) {
           tableG.set(_G["insert2"][_C.hashKey], _D["update2"], {
-            removeMissing: true
+            fields: ["id", "name", "age"]
           }, function(err, item) {
             if (err) {
               throw err;
             }
             item.id.should.exist;
             item.name.should.exist;
-            item.email.should.exist;
             item.age.should.exist;
+            should.not.exist(item.email);
             should.not.exist(item.additional);
             item.id.should.equal(_G["insert2"].id);
             item.name.should.equal(_D["update2"].name);
-            item.email.should.equal(_G["insert2"].email);
             item.age.should.equal(_D["update2"].age);
             _G["insert2"] = item;
+            done();
+          });
+        });
+        it("update third item with successfull conditonal", function(done) {
+          var _opt;
+          _opt = {
+            fields: ["id", "name", "age"],
+            conditionals: {
+              "age": {
+                "==": 78
+              }
+            }
+          };
+          tableG.set(_G["insert3"][_C.hashKey], _D["update3"], _opt, function(err, item) {
+            console.log("UPDATE THRId", err, item);
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.age.should.exist;
+            should.not.exist(item.email);
+            should.not.exist(item.additional);
+            item.id.should.equal(_G["insert3"].id);
+            item.name.should.equal(_D["update3"].name);
+            item.age.should.equal(_D["update3"].age);
+            _G["insert3"] = item;
+            done();
+          });
+        });
+        it("update third item with failing conditonal", function(done) {
+          var _opt;
+          _opt = {
+            fields: ["id", "name", "age"],
+            conditionals: {
+              "age": {
+                "==": 123
+              }
+            }
+          };
+          tableG.set(_G["insert3"][_C.hashKey], _D["update3"], _opt, function(err, item) {
+            err.should.exist;
+            err.name.should.equal("conditional-check-failed");
             done();
           });
         });

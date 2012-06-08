@@ -57,8 +57,6 @@ Option to combine multiple models into one dynamo-table. Makes sense if you want
 *Note:* If you use this feature and predefine the id/hash you have to add the `name` of the table in front of every id/hash.
 - **overwriteExistingHash**: *( `Boolean` optional: default = false )*  
 Overwrite a item on `create` of an existing hash. 
-- **removeMissing**: *( `Boolean` optional: default = false )*  
-On `true` during an update all keys not found in data will be removed. Otherwise it won't be touched. 
 - **consistent**: *( `Boolean` optional: default = false )*  
 Do consistend reads on `table.get()` and `table.find()` as default   
 **Method Arguments**  
@@ -339,8 +337,8 @@ The id of an element. If the used table is a range table you have to use an arra
 The data to update. You can redefine the range key. If you pass the hash key it will be ignored
 - **options**: *( `Object` optional )*  
 For update you can define some options.
-  - **removeMissing**: On `true` all keys not found in data will be removed. Otherwise it won't be touched.
   - **fields**: *( `Array` )* An array of fields to receive
+  - **conditionals** *( `Object` )* A query object to define a conditional. Only `{"==": value}`, `{"==": null}`, and `{"!=": null}` are allowed. How to build? … have a look at [Jed's Predicates ](https://github.com/jed/dynamo/wiki/High-level-API#wiki-predicates)
 - **fnCallback**: *( `Function` required )*  
 Callback method.  
 **Method Arguments**  
@@ -547,7 +545,6 @@ To provide a API to react on different events you can listen to a bunch of event
 - `update`: fired after a item has been updated.  
 **Event Arguments**  
 	- **item_new**: the item after the update
-	- **item_old**: the item before the update
 - `delete`: fired after a item has been deleted.  
 **Event Arguments**  
 	- **item_old**: the item before the delete
@@ -555,7 +552,6 @@ To provide a API to react on different events you can listen to a bunch of event
 ## Todos
 
 - handle `throughput exceed`with a retry
-- add conditionals as option to `table.set()`
 
 ## Work in progress
 

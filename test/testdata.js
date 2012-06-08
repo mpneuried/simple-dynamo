@@ -23,6 +23,12 @@
       "update2": {
         name: "Second employee Update",
         email: "second@employee.com",
+        age: 35,
+        additional: null
+      },
+      "update3": {
+        name: "Third employee Conditional Update",
+        email: "third@employee.com",
         age: 35
       }
     },
@@ -217,6 +223,12 @@
       "update2": {
         name: "Second employee Update",
         email: "second@employee.com",
+        age: 35,
+        additional: null
+      },
+      "update3": {
+        name: "Third employee Conditional Update",
+        email: "third@employee.com",
         age: 35
       }
     },
