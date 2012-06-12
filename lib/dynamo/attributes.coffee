@@ -141,7 +141,7 @@ class Attributes
 
 				_attr = self.get( _k )
 
-				if _attr?.type is "array" and not _.isArray( _new[ _k ] )
+				if ( _attr?.type is "array" or ( not _attr and ( _new[ _k ][ "$add" ]? or _new[ _k ][ "$rem" ]? or _new[ _k ][ "$reset" ]? ) ) ) and not _.isArray( _new[ _k ] )
 					val = _new[ _k ]
 					if val[ "$add" ]?
 						_vA = ( if _.isArray( val[ "$add" ] ) then val[ "$add" ] else [ val[ "$add" ] ] )
