@@ -59,7 +59,6 @@
             }
             items.should.an["instanceof"](Array);
             _ItemCount = items.length;
-            console.log(_ItemCount, "Items found");
             done();
           });
         });
@@ -231,7 +230,6 @@
             }
           };
           tableG.set(_G["insert3"][_C.hashKey], _D["update3"], _opt, function(err, item) {
-            console.log("UPDATE THRId", err, item);
             if (err) {
               throw err;
             }
@@ -311,10 +309,9 @@
             }
             item.id.should.exist;
             item.title.should.exist;
-            item.done.should.exist;
+            should.not.exist(item.done);
             item.id.should.equal(_D["insert1"].id);
             item.title.should.equal(_D["insert1"].title);
-            item.done.should.equal(_D["insert1"].done);
             _ItemCount++;
             _G["insert1"] = item;
             done();
@@ -786,6 +783,34 @@
         });
         it("test $reset action with string", function(done) {
           table.set(_G["insert1"].id, _.clone(_D["update7"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["y"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("test $add action with empty array", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update8"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            item.id.should.exist;
+            item.name.should.exist;
+            item.users.should.exist;
+            item.name.should.equal(_D["insert1"].name);
+            item.users.should.eql(["y"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("test $rem action with empty array", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update8"]), function(err, item) {
             if (err) {
               throw err;
             }

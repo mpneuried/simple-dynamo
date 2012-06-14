@@ -51,6 +51,8 @@ The range key name of your range attribute. If not defined the table will be gen
 The type of the `rangeKey`. Possible values are: `S` = String and `N` = Numeric
 - **fnCreateHash**: *( `Function` optional: default = `new UUID` )*  
 Method to generate a custom hash key.  
+- **defaultfields**: *( `Array` optional )*  
+List of fields to return as default. If nothing is defined all fields will be received. You always can overwrite this using `options.fields`.  
 - **combineTableTo**: *( `String` optional )*
 Option to combine multiple models into one dynamo-table. Makes sense if you want to pay only one table. Combinations are not allowed for tables of different types ( Hash-table and HashRange-table ) and you have to use the same hashKey and rangeKey. The module will handle all interactions with the models transparent, so you only have to define this option.  
 *Note:* If you use this feature and predefine the id/hash you have to add the `name` of the table in front of every id/hash.

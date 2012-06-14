@@ -330,7 +330,7 @@ module.exports = class DynamoTable extends EventEmitter
 
 	_getOptions: ( options = {} )=>
 		_defOpt =
-			fields: null
+			fields: if @_model_settings.defaultfields? then @_model_settings.defaultfields
 			overwriteExistingHash: @overwriteExistingHash
 			consistent: if @_model_settings.consistent? then @_model_settings.consistent else false
 			forward: if @_model_settings.forward? then @_model_settings.forward else true

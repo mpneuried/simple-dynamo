@@ -49,6 +49,7 @@
         hashKey: "id",
         hashKeyType: "S",
         overwriteExistingHash: false,
+        defaultfields: ["title", "id"],
         attributes: [
           {
             key: "title",
@@ -139,6 +140,7 @@
         hashKey: "id",
         hashKeyType: "S",
         overwriteExistingHash: false,
+        defaultfields: ["title", "id"],
         attributes: [
           {
             key: "title",

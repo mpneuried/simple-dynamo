@@ -66,7 +66,6 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					throw err if err
 					items.should.an.instanceof( Array )
 					_ItemCount = items.length
-					console.log _ItemCount, "Items found"
 					done()
 					return
 				return
@@ -251,7 +250,6 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 						"age": { "==": 78 }
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
-					console.log "UPDATE THRId", err, item
 					throw err if err
 
 					item.id.should.exist
@@ -338,11 +336,11 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 					item.id.should.exist
 					item.title.should.exist
-					item.done.should.exist
+					should.not.exist( item.done )
 
 					item.id.should.equal( _D[ "insert1" ].id )
 					item.title.should.equal( _D[ "insert1" ].title )
-					item.done.should.equal( _D[ "insert1" ].done )
+					#item.done.should.equal( _D[ "insert1" ].done )
 
 					_ItemCount++
 					_G[ "insert1" ] = item
@@ -766,6 +764,40 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "test $reset action with string", ( done )->
 				
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update7" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "y" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test $add action with empty array", ( done )->
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update8" ] ), ( err, item )->
+					throw err if err
+
+					item.id.should.exist
+					item.name.should.exist
+					item.users.should.exist
+
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.users.should.eql( [ "y" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "test $rem action with empty array", ( done )->
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update8" ] ), ( err, item )->
 					throw err if err
 
 					item.id.should.exist

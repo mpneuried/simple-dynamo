@@ -1,3 +1,2 @@
---bail
 --timeout 300s
 --reporter spec

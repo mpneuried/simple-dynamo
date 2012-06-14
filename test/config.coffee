@@ -37,6 +37,8 @@ module.exports  =
 
 			overwriteExistingHash: false
 
+			defaultfields: [ "title", "id" ]
+
 			attributes: [
 				{ key: "title", type: "string" }
 				{ key: "done", type: "number" }
@@ -111,6 +113,8 @@ module.exports  =
 			hashKeyType: "S"
 
 			overwriteExistingHash: false
+
+			defaultfields: [ "title", "id" ]
 
 			attributes: [
 				{ key: "title", type: "string", required: true }

@@ -88,6 +88,18 @@
         users: {
           "$reset": "y"
         }
+      },
+      "update8": {
+        name: "First",
+        users: {
+          "$add": []
+        }
+      },
+      "update9": {
+        name: "First",
+        users: {
+          "$rem": []
+        }
       }
     },
     "Logs1": {
@@ -287,6 +299,18 @@
         name: "C_First",
         users: {
           "$reset": "y"
+        }
+      },
+      "update8": {
+        name: "C_First",
+        users: {
+          "$add": []
+        }
+      },
+      "update9": {
+        name: "C_First",
+        users: {
+          "$rem": []
         }
       }
     },

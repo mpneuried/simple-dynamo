@@ -20,6 +20,8 @@ module.exports =
 		"update5": { name: "First", users: { "$add": "z" } }
 		"update6": { name: "First", users: { "$rem": "x" } }
 		"update7": { name: "First", users: { "$reset": "y" } }
+		"update8": { name: "First", users: { "$add": [] } }
+		"update9": { name: "First", users: { "$rem": [] } }
 
 	"Logs1": 
 		"inserts": [
@@ -76,6 +78,8 @@ module.exports =
 		"update5": { name: "C_First", users: { "$add": "z" } }
 		"update6": { name: "C_First", users: { "$rem": "x" } }
 		"update7": { name: "C_First", users: { "$reset": "y" } }
+		"update8": { name: "C_First", users: { "$add": [] } }
+		"update9": { name: "C_First", users: { "$rem": [] } }
 
 	"C_Logs1": 
 		"inserts": [

@@ -141,21 +141,20 @@ class Attributes
 
 				_attr = self.get( _k )
 
-				if ( _attr?.type is "array" or ( not _attr and ( _new[ _k ][ "$add" ]? or _new[ _k ][ "$rem" ]? or _new[ _k ][ "$reset" ]? ) ) ) and not _.isArray( _new[ _k ] )
-					val = _new[ _k ]
-					if val[ "$add" ]?
-						_vA = ( if _.isArray( val[ "$add" ] ) then val[ "$add" ] else [ val[ "$add" ] ] )
-						@add( _k, _vA )
-					if val[ "$rem" ]?
-						_vA = ( if _.isArray( val[ "$rem" ] ) then val[ "$rem" ] else [ val[ "$rem" ] ] )
-						@remove( _k, _vA )
-					if val[ "$reset" ]?
-						_vA = ( if _.isArray( val[ "$reset" ] ) then val[ "$reset" ] else [ val[ "$reset" ] ] )
-						@put( _k, _vA )
+				if ( _attr?.type is "array" or ( not _attr and _v? and ( _v[ "$add" ]? or _v[ "$rem" ]? or _v[ "$reset" ]? ) ) ) and not _.isArray( _v )
+					if _v[ "$add" ]?
+						_vA = ( if _.isArray( _v[ "$add" ] ) then _v[ "$add" ] else [ _v[ "$add" ] ] )
+						@add( _k, _vA ) if _vA.length
+					if _v[ "$rem" ]?
+						_vA = ( if _.isArray( _v[ "$rem" ] ) then _v[ "$rem" ] else [ _v[ "$rem" ] ] )
+						@remove( _k, _vA ) if _vA.length
+					if _v[ "$reset" ]?
+						_vA = ( if _.isArray( _v[ "$reset" ] ) then _v[ "$reset" ] else [ _v[ "$reset" ] ] )
+						@put( _k, _vA ) if _vA.length
 
 				else 
-					if _v is null
-						# remove attribute
+					if _v is null or ( _.isArray( _v ) and not _v.length )
+						# remove attribute if null or empty array
 						@remove( _k )
 					else
 						# update or create attribute
