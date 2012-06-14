@@ -553,6 +553,11 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.3.3
+
+- bug fix set handling by passing empty arrays
+- added `defaultfields` option to table-config.
+
 ### 0.3.2
 
 - added implicit set detection for `update` by testing for a object with one of the keys `$add`, `$rem` and `$reset` 
