@@ -63,9 +63,6 @@
         }
       }
       _utils.runSeries(aFn, function(err) {
-        if (_utils.checkArray(err)) {
-          throw _.first(err);
-        }
         done();
       });
     });

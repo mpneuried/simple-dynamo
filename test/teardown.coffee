@@ -53,7 +53,6 @@ describe "----- TEARDOWN -----", ->
 				, _tbl )
 
 		_utils.runSeries aFn, ( err )->
-			throw _.first( err ) if _utils.checkArray( err )
 			done()
 			return
 		return
