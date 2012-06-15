@@ -37,7 +37,7 @@
               throw err;
             }
             tableG = dynDB.get(_basicTable);
-            tableG.should.exist;
+            should.exist(tableG);
             done();
           });
         });
@@ -67,10 +67,10 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.email.should.exist;
-            item.age.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.email);
+            should.exist(item.age);
             item.id.should.equal(_D["insert1"].id);
             item.name.should.equal(_D["insert1"].name);
             item.email.should.equal(_D["insert1"].email);
@@ -85,10 +85,10 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.email.should.exist;
-            item.age.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.email);
+            should.exist(item.age);
             item.id.should.equal(_D["insert1"].id);
             item.name.should.equal(_D["insert1"].name);
             item.email.should.equal(_D["insert1"].email);
@@ -101,11 +101,11 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.email.should.exist;
-            item.age.should.exist;
-            item.additional.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.email);
+            should.exist(item.age);
+            should.exist(item.additional);
             item.name.should.equal(_D["insert2"].name);
             item.email.should.equal(_D["insert2"].email);
             item.age.should.equal(_D["insert2"].age);
@@ -120,10 +120,10 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.email.should.exist;
-            item.age.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.email);
+            should.exist(item.age);
             item.name.should.equal(_D["insert3"].name);
             item.email.should.equal(_D["insert3"].email);
             item.age.should.equal(_D["insert3"].age);
@@ -135,7 +135,7 @@
         if (_basicTable.slice(0, 2) === "C_") {
           it("insert a invalid item to combined table", function(done) {
             tableG.set(_.clone(_D["insert4"]), function(err, item) {
-              err.should.exist;
+              should.exist(err);
               err.name.should.equal("combined-hash-invalid");
               should.not.exist(item);
               done();
@@ -182,6 +182,24 @@
             done();
           });
         });
+        it("update first item with empty string attribute", function(done) {
+          tableG.set(_G["insert1"][_C.hashKey], _D["update1"], function(err, item) {
+            if (err) {
+              throw err;
+            }
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.age);
+            should.exist(item.email);
+            should.not.exist(item.additional);
+            item.id.should.equal(_G["insert1"].id);
+            item.name.should.equal(_D["insert1"].name);
+            item.email.should.equal(_D["insert1"].email);
+            item.age.should.equal(_D["insert1"].age);
+            _G["insert1"] = item;
+            done();
+          });
+        });
         it("delete the first inserted item", function(done) {
           tableG.del(_G["insert1"][_C.hashKey], function(err) {
             if (err) {
@@ -207,9 +225,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.age.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.age);
             should.not.exist(item.email);
             should.not.exist(item.additional);
             item.id.should.equal(_G["insert2"].id);
@@ -233,9 +251,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.age.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.age);
             should.not.exist(item.email);
             should.not.exist(item.additional);
             item.id.should.equal(_G["insert3"].id);
@@ -256,7 +274,7 @@
             }
           };
           tableG.set(_G["insert3"][_C.hashKey], _D["update3"], _opt, function(err, item) {
-            err.should.exist;
+            should.exist(err);
             err.name.should.equal("conditional-check-failed");
             done();
           });
@@ -307,8 +325,8 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.title.should.exist;
+            should.exist(item.id);
+            should.exist(item.title);
             should.not.exist(item.done);
             item.id.should.equal(_D["insert1"].id);
             item.title.should.equal(_D["insert1"].title);
@@ -319,7 +337,7 @@
         });
         it("try second insert with the same hash", function(done) {
           table.set(_D["insert2"], function(err, item) {
-            err.should.exist;
+            should.exist(err);
             err.name.should.equal("conditional-check-failed");
             should.not.exist(item);
             done();
@@ -687,9 +705,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["a"]);
             _ItemCount++;
@@ -702,9 +720,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["a", "b"]);
             _G["insert1"] = item;
@@ -716,9 +734,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["a", "b", "c"]);
             _G["insert1"] = item;
@@ -730,9 +748,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["b", "c"]);
             _G["insert1"] = item;
@@ -744,9 +762,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["x", "y"]);
             _G["insert1"] = item;
@@ -758,9 +776,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["x", "y", "z"]);
             _G["insert1"] = item;
@@ -772,9 +790,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["y", "z"]);
             _G["insert1"] = item;
@@ -786,9 +804,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["y"]);
             _G["insert1"] = item;
@@ -800,9 +818,9 @@
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["y"]);
             _G["insert1"] = item;
@@ -810,15 +828,28 @@
           });
         });
         it("test $rem action with empty array", function(done) {
-          table.set(_G["insert1"].id, _.clone(_D["update8"]), function(err, item) {
+          table.set(_G["insert1"].id, _.clone(_D["update9"]), function(err, item) {
             if (err) {
               throw err;
             }
-            item.id.should.exist;
-            item.name.should.exist;
-            item.users.should.exist;
+            should.exist(item.id);
+            should.exist(item.name);
+            should.exist(item.users);
             item.name.should.equal(_D["insert1"].name);
             item.users.should.eql(["y"]);
+            _G["insert1"] = item;
+            done();
+          });
+        });
+        it("update set to null should remove attribute", function(done) {
+          table.set(_G["insert1"].id, _.clone(_D["update10"]), function(err, item) {
+            if (err) {
+              throw err;
+            }
+            should.exist(item.id);
+            should.exist(item.name);
+            should.not.exist(item.users);
+            item.name.should.equal(_D["insert1"].name);
             _G["insert1"] = item;
             done();
           });

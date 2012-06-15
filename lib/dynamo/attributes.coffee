@@ -98,14 +98,14 @@ class Attributes
 					# check the type of the attributes
 					switch _attr.type
 						when "string"
-							if not _.isString( val )
+							if ( not isCreate and val isnt null ) and not _.isString( val )
 								error = new Error
 								error.name = "validation-error"
 								error.message = "Wrong type of `#{ key }`. Please pass this key as a `String`"
 								@table._error( cb, error )
 								return
 						when "number"
-							if not _.isNumber( val )
+							if ( not isCreate and val isnt null ) and not _.isNumber( val )
 								error = new Error
 								error.name = "validation-error"
 								error.message = "Wrong type of `#{ key }`. Please pass this key as a `Number`"
@@ -120,7 +120,7 @@ class Attributes
 									@table._error( cb, error )
 									return
 							else
-								if not ( val[ "$add" ]? or val[ "$rem" ]? or val[ "$reset" ]? ) and not _.isArray( val )
+								if val isnt null and not ( val[ "$add" ]? or val[ "$rem" ]? or val[ "$reset" ]? ) and not _.isArray( val )
 									error = new Error
 									error.name = "validation-error"
 									error.message = "Wrong type of `#{ key }`. Please pass this key as an `Array` or an Object of actions"
@@ -142,18 +142,24 @@ class Attributes
 				_attr = self.get( _k )
 
 				if ( _attr?.type is "array" or ( not _attr and _v? and ( _v[ "$add" ]? or _v[ "$rem" ]? or _v[ "$reset" ]? ) ) ) and not _.isArray( _v )
-					if _v[ "$add" ]?
-						_vA = ( if _.isArray( _v[ "$add" ] ) then _v[ "$add" ] else [ _v[ "$add" ] ] )
-						@add( _k, _vA ) if _vA.length
-					if _v[ "$rem" ]?
-						_vA = ( if _.isArray( _v[ "$rem" ] ) then _v[ "$rem" ] else [ _v[ "$rem" ] ] )
-						@remove( _k, _vA ) if _vA.length
-					if _v[ "$reset" ]?
-						_vA = ( if _.isArray( _v[ "$reset" ] ) then _v[ "$reset" ] else [ _v[ "$reset" ] ] )
-						@put( _k, _vA ) if _vA.length
+					if _v is null
+						@remove( _k )
+					else
+						if _v[ "$add" ]?
+							_vA = ( if _.isArray( _v[ "$add" ] ) then _v[ "$add" ] else [ _v[ "$add" ] ] )
+							@add( _k, _vA ) if _vA.length
+						if _v[ "$rem" ]?
+							_vA = ( if _.isArray( _v[ "$rem" ] ) then _v[ "$rem" ] else [ _v[ "$rem" ] ] )
+							@remove( _k, _vA ) if _vA.length
+						if _v[ "$reset" ]?
+							_vA = ( if _.isArray( _v[ "$reset" ] ) then _v[ "$reset" ] else [ _v[ "$reset" ] ] )
+							@put( _k, _vA ) if _vA.length
 
 				else 
-					if _v is null or ( _.isArray( _v ) and not _v.length )
+					if _attr.type is "string" and _.isString( _v ) and not _v.length
+						# remove attribute if type is a empty string
+						@remove( _k )
+					else if _v is null or ( _.isArray( _v ) and not _v.length )
 						# remove attribute if null or empty array
 						@remove( _k )
 					else

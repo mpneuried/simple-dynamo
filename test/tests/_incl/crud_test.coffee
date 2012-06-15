@@ -40,7 +40,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					throw err if err
 
 					tableG = dynDB.get( _basicTable )
-					tableG.should.exist
+					should.exist( tableG )
 
 					done()
 					return
@@ -73,10 +73,10 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "create an item", ( done )->
 				tableG.set _.clone( _D[ "insert1" ] ), ( err, item )->
 					throw err if err
-					item.id.should.exist
-					item.name.should.exist
-					item.email.should.exist
-					item.age.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.email )
+					should.exist( item.age )
 
 					item.id.should.equal( _D[ "insert1" ].id )
 					item.name.should.equal( _D[ "insert1" ].name )
@@ -95,10 +95,10 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				tableG.get _G[ "insert1" ][ _C.hashKey ], ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.email.should.exist
-					item.age.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.email )
+					should.exist( item.age )
 
 					item.id.should.equal( _D[ "insert1" ].id )
 					item.name.should.equal( _D[ "insert1" ].name )
@@ -114,11 +114,11 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				tableG.set _.clone( _D[ "insert2" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.email.should.exist
-					item.age.should.exist
-					item.additional.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.email )
+					should.exist( item.age )
+					should.exist( item.additional )
 
 					item.name.should.equal( _D[ "insert2" ].name )
 					item.email.should.equal( _D[ "insert2" ].email )
@@ -137,10 +137,10 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				tableG.set _.clone( _D[ "insert3" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.email.should.exist
-					item.age.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.email )
+					should.exist( item.age )
 
 					item.name.should.equal( _D[ "insert3" ].name )
 					item.email.should.equal( _D[ "insert3" ].email )
@@ -157,7 +157,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				it "insert a invalid item to combined table", ( done )->
 				
 					tableG.set _.clone( _D[ "insert4" ] ), ( err, item )->
-						err.should.exist
+						should.exist( err )
 						err.name.should.equal( "combined-hash-invalid" )
 
 						should.not.exist( item )
@@ -203,6 +203,27 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					return
 				return
 
+			it "update first item with empty string attribute", ( done )->
+				tableG.set _G[ "insert1" ][ _C.hashKey ], _D[ "update1" ], ( err, item )->
+					throw err if err
+
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.age )
+					should.exist( item.email )
+					should.not.exist( item.additional )
+
+					item.id.should.equal( _G[ "insert1" ].id )
+					item.name.should.equal( _D[ "insert1" ].name )
+					item.email.should.equal( _D[ "insert1" ].email )
+					item.age.should.equal( _D[ "insert1" ].age )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
 			it "delete the first inserted item", ( done )->
 				
 				tableG.del _G[ "insert1" ][ _C.hashKey ], ( err )->
@@ -222,13 +243,15 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					return
 				return
 
+			
+
 			it "update second item", ( done )->
 				tableG.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], fields: [ "id", "name", "age" ], ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.age.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.age )
 					should.not.exist( item.email )
 					should.not.exist( item.additional )
 
@@ -252,9 +275,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.age.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.age )
 					should.not.exist( item.email )
 					should.not.exist( item.additional )
 
@@ -276,7 +299,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 						"age": { "==": 123 }
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
-					err.should.exist
+					should.exist( err )
 					err.name.should.equal( "conditional-check-failed" )
 
 					done()
@@ -334,8 +357,8 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _.clone( _D[ "insert1" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.title.should.exist
+					should.exist( item.id )
+					should.exist( item.title )
 					should.not.exist( item.done )
 
 					item.id.should.equal( _D[ "insert1" ].id )
@@ -353,7 +376,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				
 				table.set _D[ "insert2" ], ( err, item )->
 
-					err.should.exist
+					should.exist( err )
 					err.name.should.equal( "conditional-check-failed" )
 
 					should.not.exist( item )
@@ -640,9 +663,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _.clone( _D[ "insert1" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "a" ] )
@@ -658,9 +681,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update1" ] ), ( err, item )->
 					throw err if err
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "a", "b" ] )
@@ -676,9 +699,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update2" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "a", "b", "c" ] )
@@ -694,9 +717,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update3" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "b", "c" ] )
@@ -712,9 +735,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update4" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "x", "y" ] )
@@ -730,9 +753,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update5" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "x", "y", "z" ] )
@@ -748,9 +771,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update6" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "y", "z" ] )
@@ -766,9 +789,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update7" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "y" ] )
@@ -783,9 +806,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update8" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "y" ] )
@@ -797,15 +820,32 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "test $rem action with empty array", ( done )->
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update8" ] ), ( err, item )->
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update9" ] ), ( err, item )->
 					throw err if err
 
-					item.id.should.exist
-					item.name.should.exist
-					item.users.should.exist
+					should.exist( item.id )
+					should.exist( item.name )
+					should.exist( item.users )
 
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.users.should.eql( [ "y" ] )
+
+					_G[ "insert1" ] = item
+
+					done()
+					return
+				return
+
+			it "update set to null should remove attribute", ( done )->
+				
+				table.set _G[ "insert1" ].id, _.clone( _D[ "update10" ] ), ( err, item )->
+					throw err if err
+
+					should.exist( item.id )
+					should.exist( item.name )
+					should.not.exist( item.users )
+
+					item.name.should.equal( _D[ "insert1" ].name )
 
 					_G[ "insert1" ] = item
 

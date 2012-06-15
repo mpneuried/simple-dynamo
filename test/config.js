@@ -27,6 +27,9 @@
           }, {
             key: "age",
             type: "number"
+          }, {
+            key: "additional",
+            type: "string"
           }
         ]
       },
@@ -117,6 +120,9 @@
           }, {
             key: "age",
             type: "number"
+          }, {
+            key: "additional",
+            type: "string"
           }
         ]
       },

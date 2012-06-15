@@ -18,6 +18,7 @@ module.exports  =
 				{ key: "name", type: "string", required: true }
 				{ key: "email", type: "string" }
 				{ key: "age", type: "number" }
+				{ key: "additional", type: "string" }
 			]
 
 		"Rooms":
@@ -92,6 +93,7 @@ module.exports  =
 				{ key: "name", type: "string", required: true }
 				{ key: "email", type: "string" }
 				{ key: "age", type: "number" }
+				{ key: "additional", type: "string" }
 			]
 
 		"C_Rooms":

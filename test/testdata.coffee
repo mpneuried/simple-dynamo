@@ -1,9 +1,11 @@
 module.exports = 
 	"Employees": 
-		"insert1": { id:"1234567890", name: "First employee", email: "first@employee.com", age: 20 }
+		"insert1": { id:"1234567890", name: "First employee", email: "first@employee.com", age: 20, additional: "more ... "  }
 		"insert2": { name: "Second employee", email: "second@employee.com", age: 30, additional: "more ... " }
 		"insert3": { name: "Third employee", email: "third@employee.com", age: 78 }
+		"insert4": { id:"9999999", name: "Invalid employee", email: "invalid@employee.com", age: 99 }
 
+		"update1": { name: "First employee", additional: "" }
 		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35, additional: null }
 		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35 }
 
@@ -22,6 +24,7 @@ module.exports =
 		"update7": { name: "First", users: { "$reset": "y" } }
 		"update8": { name: "First", users: { "$add": [] } }
 		"update9": { name: "First", users: { "$rem": [] } }
+		"update10": { name: "First", users: null }
 
 	"Logs1": 
 		"inserts": [
@@ -56,11 +59,12 @@ module.exports =
 		]
 
 	"C_Employees": 
-		"insert1": { id:"emp1234567890", name: "First employee", email: "first@employee.com", age: 20 }
+		"insert1": { id:"emp1234567890", name: "First employee", email: "first@employee.com", age: 20, additional: "more ... " }
 		"insert2": { name: "Second employee", email: "second@employee.com", age: 30, additional: "more ... " }
 		"insert3": { name: "Third employee", email: "third@employee.com", age: 78 }
 		"insert4": { id:"9999999", name: "Invalid employee", email: "invalid@employee.com", age: 99 }
 
+		"update1": { name: "First employee", additional: "" }
 		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35, additional: null }
 		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35 }
 
@@ -80,6 +84,7 @@ module.exports =
 		"update7": { name: "C_First", users: { "$reset": "y" } }
 		"update8": { name: "C_First", users: { "$add": [] } }
 		"update9": { name: "C_First", users: { "$rem": [] } }
+		"update10": { name: "C_First", users: null }
 
 	"C_Logs1": 
 		"inserts": [

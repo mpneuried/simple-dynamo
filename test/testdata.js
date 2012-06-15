@@ -7,7 +7,8 @@
         id: "1234567890",
         name: "First employee",
         email: "first@employee.com",
-        age: 20
+        age: 20,
+        additional: "more ... "
       },
       "insert2": {
         name: "Second employee",
@@ -19,6 +20,16 @@
         name: "Third employee",
         email: "third@employee.com",
         age: 78
+      },
+      "insert4": {
+        id: "9999999",
+        name: "Invalid employee",
+        email: "invalid@employee.com",
+        age: 99
+      },
+      "update1": {
+        name: "First employee",
+        additional: ""
       },
       "update2": {
         name: "Second employee Update",
@@ -100,6 +111,10 @@
         users: {
           "$rem": []
         }
+      },
+      "update10": {
+        name: "First",
+        users: null
       }
     },
     "Logs1": {
@@ -213,7 +228,8 @@
         id: "emp1234567890",
         name: "First employee",
         email: "first@employee.com",
-        age: 20
+        age: 20,
+        additional: "more ... "
       },
       "insert2": {
         name: "Second employee",
@@ -231,6 +247,10 @@
         name: "Invalid employee",
         email: "invalid@employee.com",
         age: 99
+      },
+      "update1": {
+        name: "First employee",
+        additional: ""
       },
       "update2": {
         name: "Second employee Update",
@@ -312,6 +332,10 @@
         users: {
           "$rem": []
         }
+      },
+      "update10": {
+        name: "C_First",
+        users: null
       }
     },
     "C_Logs1": {

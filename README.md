@@ -555,6 +555,10 @@ To provide a API to react on different events you can listen to a bunch of event
 
 ### 0.3.3
 
+- bug fix set a attribute to `null` will lead to a removal. For a string attribute a set to an empty string will also lead to a attribute removal
+
+### 0.3.3
+
 - bug fix set handling by passing empty arrays
 - added `defaultfields` option to table-config.
 
