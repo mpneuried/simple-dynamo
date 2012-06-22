@@ -119,6 +119,9 @@ class Attributes
 									error.message = "Wrong type of `#{ key }`. Please pass this key as an `Array`"
 									@table._error( cb, error )
 									return
+								else if val.length is 0
+									delete attrs[ key ]
+
 							else
 								if val isnt null and not ( val[ "$add" ]? or val[ "$rem" ]? or val[ "$reset" ]? ) and not _.isArray( val )
 									error = new Error
