@@ -1,0 +1,864 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>simple-dynamo by mpneuried</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>simple-dynamo</h1>
+        <p>simple-dynamo is a abstraction layer to simplify Jed Schmidt's dynamo Node.js driver.</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/mpneuried/simple-dynamo" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/mpneuried/simple-dynamo/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/mpneuried/simple-dynamo/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>simple-dynamo</h1>
+
+<p>is a abstraction layer to Jed Schmidt's <a href="https://github.com/jed/dynamo">dynamo</a> Node.js driver.</p>
+
+<p><a href="http://travis-ci.org/mpneuried/simple-dynamo"><img src="https://secure.travis-ci.org/mpneuried/simple-dynamo.png?branch=master" alt="Build Status"></a></p>
+
+<p>It provides a absolute simple JSON-CRUD Interface without any knowledge of Dynamos specialties.</p>
+
+<p>A special feature is the <em>combineTableTo</em> options for tables. It adds the ability to combine multiple models into one Dymamo-table, but use them separately in your application. So you have to pay only one throughput capacity.</p>
+
+<p><em>Written in coffee-script</em></p>
+
+<p><strong>INFO: all examples are written in coffee-script</strong></p>
+
+<h1>Install</h1>
+
+<pre><code>  npm install simple-dynamo
+</code></pre>
+
+<h1>Connection and Table</h1>
+
+<h2>Initialize</h2>
+
+<p>first you have to define the connection and table attributes and get an instance of the simple-dynamo interface.</p>
+
+<p><code>new SimpleDynamo( connectionSettings, tables )</code></p>
+
+<h3>connection Settings</h3>
+
+<ul>
+<li>
+<strong>accessKeyId</strong> : Your AWS access key id</li>
+<li>
+<strong>secretAccessKey</strong> : Your AWS secret access key</li>
+<li>
+<strong>region</strong> : The region your Dynamo-Tables will be placed </li>
+</ul><h3>table Definition</h3>
+
+<p>An Object of Tables.<br>
+The key you are using will be the key to get the table object.</p>
+
+<p>Every object can have the following keys:</p>
+
+<ul>
+<li>
+<strong>name</strong> : <em>( <code>String</code> required )</em><br>
+Tablename for AWS</li>
+<li>
+<strong>hashKey</strong> : <em>( <code>String</code> required )</em><br>
+The hash key name of your ids/hashes</li>
+<li>
+<strong>hashKeyType</strong> : <em>( <code>String</code> optional: default = <code>S</code> )</em><br>
+The type of the <code>hashKey</code>. Possible values are: <code>S</code> = String and <code>N</code> = Numeric</li>
+<li>
+<strong>rangeKey</strong>: <em>( String optional )</em><br>
+The range key name of your range attribute. If not defined the table will be generated without the range methods</li>
+<li>
+<strong>rangeKeyType</strong>: <em>( <code>String</code> optional: default = <code>N</code> )</em><br>
+The type of the <code>rangeKey</code>. Possible values are: <code>S</code> = String and <code>N</code> = Numeric</li>
+<li>
+<strong>fnCreateHash</strong>: <em>( <code>Function</code> optional: default = <code>new UUID</code> )</em><br>
+Method to generate a custom hash key.<br>
+</li>
+<li>
+<strong>defaultfields</strong>: <em>( <code>Array</code> optional )</em><br>
+List of fields to return as default. If nothing is defined all fields will be received. You always can overwrite this using <code>options.fields</code>.<br>
+</li>
+<li>
+<strong>combineTableTo</strong>: <em>( <code>String</code> optional )</em>
+Option to combine multiple models into one dynamo-table. Makes sense if you want to pay only one table. Combinations are not allowed for tables of different types ( Hash-table and HashRange-table ) and you have to use the same hashKey and rangeKey. The module will handle all interactions with the models transparent, so you only have to define this option.<br><em>Note:</em> If you use this feature and predefine the id/hash you have to add the <code>name</code> of the table in front of every id/hash.</li>
+<li>
+<strong>overwriteExistingHash</strong>: <em>( <code>Boolean</code> optional: default = false )</em><br>
+Overwrite a item on <code>create</code> of an existing hash. </li>
+<li>
+<strong>consistent</strong>: <em>( <code>Boolean</code> optional: default = false )</em><br>
+Do consistend reads on <code>table.get()</code> and <code>table.find()</code> as default<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>attributes</strong>: The given attributes on create<br>
+</li>
+<li>
+<strong>cb</strong>: Callback method to pass the custom generates id/hash. <code>cb( "my-special-hash" )</code>
+</li>
+</ul>
+</li>
+<li>
+<strong>fnCreateRange</strong>: <em>( <code>Function</code> optional: default = <code>current Timestamp</code> )</em><br>
+Method to generate a custom range key.<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>attributes</strong>: The given attributes on create<br>
+</li>
+<li>
+<strong>cb</strong>: Callback method to pass the custom generates id/hash. <code>cb( "my-special-range" )</code>
+</li>
+</ul>
+</li>
+<li>
+<strong>attributes</strong>: <em>( <code>Array of Objects</code> required )</em><br>
+An array of attribute Objects. Which will be validated<br><strong>Attributes keys</strong>
+
+<ul>
+<li>
+<strong>key</strong>: <em>( <code>String</code> required )</em><br>
+Column/Attribute name/key</li>
+<li>
+<strong>type</strong>: <em>( <code>String</code> required )</em><br>
+Datatype. possible values are <code>string</code> = String, <code>number</code> = Numeric and <code>array</code> = Array/Set of <strong>Strings</strong>
+</li>
+<li>
+<strong>required</strong>: <em>( <code>Boolean</code> optional: default = <code>false</code> )</em><br>
+Validate the attribute to be required. <em>( Not implemented yet ! )</em>
+</li>
+</ul>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="c1"># import module</span>
+<span class="nv">SimpleDynamo = </span><span class="nx">require</span> <span class="s">"simple-dynamo"</span>
+
+<span class="c1"># define connection settings</span>
+<span class="nv">connectionSettings =</span>
+    <span class="nv">accessKeyId: </span><span class="s">"-"</span>
+    <span class="nv">secretAccessKey: </span><span class="s">"-"</span>
+    <span class="nv">region: </span><span class="s">"eu-west-1"</span>
+
+<span class="c1"># define tables</span>
+<span class="nv">tables = </span>
+    <span class="s">"Users"</span><span class="o">:</span>
+        <span class="nv">name: </span><span class="s">"users"</span>
+        <span class="nv">hashKey: </span><span class="s">"id"</span>
+
+        <span class="nv">attributes: </span><span class="p">[</span>
+            <span class="p">{</span> <span class="nv">key: </span><span class="s">"name"</span><span class="p">,</span> <span class="nv">type: </span><span class="s">"string"</span><span class="p">,</span> <span class="nv">required: </span><span class="kc">true</span> <span class="p">}</span>
+            <span class="p">{</span> <span class="nv">key: </span><span class="s">"email"</span><span class="p">,</span> <span class="nv">type: </span><span class="s">"string"</span> <span class="p">}</span>
+        <span class="p">]</span>
+
+    <span class="s">"Todos"</span><span class="o">:</span>
+        <span class="nv">name: </span><span class="s">"todos"</span>
+        <span class="nv">hashKey: </span><span class="s">"id"</span>
+        <span class="nv">rangeKey: </span><span class="s">"_t"</span>
+        <span class="nv">rangeKeyType: </span><span class="s">"N"</span>
+
+        <span class="nv">fnCreateHash: </span><span class="p">(</span> <span class="nx">attributes</span><span class="p">,</span> <span class="nx">cb</span> <span class="p">)</span><span class="o">=&gt;</span>
+            <span class="nx">cb</span><span class="p">(</span> <span class="nx">attributes</span><span class="p">.</span><span class="nx">user_id</span> <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="nv">attributes: </span><span class="p">[</span>
+            <span class="p">{</span> <span class="nv">key: </span><span class="s">"title"</span><span class="p">,</span> <span class="nv">type: </span><span class="s">"string"</span><span class="p">,</span> <span class="nv">required: </span><span class="kc">true</span> <span class="p">}</span>
+            <span class="p">{</span> <span class="nv">key: </span><span class="s">"done"</span><span class="p">,</span> <span class="nv">type: </span><span class="s">"number"</span> <span class="p">}</span>
+        <span class="p">]</span>
+
+    <span class="c1"># example for a combined table usage</span>
+    <span class="s">"Combined1"</span><span class="o">:</span>
+        <span class="nv">name: </span><span class="s">"c1"</span>
+        <span class="nv">hashKey: </span> <span class="s">"id"</span>
+        <span class="nv">combineTableTo: </span><span class="s">"combined_hash"</span>
+
+        <span class="nv">attributes: </span><span class="p">[</span>
+            <span class="p">{</span> <span class="nv">key: </span><span class="s">"title"</span><span class="p">,</span> <span class="nv">type: </span><span class="s">"string"</span><span class="p">,</span> <span class="nv">required: </span><span class="kc">true</span> <span class="p">}</span>
+        <span class="p">]</span>
+
+    <span class="s">"Combined2"</span><span class="o">:</span>
+        <span class="nv">name: </span><span class="s">"c2"</span>
+        <span class="nv">hashKey: </span> <span class="s">"id"</span>
+        <span class="nv">combineTableTo: </span><span class="s">"combined_hash"</span>
+
+        <span class="nv">attributes: </span><span class="p">[</span>
+            <span class="p">{</span> <span class="nv">key: </span><span class="s">"title"</span><span class="p">,</span> <span class="nv">type: </span><span class="s">"string"</span><span class="p">,</span> <span class="nv">required: </span><span class="kc">true</span> <span class="p">}</span>
+        <span class="p">]</span>
+
+<span class="c1"># create instance</span>
+<span class="nv">sdManager = </span><span class="k">new</span> <span class="nx">SimpleDynamo</span><span class="p">(</span> <span class="nx">connectionSettings</span><span class="p">,</span> <span class="nx">tables</span> <span class="p">)</span>
+
+<span class="c1"># connect</span>
+<span class="nx">sdManager</span><span class="p">.</span><span class="nx">connect</span> <span class="nf">( err )-&gt;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"simple-dynamo ready to use"</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>First connect to AWS</h2>
+
+<p>The module has to know about the existing AWS tables so you have to read them first.<br><strong>If you do not run <code>.connect()</code> the module will throw an error everytime</strong> </p>
+
+<p><strong><code>Manager.connect( fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method. Single arguments on return is the error object. On success the error is <code>null</code>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nx">sdManager</span><span class="p">.</span><span class="nx">connect</span> <span class="nf">( err )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"connect ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"simple-dynamo ready to use"</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Create all tables</h2>
+
+<p>to create all missing tables just call <code>.createAll()</code>.</p>
+
+<p>This is not necessary if you know the tables has been created in the past.</p>
+
+<p><strong>Note! The generating of tables could take a few Minutes</strong></p>
+
+<p><strong><code>Manager.generateAll( fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method. Single arguments on return is the error object. On success the error is <code>null</code>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nx">sdManager</span><span class="p">.</span><span class="nx">generateAll</span> <span class="nf">( err )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"connect ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"simple-dynamo ready to use"</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Get a table instance</h2>
+
+<p>To interact with a table you have to retrieve the table object. It's defined in the table-definitions</p>
+
+<p><strong><code>Manager.get( 'tableName' )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>tableName</strong>: <em>( <code>String</code> required )</em><br>
+Method to retrieve the instance of a table object.</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nv">tblTodos = </span><span class="nx">sdManager</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s">'Todos'</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Destroy a table</h2>
+
+<p>destroy table at AWS. This removes the table from AWS will all the data</p>
+
+<p><strong><code>Table.destroy( fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method.<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>err</strong>: Usually <code>null</code>. On an error a object with <code>error</code> and <code>msg</code>
+</li>
+</ul>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">del</span> <span class="nf">( err )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"destroy ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"table destroyed"</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h1>Item handling</h1>
+
+<h2>Write a new item (INSERT)</h2>
+
+<p>Create a new item in a select table. You can also add some attributes not defined in the table-definition, which will be saved, too.</p>
+
+<p><strong><code>Table.set( data, options, fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>data</strong>: <em>( <code>Object</code> required )</em><br>
+The data to save. You can define the hash and/or range key. If not the module will generate a hash/range automatically.<br><em>Note:</em> If the used table uses the combined feature and you define the hash-key it's necessary to add the <code>name</code> out of the table-config in front of every hash.</li>
+<li>
+<strong>options</strong>: <em>( <code>Object</code> optional )</em><br><ul>
+<li>
+<strong>fields</strong>: <em>( <code>Array</code> )</em> An array of fields to receive</li>
+<li>
+<strong>overwriteExistingHash</strong>: <em>( <code>Boolean</code> optional: default = [tableConfig.overwriteExistingHash] )</em>  Overwrite a item it already exists. </li>
+</ul>
+</li>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method.<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>err</strong>: Usually <code>null</code>. On an error a object with <code>error</code> and <code>msg</code>
+</li>
+<li>
+<strong>item</strong>: the save item as simple object</li>
+</ul>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nv">data = </span>
+    <span class="nv">title: </span><span class="s">"My First Todo"</span>
+    <span class="nv">done: </span><span class="mi">0</span>
+    <span class="nv">aditionalData: </span><span class="s">"Foo bar"</span>
+
+<span class="nx">tblTodos</span><span class="p">.</span><span class="nx">set</span> <span class="nx">data</span><span class="p">,</span> <span class="nf">( err, todo )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"insert ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todo</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Get a item (GET)</h2>
+
+<p>Get an existing element by id/hash</p>
+
+<p><strong><code>Table.get( id, fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>id</strong>: <em>( <code>String|Number|Array</code> required )</em><br>
+The id of an element. If the used table is a range table you have to use an array <code>[hash,range]</code> as combined id. Otherwise you will get an error. </li>
+<li>
+<strong>options</strong>: <em>( <code>Object</code> optional )</em><br><ul>
+<li>
+<strong>fields</strong>: <em>( <code>Array</code> )</em> An array of fields to receive. If nothing is defined all fields are returned.</li>
+<li>
+<strong>consistent</strong>: <em>( <code>Boolean</code> optional: default = [tableConfig.consistent] )</em> do a consitent read<br>
+</li>
+</ul>
+</li>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method.<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>err</strong>: Usually <code>null</code>. On an error a object with <code>error</code> and <code>msg</code>
+</li>
+<li>
+<strong>item</strong>: the database item as simple object. If not found <code>null</code>
+</li>
+</ul>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">get</span> <span class="s">'myTodoId'</span><span class="p">,</span> <span class="nf">( err, todo )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"get ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todo</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<div class="highlight">
+<pre><span class="nx">tblRangeTodos</span><span class="p">.</span><span class="nx">get</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="s">'myRange'</span> <span class="p">],</span> <span class="nf">( err, todo )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"get ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todo</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Get many items (MGET)</h2>
+
+<p>Get an many existing elements by id/hash in one request</p>
+
+<p><strong><code>Table.mget( [ id1, id2, .. ], options, fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>ids</strong>: <em>( <code>Array</code> required )</em><br>
+An array of id of an elements. If the used table is a range table you have to use an array of arrays <code>[hash,range]</code> as combined id. Otherwise you will get an error. </li>
+<li>
+<strong>options</strong>: <em>( <code>Object</code> optional )</em><br><ul>
+<li>
+<strong>fields</strong>: <em>( <code>Array</code> )</em> An array of fields to receive. If nothing is defined all fields are returned.</li>
+</ul>
+</li>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method.<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>err</strong>: Usually <code>null</code>. On an error a object with <code>error</code> and <code>msg</code>
+</li>
+<li>
+<strong>items</strong>: the database items as a array of simple objects. Only existing items will be received. </li>
+</ul>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">mget</span> <span class="p">[</span> <span class="s">'myTodoIdA'</span><span class="p">,</span> <span class="s">'myTodoIdB'</span> <span class="p">],</span> <span class="nf">( err, todos )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"get ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todos</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<div class="highlight">
+<pre><span class="nx">tblRangeTodos</span><span class="p">.</span><span class="nx">mget</span> <span class="p">[</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span> <span class="p">],</span> <span class="nf">( err, todos )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"get ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todos</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Update an item (UPDATE)</h2>
+
+<p>update an existing item.<br>
+To remove a attribute you have to set the value to <code>null</code></p>
+
+<p><strong><code>Table.set( id, data, options, fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>id</strong>: <em>( <code>String|Number|Array</code> required )</em><br>
+The id of an element. If the used table is a range table you have to use an array <code>[hash,range]</code> as combined id. Otherwise you will get an error. </li>
+<li>
+<strong>data</strong>: <em>( <code>Object</code> required )</em><br>
+The data to update. You can redefine the range key. If you pass the hash key it will be ignored</li>
+<li>
+<strong>options</strong>: <em>( <code>Object</code> optional )</em><br>
+For update you can define some options.
+
+<ul>
+<li>
+<strong>fields</strong>: <em>( <code>Array</code> )</em> An array of fields to receive</li>
+<li>
+<strong>conditionals</strong> <em>( <code>Object</code> )</em> A query object to define a conditional. Only <code>{"==": value}</code>, <code>{"==": null}</code>, and <code>{"!=": null}</code> are allowed. How to build? … have a look at <a href="https://github.com/jed/dynamo/wiki/High-level-API#wiki-predicates">Jed's Predicates </a>
+</li>
+</ul>
+</li>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method.<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>err</strong>: Usually <code>null</code>. On an error a object with <code>error</code> and <code>msg</code>
+</li>
+<li>
+<strong>item</strong>: the database item as simple object. If not found <code>null</code>
+</li>
+</ul>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nv">data = </span>
+    <span class="nv">title: </span><span class="s">"My First Update"</span>
+    <span class="nv">done: </span><span class="mi">1</span>
+
+<span class="nx">tblTodos</span><span class="p">.</span><span class="nx">set</span> <span class="s">'myTodoId'</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nf">( err, todo )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"update ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="c1"># note. the key 'aditionalData' will be gone</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todo</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Delete an item (DELETE)</h2>
+
+<p>delete an item by id/hash</p>
+
+<p><strong><code>Table.del( id, fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>id</strong>: <em>( <code>String|Number|Array</code> required )</em><br>
+The id of an element. If the used table is a range table you have to use an array <code>[hash,range]</code> as combined id. Otherwise you will get an error. </li>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method.<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>err</strong>: Usually <code>null</code>. On an error a object with <code>error</code> and <code>msg</code>
+</li>
+</ul>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">del</span> <span class="s">'myTodoId'</span><span class="p">,</span> <span class="nf">( err )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"delete ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"delete done"</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Query a table (FIND)</h2>
+
+<p>run a query on a table. The module automatically trys to do a <code>Dynamo.db scan</code> or <code>Dynamo query</code>.</p>
+
+<p><strong><code>Table.find( query, startAt, options, fnCallback )</code> Arguments</strong> : </p>
+
+<ul>
+<li>
+<strong>query</strong>: <em>( <code>Object</code> : default = <code>{}</code> all )</em><br>
+A query object. How to build … have a look at <a href="https://github.com/jed/dynamo/wiki/High-level-API#wiki-predicates">Jed's Predicates </a>
+</li>
+<li>
+<strong>startAt</strong>: <em>( <code>String|Number|Array</code> optional )</em><br>
+To realize a paging you can define a <code>startAt</code>. Usually the last item of a list. If you define <code>startAt</code> with the last item of the previous find you get the next collection of items without the given <code>startAt</code> item.<br>
+If the used table is a range table you have to use an array <code>[hash,range]</code> as combined <code>startAt</code>. Otherwise you will get an error. </li>
+<li>
+<strong>options</strong>: <em>( <code>Object</code> optional )</em><br><ul>
+<li>
+<strong>fields</strong>: <em>( <code>Array</code> )</em> An array of fields to receive</li>
+<li>
+<strong>limit</strong>: <em>( <code>Number</code> )</em> Define the max. items to return</li>
+<li>
+<strong>forward</strong>: <em>( <code>Boolean</code> default = true  )</em> define the direction <code>acs</code> or <code>desc</code> for range querys. </li>
+<li>
+<strong>consistent</strong>: <em>( <code>Boolean</code> optional: default = [tableConfig.consistent] )</em> do a consitent read.<br><strong>Note! This is only availible for real query's through range-tables. This means if you query by hash and range ( e.g. Advanced Examples )</strong>
+</li>
+</ul>
+</li>
+<li>
+<strong>fnCallback</strong>: <em>( <code>Function</code> required )</em><br>
+Callback method.<br><strong>Method Arguments</strong><br><ul>
+<li>
+<strong>err</strong>: Usually <code>null</code>. On an error a object with <code>error</code> and <code>msg</code>
+</li>
+<li>
+<strong>items</strong>: an array of objects found</li>
+</ul>
+</li>
+</ul><p><strong>Example</strong></p>
+
+<div class="highlight">
+<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">find</span> <span class="p">{},</span> <span class="nf">( err, items )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"delete ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"all existend items"</span><span class="p">,</span> <span class="nx">items</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<p><strong>Advanced Examples</strong></p>
+
+<div class="highlight">
+<pre><span class="c1"># create a query to read all todos from last hour</span>
+<span class="nv">_query = </span>
+    <span class="nv">id: </span><span class="p">{</span> <span class="s">"!="</span><span class="o">:</span> <span class="kc">null</span> <span class="p">}</span>
+    <span class="nv">_t: </span><span class="p">{</span> <span class="s">"&lt;"</span><span class="o">:</span> <span class="p">(</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
+
+<span class="nx">tblTodos</span><span class="p">.</span><span class="nx">find</span> <span class="p">,</span> <span class="nf">( err, items )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"delete ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"found items"</span><span class="p">,</span> <span class="nx">items</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<div class="highlight">
+<pre><span class="c1"># read 4 todos from last hour beginning starting with a known id</span>
+<span class="nv">_query = </span>
+    <span class="nv">id: </span><span class="p">{</span> <span class="s">"!="</span><span class="o">:</span> <span class="kc">null</span> <span class="p">}</span>
+    <span class="nv">_t: </span><span class="p">{</span> <span class="s">"&lt;"</span><span class="o">:</span> <span class="p">(</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
+
+<span class="nv">_startAt = </span><span class="s">"myid_todoItem12"</span>
+
+<span class="nv">_options = </span><span class="p">{</span> <span class="s">"limit"</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">"fields"</span><span class="o">:</span> <span class="p">[</span> <span class="s">"id"</span><span class="p">,</span> <span class="s">"_t"</span><span class="p">,</span> <span class="s">"title"</span> <span class="p">]</span> <span class="p">}</span>
+
+<span class="nx">tblTodos</span><span class="p">.</span><span class="nx">find</span> <span class="nx">_query</span><span class="p">,</span> <span class="nx">_startAt</span><span class="p">,</span> <span class="nx">_options</span><span class="p">,</span> <span class="nf">( err, items )-&gt;</span>
+    <span class="k">if</span> <span class="nx">err</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"delete ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
+    <span class="k">else</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"4 found items"</span><span class="p">,</span> <span class="nx">items</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Working with sets</h2>
+
+<p>Dynamo has the ability to work with sets. That means you can save a Set of Strings as an Array.<br>
+During an update you have the ability to add or remove a single value out of the set. Or you can reset the whole set.  </p>
+
+<p>But you can only perform one action per key and you obnly can use the functionalty if defined through the table-definition ( <code>type:"array"</code> ).</p>
+
+<p>Existing values will be ignored.</p>
+
+<p>The following key variants are availible:</p>
+
+<ul>
+<li>
+<code>"key":[ "a", "b", "c" ]'</code>: Resets the whole value of the key</li>
+<li>
+<code>"key":{ "$add": [ "d", "e" ] }</code>: Add some values to the set</li>
+<li>
+<code>"key":{ "$rem": [ "a", "b" ] }</code>: remove some values</li>
+<li>
+<code>"key":{ "$reset": [ "x", "y" ] }</code>: reset the whole value. Same as <code>"key":[ "x", "y" ]'</code>
+</li>
+<li>
+<code>"key":{ "$add": "d"}</code>: Add a single value to the set</li>
+<li>
+<code>"key":{ "$rem": "a" }</code>: remove a single value</li>
+<li>
+<code>"key":{ "$reset": "y" }</code>: reset the whole set to a single value. Same as <code>"key":[ "y" ]'</code>
+</li>
+</ul><p><strong>Examples</strong></p>
+
+<div class="highlight">
+<pre><span class="c1"># Source "key: [ "a", "b", "c" ]"</span>
+
+<span class="nv">data = </span>
+    <span class="nv">key: </span><span class="p">[</span> <span class="s">"x"</span><span class="p">,</span> <span class="s">"y"</span><span class="p">,</span> <span class="s">"z"</span> <span class="p">]</span>
+
+<span class="nx">tblSets</span><span class="p">.</span><span class="nx">set</span> <span class="s">'mySetsId'</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nf">( err, setData )-&gt;</span>
+    <span class="c1"># Result "key: [ "x", "y", "z" ]"</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">setData</span> <span class="p">)</span>
+</pre>
+</div>
+
+
+<pre><code># Source "key: [ "a", "b", "c" ]"
+
+data = 
+    key: { "$add": [ "a", "d", "e" ] }
+
+tblSets.set 'mySetsId', data, ( err, setData )-&gt;
+    # Result "key: [ "a", "b", "c", "d", "e" ]"
+    console.log( setData )
+</code></pre>
+
+<pre><code># Source "key: [ "a", "b", "c" ]"
+
+data = 
+    key: { "$rem": [ "a", "b", "x" ] }
+
+tblSets.set 'mySetsId', data, ( err, setData )-&gt;
+    # Result "key: [ "c" ]"
+    console.log( setData )
+</code></pre>
+
+<pre><code># Source "key: [ "a", "b", "c" ]"
+
+data = 
+    key: { "$reset": [ "x", "y", "z" ] }
+
+tblSets.set 'mySetsId', data, ( err, setData )-&gt;
+    # Result "key: [ "x", "y", "z" ]"
+    console.log( setData )
+</code></pre>
+
+<h1>Events</h1>
+
+<p>To provide a API to react on different events you can listen to a bunch of events.</p>
+
+<h2>Manager Events</h2>
+
+<ul>
+<li>
+<code>new-table</code>: Table object initialized and ready to use. This means only the client model is ready. Eventually you have to create the table first.<br><strong>Event Arguments</strong><br><ul>
+<li>
+<strong>name</strong>: the name og the table, like you would use with `Manager.get()</li>
+<li>
+<strong>Table</strong>: the <code>Table</code> object</li>
+</ul>
+</li>
+<li>
+<code>table-generated</code>: Fired after all a new tables has been generated.
+<strong>Event Arguments</strong><br><ul>
+<li>
+<strong>Meta</strong>: the tables meta-data</li>
+</ul>
+</li>
+<li>
+<code>all-tables-generated</code>: Fired after all tables are generated.<br>
+</li>
+</ul><h2>Table Events</h2>
+
+<ul>
+<li>
+<code>create-status</code>: fired on table create.<br><strong>Event Arguments</strong><br><ul>
+<li>
+<strong>status</strong>: describes the state of table creation. Possible values are: <code>already-active</code>, <code>waiting</code>, <code>active</code>
+</li>
+</ul>
+</li>
+<li>
+<code>get</code>: fired after a table.get.<br><strong>Event Arguments</strong><br><ul>
+<li>
+<strong>item</strong>: the item</li>
+</ul>
+</li>
+<li>
+<code>get-empty</code>: fired after a table.get with an empty result.<br>
+</li>
+<li>
+<code>mget</code>: fired after a table.mget.<br><strong>Event Arguments</strong><br><ul>
+<li>
+<strong>items</strong>: the items</li>
+</ul>
+</li>
+<li>
+<code>mget-empty</code>: fired after a table.mget with no results.<br>
+</li>
+<li>
+<code>create</code>: fired after a item has been created.<br><strong>Event Arguments</strong><br><ul>
+<li>
+<strong>item</strong>: the created item</li>
+</ul>
+</li>
+<li>
+<code>update</code>: fired after a item has been updated.<br><strong>Event Arguments</strong><br><ul>
+<li>
+<strong>item_new</strong>: the item after the update</li>
+</ul>
+</li>
+<li>
+<code>delete</code>: fired after a item has been deleted.<br><strong>Event Arguments</strong><br><ul>
+<li>
+<strong>item_old</strong>: the item before the delete</li>
+</ul>
+</li>
+</ul><h2>Changelogs</h2>
+
+<h3>0.3.5</h3>
+
+<ul>
+<li>fixed #5: fixed bug for set empty array on create</li>
+<li>fixed #9: fixed bug for null on fliedtype `number</li>
+</ul><h3>0.3.4</h3>
+
+<ul>
+<li>fixed #7: bug fix set a attribute to <code>null</code> will lead to a removal. For a string attribute a set to an empty string will also lead to a attribute removal</li>
+</ul><h3>0.3.3</h3>
+
+<ul>
+<li>bug fix set handling by passing empty arrays</li>
+<li>feature #6: added <code>defaultfields</code> option to table-config.</li>
+</ul><h3>0.3.2</h3>
+
+<ul>
+<li>added implicit set detection for <code>update</code> by testing for a object with one of the keys <code>$add</code>, <code>$rem</code> and <code>$reset</code> </li>
+</ul><h3>0.3.1</h3>
+
+<ul>
+<li>bugfix <code>option.forward</code> on <code>find.()</code>
+</li>
+</ul><h3>0.3.0</h3>
+
+<ul>
+<li>changed update behavior. Now there is not get before set.</li>
+<li>Event <code>update</code>, no longer with new and old value. Just the new value. This is a victim to the removal of get before set.</li>
+<li>added option <code>conditionals</code> to update. So you can define conditions to your update</li>
+<li>removed option <code>removeMissing</code>. Now you have to set a attribute to <code>null</code> to remove it.</li>
+<li>added <code>forward</code> option to <code>.find()</code> to define the direction of a range query</li>
+</ul><h2>Todos</h2>
+
+<ul>
+<li>handle <code>throughput exceed</code>with a retry</li>
+<li>better check of the given config-data</li>
+<li>check for node.js 0.8.0 </li>
+</ul><h3>Work in progress</h3>
+
+<p><code>simple-dynamo</code> is work in progress. Your ideas, suggestions etc. are very welcome.</p>
+
+<h2>License</h2>
+
+<p>(The MIT License)</p>
+
+<p>Copyright (c) 2010 TCS &lt;dev (at) tcs.de&gt;</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/mpneuried">mpneuried</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-32491479-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
