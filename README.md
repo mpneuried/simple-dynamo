@@ -12,27 +12,27 @@ A special feature is the *combineTableTo* options for tables. It adds the abilit
 
 **INFO: all examples are written in coffee-script**
 
-## Install
+# Install
 
 ```
   npm install simple-dynamo
 ```
 
-## Examples
+# Connection and Table
 
-### Initialize module:
+## Initialize
 
 first you have to define the connection and table attributes and get an instance of the simple-dynamo interface.
 
 `new SimpleDynamo( connectionSettings, tables )`
 
-####connection Settings
+###connection Settings
 
 - **accessKeyId** : Your AWS access key id
 - **secretAccessKey** : Your AWS secret access key
 - **region** : The region your Dynamo-Tables will be placed 
 
-####table Definition
+###table Definition
 
 An Object of Tables.  
 The key you are using will be the key to get the table object.
@@ -144,7 +144,7 @@ sdManager.connect ( err )->
 	console.log( "simple-dynamo ready to use" )
 ```
 
-### First connect to AWS:
+## First connect to AWS
 
 The module has to know about the existing AWS tables so you have to read them first.  
 **If you do not run `.connect()` the module will throw an error everytime** 
@@ -164,7 +164,7 @@ sdManager.connect ( err )->
 		console.log( "simple-dynamo ready to use" )
 ```
 
-### Create all tables:
+## Create all tables
 
 to create all missing tables just call `.createAll()`.
 
@@ -187,7 +187,7 @@ sdManager.generateAll ( err )->
 		console.log( "simple-dynamo ready to use" )
 ```
 
-### Get a table instance ( Table GET ):
+## Get a table instance
 
 To interact with a table you have to retrieve the table object. It's defined in the table-definitions
 
@@ -202,7 +202,7 @@ Method to retrieve the instance of a table object.
 tblTodos = sdManager.get( 'Todos' )
 ```
 
-### Destroy a table ( Table DESTROY ):
+## Destroy a table
 
 destroy table at AWS. This removes the table from AWS will all the data
 
@@ -223,7 +223,9 @@ tblTodos.del ( err )->
 		console.log( "table destroyed" )
 ```
 
-### Write a new item ( INSERT ):
+# Item handling 
+
+## Write a new item (INSERT)
 
 Create a new item in a select table. You can also add some attributes not defined in the table-definition, which will be saved, too.
 
@@ -256,7 +258,7 @@ tblTodos.set data, ( err, todo )->
 		console.log( todo )
 ```
 
-### Get a item ( GET ):
+## Get a item (GET)
 
 Get an existing element by id/hash
 
@@ -291,9 +293,9 @@ tblRangeTodos.get [ 'myHash', 'myRange' ], ( err, todo )->
 		console.log( todo )
 ```
 
-### Get many items in one request ( MGET ):
+## Get many items (MGET)
 
-Get an many existing elements by id/hash
+Get an many existing elements by id/hash in one request
 
 **`Table.mget( [ id1, id2, .. ], options, fnCallback )` Arguments** : 
 
@@ -325,7 +327,7 @@ tblRangeTodos.mget [ [ 'myHash', 1 ], [ 'myHash', 2 ] ], ( err, todos )->
 		console.log( todos )
 ```
 
-### Update an item ( UPDATE ):
+## Update an item (UPDATE)
 
 update an existing item.  
 To remove a attribute you have to set the value to `null`
@@ -361,7 +363,7 @@ tblTodos.set 'myTodoId', data, ( err, todo )->
 		console.log( todo )
 ```
 
-### Delete an item ( DELETE ):
+## Delete an item (DELETE)
 
 delete an item by id/hash
 
@@ -384,7 +386,7 @@ tblTodos.del 'myTodoId', ( err )->
 		console.log( "delete done" )
 ```
 
-### Query a table ( FIND ):
+## Query a table (FIND)
 
 run a query on a table. The module automatically trys to do a `Dynamo.db scan` or `Dynamo query`.
 
@@ -450,7 +452,7 @@ tblTodos.find _query, _startAt, _options, ( err, items )->
 ```
 
 
-### Working with sets ( UPDATE Set ):
+## Working with sets
 
 Dynamo has the ability to work with sets. That means you can save a Set of Strings as an Array.  
 During an update you have the ability to add or remove a single value out of the set. Or you can reset the whole set.  
@@ -512,11 +514,11 @@ tblSets.set 'mySetsId', data, ( err, setData )->
     console.log( setData )
 ```
 
-##Events
+#Events
 
 To provide a API to react on different events you can listen to a bunch of events.
 
-###Manager Events
+##Manager Events
 
 - `new-table`: Table object initialized and ready to use. This means only the client model is ready. Eventually you have to create the table first.  
 **Event Arguments**  
@@ -528,7 +530,7 @@ To provide a API to react on different events you can listen to a bunch of event
 - `all-tables-generated`: Fired after all tables are generated.  
 
 
-###Table Events
+##Table Events
 
 - `create-status`: fired on table create.  
 **Event Arguments**  
@@ -588,7 +590,7 @@ To provide a API to react on different events you can listen to a bunch of event
 - better check of the given config-data
 - check for node.js 0.8.0 
 
-## Work in progress
+### Work in progress
 
 `simple-dynamo` is work in progress. Your ideas, suggestions etc. are very welcome.
 
