@@ -113,7 +113,9 @@ class Attributes
 								return
 						when "array"
 							if isCreate
-								if not _.isArray( val )
+								if val is null
+									delete attrs[ key ]
+								else if not _.isArray( val )
 									error = new Error
 									error.name = "validation-error"
 									error.message = "Wrong type of `#{ key }`. Please pass this key as an `Array`"
@@ -159,7 +161,7 @@ class Attributes
 							@put( _k, _vA ) if _vA.length
 
 				else 
-					if _attr.type is "string" and _.isString( _v ) and not _v.length
+					if _attr?.type is "string" and _.isString( _v ) and not _v.length
 						# remove attribute if type is a empty string
 						@remove( _k )
 					else if _v is null or ( _.isArray( _v ) and not _v.length )

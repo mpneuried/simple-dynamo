@@ -306,6 +306,27 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					return
 				return
 
+			it "update third item with `number` field = `null`", ( done )->
+
+				_opt = 
+					fields: [ "id", "name", "age" ]
+
+				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3_2" ], _opt, ( err, item )->
+					should.not.exist( err )
+					
+					should.exist( item.id )
+					should.exist( item.name )
+					should.not.exist( item.age )
+
+					item.id.should.equal( _G[ "insert3" ].id )
+					item.name.should.equal( _G[ "insert3" ].name )
+
+					_G[ "insert3" ] = item
+
+					done()
+					return
+				return
+
 			it "delete the second inserted item", ( done )->
 				
 				tableG.del _G[ "insert2" ][ _C.hashKey ], ( err )->
@@ -677,6 +698,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					return
 				return
 
+
 			it "test raw reset", ( done )->
 				
 				table.set _G[ "insert1" ].id, _.clone( _D[ "update1" ] ), ( err, item )->
@@ -803,63 +825,135 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "test $add action with empty array", ( done )->
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update8" ] ), ( err, item )->
-					throw err if err
+				_.delay( =>
+					table.set _G[ "insert1" ].id, _.clone( _D[ "update8" ] ), ( err, item )->
+						throw err if err
 
-					should.exist( item.id )
-					should.exist( item.name )
-					should.exist( item.users )
+						should.exist( item.id )
+						should.exist( item.name )
+						should.exist( item.users )
 
-					item.name.should.equal( _D[ "insert1" ].name )
-					item.users.should.eql( [ "y" ] )
+						item.name.should.equal( _D[ "insert1" ].name )
+						item.users.should.eql( [ "y" ] )
 
-					_G[ "insert1" ] = item
+						_G[ "insert1" ] = item
 
-					done()
+						done()
+						return
 					return
+				, 250 )
 				return
 
 			it "test $rem action with empty array", ( done )->
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update9" ] ), ( err, item )->
-					throw err if err
+				_.delay( =>
+					table.set _G[ "insert1" ].id, _.clone( _D[ "update9" ] ), ( err, item )->
+						throw err if err
 
-					should.exist( item.id )
-					should.exist( item.name )
-					should.exist( item.users )
+						should.exist( item.id )
+						should.exist( item.name )
+						should.exist( item.users )
 
-					item.name.should.equal( _D[ "insert1" ].name )
-					item.users.should.eql( [ "y" ] )
+						item.name.should.equal( _D[ "insert1" ].name )
+						item.users.should.eql( [ "y" ] )
 
-					_G[ "insert1" ] = item
+						_G[ "insert1" ] = item
 
-					done()
+						done()
+						return
 					return
+				, 250 )
 				return
 
 			it "update set to null should remove attribute", ( done )->
-				
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update10" ] ), ( err, item )->
-					throw err if err
+				_.delay( =>
+					table.set _G[ "insert1" ].id, _.clone( _D[ "update10" ] ), ( err, item )->
+						throw err if err
 
-					should.exist( item.id )
-					should.exist( item.name )
-					should.not.exist( item.users )
+						should.exist( item.id )
+						should.exist( item.name )
+						should.not.exist( item.users )
 
-					item.name.should.equal( _D[ "insert1" ].name )
+						item.name.should.equal( _D[ "insert1" ].name )
 
-					_G[ "insert1" ] = item
+						_G[ "insert1" ] = item
 
-					done()
+						done()
+						return
 					return
+				, 250 )
 				return
 
-			it "delete test item", ( done )->
-				
-				table.del _G[ "insert1" ].id, ( err )->
-					throw err if err
-					_ItemCount--
-					done()
+			it "create the test item2 with empty array as set", ( done )->
+				_.delay( =>
+					table.set _.clone( _D[ "insert2" ] ), ( err, item )->
+						throw err if err
+
+						should.exist( item.id )
+						should.exist( item.name )
+						should.not.exist( item.users )
+
+						item.name.should.equal( _D[ "insert2" ].name )
+
+						_ItemCount++
+						_G[ "insert2" ] = item
+
+						done()
+						return
 					return
+				, 250 )
+				return
+
+			it "create the test item3 with empty array as set", ( done )->
+				_.delay( =>
+					table.set _.clone( _D[ "insert3" ] ), ( err, item )->
+						throw err if err
+
+						should.exist( item.id )
+						should.exist( item.name )
+						should.not.exist( item.users )
+
+						item.name.should.equal( _D[ "insert3" ].name )
+
+						_ItemCount++
+						_G[ "insert3" ] = item
+
+						done()
+						return
+					return
+				, 250 )
+				return
+
+			it "delete test item. ( Has delay of 250ms to prevent from throughput error )", ( done )->
+				_.delay( =>
+					table.del _G[ "insert1" ].id, ( err )->
+						throw err if err
+						_ItemCount--
+						done()
+						return
+					return
+				, 250 )
+				return
+
+			it "delete test item 2", ( done )->
+				_.delay( =>
+					table.del _G[ "insert2" ].id, ( err )->
+						throw err if err
+						_ItemCount--
+						done()
+						return
+					return
+				, 250 )
+				return
+
+			it "delete test item 3", ( done )->
+				_.delay( =>
+					table.del _G[ "insert3" ].id, ( err )->
+						throw err if err
+						_ItemCount--
+						done()
+						return
+					return
+				, 250 )
 				return
 
 		return			

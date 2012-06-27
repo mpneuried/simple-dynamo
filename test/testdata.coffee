@@ -8,6 +8,7 @@ module.exports =
 		"update1": { name: "First employee", additional: "" }
 		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35, additional: null }
 		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35 }
+		"update3_2": { name: "Third employee Conditional Update", email: "third@employee.com", age: null }
 
 	"Todos": 
 		"insert1": { id: "123456", title: "First", done: 0 }
@@ -15,6 +16,8 @@ module.exports =
 
 	"Rooms": 
 		"insert1": { name: "First", users: [ "a" ] }
+		"insert2": { name: "Second", users: [] }
+		"insert3": { name: "Third", users: null }
 		"update1": { name: "First", users: [ "a", "b" ] }
 		"update2": { name: "First", users: { "$add": [ "b", "c" ] } }
 		"update3": { name: "First", users: { "$rem": [ "a" ] } }
@@ -67,6 +70,7 @@ module.exports =
 		"update1": { name: "First employee", additional: "" }
 		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35, additional: null }
 		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35 }
+		"update3_2": { name: "Third employee Conditional Update", email: "third@employee.com", age: null }
 
 	"C_Todos": 
 		"insert1": { id: "tds12345678911", title: "First", done: 0 }
@@ -75,6 +79,8 @@ module.exports =
 
 	"C_Rooms": 
 		"insert1": { name: "C_First", users: [ "a" ] }
+		"insert2": { name: "C_Second", users: [] }
+		"insert3": { name: "C_Third", users: null }
 		"update1": { name: "C_First", users: [ "a", "b" ] }
 		"update2": { name: "C_First", users: { "$add": [ "b", "c" ] } }
 		"update3": { name: "C_First", users: { "$rem": [ "a" ] } }

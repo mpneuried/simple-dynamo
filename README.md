@@ -553,14 +553,19 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
-### 0.3.3
+### 0.3.5
 
-- bug fix set a attribute to `null` will lead to a removal. For a string attribute a set to an empty string will also lead to a attribute removal
+- fixed #5: fixed bug for set empty array on create
+- fixed #9: fixed bug for null on fliedtype `number
+
+### 0.3.4
+
+- fixed #7: bug fix set a attribute to `null` will lead to a removal. For a string attribute a set to an empty string will also lead to a attribute removal
 
 ### 0.3.3
 
 - bug fix set handling by passing empty arrays
-- added `defaultfields` option to table-config.
+- feature #6: added `defaultfields` option to table-config.
 
 ### 0.3.2
 

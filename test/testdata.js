@@ -41,6 +41,11 @@
         name: "Third employee Conditional Update",
         email: "third@employee.com",
         age: 35
+      },
+      "update3_2": {
+        name: "Third employee Conditional Update",
+        email: "third@employee.com",
+        age: null
       }
     },
     "Todos": {
@@ -59,6 +64,14 @@
       "insert1": {
         name: "First",
         users: ["a"]
+      },
+      "insert2": {
+        name: "Second",
+        users: []
+      },
+      "insert3": {
+        name: "Third",
+        users: null
       },
       "update1": {
         name: "First",
@@ -262,6 +275,11 @@
         name: "Third employee Conditional Update",
         email: "third@employee.com",
         age: 35
+      },
+      "update3_2": {
+        name: "Third employee Conditional Update",
+        email: "third@employee.com",
+        age: null
       }
     },
     "C_Todos": {
@@ -280,6 +298,14 @@
       "insert1": {
         name: "C_First",
         users: ["a"]
+      },
+      "insert2": {
+        name: "C_Second",
+        users: []
+      },
+      "insert3": {
+        name: "C_Third",
+        users: null
       },
       "update1": {
         name: "C_First",

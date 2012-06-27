@@ -279,6 +279,22 @@
             done();
           });
         });
+        it("update third item with `number` field = `null`", function(done) {
+          var _opt;
+          _opt = {
+            fields: ["id", "name", "age"]
+          };
+          tableG.set(_G["insert3"][_C.hashKey], _D["update3_2"], _opt, function(err, item) {
+            should.not.exist(err);
+            should.exist(item.id);
+            should.exist(item.name);
+            should.not.exist(item.age);
+            item.id.should.equal(_G["insert3"].id);
+            item.name.should.equal(_G["insert3"].name);
+            _G["insert3"] = item;
+            done();
+          });
+        });
         it("delete the second inserted item", function(done) {
           tableG.del(_G["insert2"][_C.hashKey], function(err) {
             if (err) {
@@ -814,54 +830,124 @@
           });
         });
         it("test $add action with empty array", function(done) {
-          table.set(_G["insert1"].id, _.clone(_D["update8"]), function(err, item) {
-            if (err) {
-              throw err;
-            }
-            should.exist(item.id);
-            should.exist(item.name);
-            should.exist(item.users);
-            item.name.should.equal(_D["insert1"].name);
-            item.users.should.eql(["y"]);
-            _G["insert1"] = item;
-            done();
-          });
+          var _this = this;
+          _.delay(function() {
+            table.set(_G["insert1"].id, _.clone(_D["update8"]), function(err, item) {
+              if (err) {
+                throw err;
+              }
+              should.exist(item.id);
+              should.exist(item.name);
+              should.exist(item.users);
+              item.name.should.equal(_D["insert1"].name);
+              item.users.should.eql(["y"]);
+              _G["insert1"] = item;
+              done();
+            });
+          }, 250);
         });
         it("test $rem action with empty array", function(done) {
-          table.set(_G["insert1"].id, _.clone(_D["update9"]), function(err, item) {
-            if (err) {
-              throw err;
-            }
-            should.exist(item.id);
-            should.exist(item.name);
-            should.exist(item.users);
-            item.name.should.equal(_D["insert1"].name);
-            item.users.should.eql(["y"]);
-            _G["insert1"] = item;
-            done();
-          });
+          var _this = this;
+          _.delay(function() {
+            table.set(_G["insert1"].id, _.clone(_D["update9"]), function(err, item) {
+              if (err) {
+                throw err;
+              }
+              should.exist(item.id);
+              should.exist(item.name);
+              should.exist(item.users);
+              item.name.should.equal(_D["insert1"].name);
+              item.users.should.eql(["y"]);
+              _G["insert1"] = item;
+              done();
+            });
+          }, 250);
         });
         it("update set to null should remove attribute", function(done) {
-          table.set(_G["insert1"].id, _.clone(_D["update10"]), function(err, item) {
-            if (err) {
-              throw err;
-            }
-            should.exist(item.id);
-            should.exist(item.name);
-            should.not.exist(item.users);
-            item.name.should.equal(_D["insert1"].name);
-            _G["insert1"] = item;
-            done();
-          });
+          var _this = this;
+          _.delay(function() {
+            table.set(_G["insert1"].id, _.clone(_D["update10"]), function(err, item) {
+              if (err) {
+                throw err;
+              }
+              should.exist(item.id);
+              should.exist(item.name);
+              should.not.exist(item.users);
+              item.name.should.equal(_D["insert1"].name);
+              _G["insert1"] = item;
+              done();
+            });
+          }, 250);
         });
-        return it("delete test item", function(done) {
-          table.del(_G["insert1"].id, function(err) {
-            if (err) {
-              throw err;
-            }
-            _ItemCount--;
-            done();
-          });
+        it("create the test item2 with empty array as set", function(done) {
+          var _this = this;
+          _.delay(function() {
+            table.set(_.clone(_D["insert2"]), function(err, item) {
+              if (err) {
+                throw err;
+              }
+              should.exist(item.id);
+              should.exist(item.name);
+              should.not.exist(item.users);
+              item.name.should.equal(_D["insert2"].name);
+              _ItemCount++;
+              _G["insert2"] = item;
+              done();
+            });
+          }, 250);
+        });
+        it("create the test item3 with empty array as set", function(done) {
+          var _this = this;
+          _.delay(function() {
+            table.set(_.clone(_D["insert3"]), function(err, item) {
+              if (err) {
+                throw err;
+              }
+              should.exist(item.id);
+              should.exist(item.name);
+              should.not.exist(item.users);
+              item.name.should.equal(_D["insert3"].name);
+              _ItemCount++;
+              _G["insert3"] = item;
+              done();
+            });
+          }, 250);
+        });
+        it("delete test item. ( Has delay of 250ms to prevent from throughput error )", function(done) {
+          var _this = this;
+          _.delay(function() {
+            table.del(_G["insert1"].id, function(err) {
+              if (err) {
+                throw err;
+              }
+              _ItemCount--;
+              done();
+            });
+          }, 250);
+        });
+        it("delete test item 2", function(done) {
+          var _this = this;
+          _.delay(function() {
+            table.del(_G["insert2"].id, function(err) {
+              if (err) {
+                throw err;
+              }
+              _ItemCount--;
+              done();
+            });
+          }, 250);
+        });
+        return it("delete test item 3", function(done) {
+          var _this = this;
+          _.delay(function() {
+            table.del(_G["insert3"].id, function(err) {
+              if (err) {
+                throw err;
+              }
+              _ItemCount--;
+              done();
+            });
+          }, 250);
         });
       });
     });
