@@ -585,6 +585,8 @@ To provide a API to react on different events you can listen to a bunch of event
 ## Todos
 
 - handle `throughput exceed`with a retry
+- better check of the given config-data
+- check for node.js 0.8.0 
 
 ## Work in progress
 
