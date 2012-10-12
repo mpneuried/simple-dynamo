@@ -555,6 +555,10 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.3.6
+
+- Added conditionals to delete
+
 ### 0.3.5
 
 - fixed #5: fixed bug for set empty array on create

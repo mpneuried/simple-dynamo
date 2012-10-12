@@ -223,6 +223,11 @@ module.exports = class DynamoTable extends EventEmitter
 		return
 
 	del: ( _id, cb )=>
+		[ args..., cb ] = arguments
+		[ _id, options ] = args
+
+		options or= {}
+		
 		if @_isExistend( cb )
 			query = @_deFixHash( _id ) 
 
@@ -230,7 +235,7 @@ module.exports = class DynamoTable extends EventEmitter
 				@_error( cb, query )
 			else
 			
-				@_del query, ( err, success )=>
+				@_del query, options, ( err, success )=>
 					if err
 						@_error( cb, err )
 					else
@@ -434,10 +439,14 @@ module.exports = class DynamoTable extends EventEmitter
 
 		return
 
-	_del: ( query, cb )=>
-		_item = @external.get( query )
+	_del: ( query, options, cb )=>
+		_del = @external.get( query )
 
-		_item.destroy returnvalues: true, ( err, item )=>
+		_del.returning( "ALL_OLD" )
+
+		_del = @_checkSetOptions( "update", _del, {}, options )
+
+		_del.destroy ( err, item )=>
 			if err
 				cb err
 			else
