@@ -555,6 +555,10 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.3.7
+
+- Bugfix for correct handling of `BETWEEN` predicates
+
 ### 0.3.6
 
 - Added conditionals to delete

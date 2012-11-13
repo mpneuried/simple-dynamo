@@ -253,17 +253,17 @@ class Attributes
 		_vt = typeof value
 
 		switch type
-			when "string"
+			when "string", "S"
 				if _vt not in [ "string", "undefined" ]
 					value.toString()
 				else
 					value
-			when "number"
+			when "number", "N"
 				if _vt not in [ "number", "undefined" ]
 					parseFloat( value, 10 )
 				else
 					value
-			when "boolean"
+			when "boolean", "B"
 				if _vt not in [ "boolean", "undefined" ]
 					Boolean( value )
 				else
