@@ -8,6 +8,9 @@ It provides a absolute simple JSON-CRUD Interface without any knowledge of Dynam
 
 A special feature is the *combineTableTo* options for tables. It adds the ability to combine multiple models into one Dymamo-table, but use them separately in your application. So you have to pay only one throughput capacity.
 
+**Need a offline version of Dynamo?**
+[mysql-dynamo](http://mpneuried.github.io/mysql-dynamo/) is a solution to use the same interface of this `simple-dynamo` module with a MySQL database.
+
 *Written in coffee-script*
 
 **INFO: all examples are written in coffee-script**
