@@ -39,34 +39,43 @@
         <ul></ul>
       </nav>
       <section>
-        <h1>simple-dynamo</h1>
+        <h1>
+<a name="simple-dynamo" class="anchor" href="#simple-dynamo"><span class="octicon octicon-link"></span></a>simple-dynamo</h1>
 
 <p>is a abstraction layer to Jed Schmidt's <a href="https://github.com/jed/dynamo">dynamo</a> Node.js driver.</p>
 
-<p><a href="http://travis-ci.org/mpneuried/simple-dynamo"><img src="https://secure.travis-ci.org/mpneuried/simple-dynamo.png?branch=master" alt="Build Status"></a></p>
+<p><a href="http://travis-ci.org/mpneuried/simple-dynamo"><img src="https://secure.travis-ci.org/mpneuried/simple-dynamo.png?branch=master" alt="Build Status"></a>
+<em>Travis currently fails because the credentials are no longer vaild</em> </p>
 
 <p>It provides a absolute simple JSON-CRUD Interface without any knowledge of Dynamos specialties.</p>
 
 <p>A special feature is the <em>combineTableTo</em> options for tables. It adds the ability to combine multiple models into one Dymamo-table, but use them separately in your application. So you have to pay only one throughput capacity.</p>
 
+<p><strong>Need a offline version of Dynamo?</strong>
+<a href="http://mpneuried.github.io/mysql-dynamo/">mysql-dynamo</a> is a solution to use the same interface of this <code>simple-dynamo</code> module with a MySQL database.</p>
+
 <p><em>Written in coffee-script</em></p>
 
 <p><strong>INFO: all examples are written in coffee-script</strong></p>
 
-<h1>Install</h1>
+<h1>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h1>
 
 <pre><code>  npm install simple-dynamo
 </code></pre>
 
-<h1>Connection and Table</h1>
+<h1>
+<a name="connection-and-table" class="anchor" href="#connection-and-table"><span class="octicon octicon-link"></span></a>Connection and Table</h1>
 
-<h2>Initialize</h2>
+<h2>
+<a name="initialize" class="anchor" href="#initialize"><span class="octicon octicon-link"></span></a>Initialize</h2>
 
 <p>first you have to define the connection and table attributes and get an instance of the simple-dynamo interface.</p>
 
 <p><code>new SimpleDynamo( connectionSettings, tables )</code></p>
 
-<h3>connection Settings</h3>
+<h3>
+<a name="connection-settings" class="anchor" href="#connection-settings"><span class="octicon octicon-link"></span></a>connection Settings</h3>
 
 <ul>
 <li>
@@ -75,7 +84,8 @@
 <strong>secretAccessKey</strong> : Your AWS secret access key</li>
 <li>
 <strong>region</strong> : The region your Dynamo-Tables will be placed </li>
-</ul><h3>table Definition</h3>
+</ul><h3>
+<a name="table-definition" class="anchor" href="#table-definition"><span class="octicon octicon-link"></span></a>table Definition</h3>
 
 <p>An Object of Tables.<br>
 The key you are using will be the key to get the table object.</p>
@@ -154,8 +164,7 @@ Validate the attribute to be required. <em>( Not implemented yet ! )</em>
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="c1"># import module</span>
+<div class="highlight"><pre><span class="c1"># import module</span>
 <span class="nv">SimpleDynamo = </span><span class="nx">require</span> <span class="s">"simple-dynamo"</span>
 
 <span class="c1"># define connection settings</span>
@@ -181,7 +190,7 @@ Validate the attribute to be required. <em>( Not implemented yet ! )</em>
         <span class="nv">rangeKey: </span><span class="s">"_t"</span>
         <span class="nv">rangeKeyType: </span><span class="s">"N"</span>
 
-        <span class="nv">fnCreateHash: </span><span class="p">(</span> <span class="nx">attributes</span><span class="p">,</span> <span class="nx">cb</span> <span class="p">)</span><span class="o">=&gt;</span>
+        <span class="nv">fnCreateHash: </span><span class="nf">( attributes, cb )=&gt;</span>
             <span class="nx">cb</span><span class="p">(</span> <span class="nx">attributes</span><span class="p">.</span><span class="nx">user_id</span> <span class="p">)</span>
             <span class="k">return</span>
 
@@ -215,11 +224,10 @@ Validate the attribute to be required. <em>( Not implemented yet ! )</em>
 <span class="c1"># connect</span>
 <span class="nx">sdManager</span><span class="p">.</span><span class="nx">connect</span> <span class="nf">( err )-&gt;</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"simple-dynamo ready to use"</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>First connect to AWS</h2>
+<h2>
+<a name="first-connect-to-aws" class="anchor" href="#first-connect-to-aws"><span class="octicon octicon-link"></span></a>First connect to AWS</h2>
 
 <p>The module has to know about the existing AWS tables so you have to read them first.<br><strong>If you do not run <code>.connect()</code> the module will throw an error everytime</strong> </p>
 
@@ -232,17 +240,15 @@ Callback method. Single arguments on return is the error object. On success the 
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nx">sdManager</span><span class="p">.</span><span class="nx">connect</span> <span class="nf">( err )-&gt;</span>
+<div class="highlight"><pre><span class="nx">sdManager</span><span class="p">.</span><span class="nx">connect</span> <span class="nf">( err )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"connect ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"simple-dynamo ready to use"</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>Create all tables</h2>
+<h2>
+<a name="create-all-tables" class="anchor" href="#create-all-tables"><span class="octicon octicon-link"></span></a>Create all tables</h2>
 
 <p>to create all missing tables just call <code>.createAll()</code>.</p>
 
@@ -259,17 +265,15 @@ Callback method. Single arguments on return is the error object. On success the 
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nx">sdManager</span><span class="p">.</span><span class="nx">generateAll</span> <span class="nf">( err )-&gt;</span>
+<div class="highlight"><pre><span class="nx">sdManager</span><span class="p">.</span><span class="nx">generateAll</span> <span class="nf">( err )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"connect ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"simple-dynamo ready to use"</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>Get a table instance</h2>
+<h2>
+<a name="get-a-table-instance" class="anchor" href="#get-a-table-instance"><span class="octicon octicon-link"></span></a>Get a table instance</h2>
 
 <p>To interact with a table you have to retrieve the table object. It's defined in the table-definitions</p>
 
@@ -281,13 +285,11 @@ Callback method. Single arguments on return is the error object. On success the 
 Method to retrieve the instance of a table object.</li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nv">tblTodos = </span><span class="nx">sdManager</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s">'Todos'</span> <span class="p">)</span>
-</pre>
-</div>
+<div class="highlight"><pre><span class="nv">tblTodos = </span><span class="nx">sdManager</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s">'Todos'</span> <span class="p">)</span>
+</pre></div>
 
-
-<h2>Destroy a table</h2>
+<h2>
+<a name="destroy-a-table" class="anchor" href="#destroy-a-table"><span class="octicon octicon-link"></span></a>Destroy a table</h2>
 
 <p>destroy table at AWS. This removes the table from AWS will all the data</p>
 
@@ -304,19 +306,18 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">del</span> <span class="nf">( err )-&gt;</span>
+<div class="highlight"><pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">del</span> <span class="nf">( err )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"destroy ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"table destroyed"</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
+<h1>
+<a name="item-handling" class="anchor" href="#item-handling"><span class="octicon octicon-link"></span></a>Item handling</h1>
 
-<h1>Item handling</h1>
-
-<h2>Write a new item (INSERT)</h2>
+<h2>
+<a name="write-a-new-item-insert" class="anchor" href="#write-a-new-item-insert"><span class="octicon octicon-link"></span></a>Write a new item (INSERT)</h2>
 
 <p>Create a new item in a select table. You can also add some attributes not defined in the table-definition, which will be saved, too.</p>
 
@@ -346,8 +347,7 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nv">data = </span>
+<div class="highlight"><pre><span class="nv">data = </span>
     <span class="nv">title: </span><span class="s">"My First Todo"</span>
     <span class="nv">done: </span><span class="mi">0</span>
     <span class="nv">aditionalData: </span><span class="s">"Foo bar"</span>
@@ -357,11 +357,10 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"insert ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todo</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>Get a item (GET)</h2>
+<h2>
+<a name="get-a-item-get" class="anchor" href="#get-a-item-get"><span class="octicon octicon-link"></span></a>Get a item (GET)</h2>
 
 <p>Get an existing element by id/hash</p>
 
@@ -393,27 +392,22 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">get</span> <span class="s">'myTodoId'</span><span class="p">,</span> <span class="nf">( err, todo )-&gt;</span>
+<div class="highlight"><pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">get</span> <span class="s">'myTodoId'</span><span class="p">,</span> <span class="nf">( err, todo )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"get ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todo</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<div class="highlight">
-<pre><span class="nx">tblRangeTodos</span><span class="p">.</span><span class="nx">get</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="s">'myRange'</span> <span class="p">],</span> <span class="nf">( err, todo )-&gt;</span>
+<div class="highlight"><pre><span class="nx">tblRangeTodos</span><span class="p">.</span><span class="nx">get</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="s">'myRange'</span> <span class="p">],</span> <span class="nf">( err, todo )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"get ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todo</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>Get many items (MGET)</h2>
+<h2>
+<a name="get-many-items-mget" class="anchor" href="#get-many-items-mget"><span class="octicon octicon-link"></span></a>Get many items (MGET)</h2>
 
 <p>Get an many existing elements by id/hash in one request</p>
 
@@ -441,27 +435,22 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">mget</span> <span class="p">[</span> <span class="s">'myTodoIdA'</span><span class="p">,</span> <span class="s">'myTodoIdB'</span> <span class="p">],</span> <span class="nf">( err, todos )-&gt;</span>
+<div class="highlight"><pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">mget</span> <span class="p">[</span> <span class="s">'myTodoIdA'</span><span class="p">,</span> <span class="s">'myTodoIdB'</span> <span class="p">],</span> <span class="nf">( err, todos )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"get ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todos</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<div class="highlight">
-<pre><span class="nx">tblRangeTodos</span><span class="p">.</span><span class="nx">mget</span> <span class="p">[</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span> <span class="p">],</span> <span class="nf">( err, todos )-&gt;</span>
+<div class="highlight"><pre><span class="nx">tblRangeTodos</span><span class="p">.</span><span class="nx">mget</span> <span class="p">[</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="mi">1</span> <span class="p">],</span> <span class="p">[</span> <span class="s">'myHash'</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span> <span class="p">],</span> <span class="nf">( err, todos )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"get ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todos</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>Update an item (UPDATE)</h2>
+<h2>
+<a name="update-an-item-update" class="anchor" href="#update-an-item-update"><span class="octicon octicon-link"></span></a>Update an item (UPDATE)</h2>
 
 <p>update an existing item.<br>
 To remove a attribute you have to set the value to <code>null</code></p>
@@ -500,8 +489,7 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nv">data = </span>
+<div class="highlight"><pre><span class="nv">data = </span>
     <span class="nv">title: </span><span class="s">"My First Update"</span>
     <span class="nv">done: </span><span class="mi">1</span>
 
@@ -511,11 +499,10 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
     <span class="k">else</span>
         <span class="c1"># note. the key 'aditionalData' will be gone</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">todo</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>Delete an item (DELETE)</h2>
+<h2>
+<a name="delete-an-item-delete" class="anchor" href="#delete-an-item-delete"><span class="octicon octicon-link"></span></a>Delete an item (DELETE)</h2>
 
 <p>delete an item by id/hash</p>
 
@@ -535,17 +522,15 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">del</span> <span class="s">'myTodoId'</span><span class="p">,</span> <span class="nf">( err )-&gt;</span>
+<div class="highlight"><pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">del</span> <span class="s">'myTodoId'</span><span class="p">,</span> <span class="nf">( err )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"delete ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"delete done"</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>Query a table (FIND)</h2>
+<h2>
+<a name="query-a-table-find" class="anchor" href="#query-a-table-find"><span class="octicon octicon-link"></span></a>Query a table (FIND)</h2>
 
 <p>run a query on a table. The module automatically trys to do a <code>Dynamo.db scan</code> or <code>Dynamo query</code>.</p>
 
@@ -585,20 +570,16 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
 </li>
 </ul><p><strong>Example</strong></p>
 
-<div class="highlight">
-<pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">find</span> <span class="p">{},</span> <span class="nf">( err, items )-&gt;</span>
+<div class="highlight"><pre><span class="nx">tblTodos</span><span class="p">.</span><span class="nx">find</span> <span class="p">{},</span> <span class="nf">( err, items )-&gt;</span>
     <span class="k">if</span> <span class="nx">err</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"delete ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"all existend items"</span><span class="p">,</span> <span class="nx">items</span> <span class="p">)</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p><strong>Advanced Examples</strong></p>
 
-<div class="highlight">
-<pre><span class="c1"># create a query to read all todos from last hour</span>
+<div class="highlight"><pre><span class="c1"># create a query to read all todos from last hour</span>
 <span class="nv">_query = </span>
     <span class="nv">id: </span><span class="p">{</span> <span class="s">"!="</span><span class="o">:</span> <span class="kc">null</span> <span class="p">}</span>
     <span class="nv">_t: </span><span class="p">{</span> <span class="s">"&lt;"</span><span class="o">:</span> <span class="p">(</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
@@ -608,12 +589,9 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"delete ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"found items"</span><span class="p">,</span> <span class="nx">items</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<div class="highlight">
-<pre><span class="c1"># read 4 todos from last hour beginning starting with a known id</span>
+<div class="highlight"><pre><span class="c1"># read 4 todos from last hour beginning starting with a known id</span>
 <span class="nv">_query = </span>
     <span class="nv">id: </span><span class="p">{</span> <span class="s">"!="</span><span class="o">:</span> <span class="kc">null</span> <span class="p">}</span>
     <span class="nv">_t: </span><span class="p">{</span> <span class="s">"&lt;"</span><span class="o">:</span> <span class="p">(</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span> <span class="mi">1000</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
@@ -627,11 +605,10 @@ Callback method.<br><strong>Method Arguments</strong><br><ul>
         <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="s">"delete ERROR"</span><span class="p">,</span> <span class="nx">err</span> <span class="p">)</span>
     <span class="k">else</span>
         <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="s">"4 found items"</span><span class="p">,</span> <span class="nx">items</span> <span class="p">)</span>
-</pre>
-</div>
+</pre></div>
 
-
-<h2>Working with sets</h2>
+<h2>
+<a name="working-with-sets" class="anchor" href="#working-with-sets"><span class="octicon octicon-link"></span></a>Working with sets</h2>
 
 <p>Dynamo has the ability to work with sets. That means you can save a Set of Strings as an Array.<br>
 During an update you have the ability to add or remove a single value out of the set. Or you can reset the whole set.  </p>
@@ -661,8 +638,7 @@ During an update you have the ability to add or remove a single value out of the
 </li>
 </ul><p><strong>Examples</strong></p>
 
-<div class="highlight">
-<pre><span class="c1"># Source "key: [ "a", "b", "c" ]"</span>
+<div class="highlight"><pre><span class="c1"># Source "key: [ "a", "b", "c" ]"</span>
 
 <span class="nv">data = </span>
     <span class="nv">key: </span><span class="p">[</span> <span class="s">"x"</span><span class="p">,</span> <span class="s">"y"</span><span class="p">,</span> <span class="s">"z"</span> <span class="p">]</span>
@@ -670,9 +646,7 @@ During an update you have the ability to add or remove a single value out of the
 <span class="nx">tblSets</span><span class="p">.</span><span class="nx">set</span> <span class="s">'mySetsId'</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nf">( err, setData )-&gt;</span>
     <span class="c1"># Result "key: [ "x", "y", "z" ]"</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">setData</span> <span class="p">)</span>
-</pre>
-</div>
-
+</pre></div>
 
 <pre><code># Source "key: [ "a", "b", "c" ]"
 
@@ -704,11 +678,13 @@ tblSets.set 'mySetsId', data, ( err, setData )-&gt;
     console.log( setData )
 </code></pre>
 
-<h1>Events</h1>
+<h1>
+<a name="events" class="anchor" href="#events"><span class="octicon octicon-link"></span></a>Events</h1>
 
 <p>To provide a API to react on different events you can listen to a bunch of events.</p>
 
-<h2>Manager Events</h2>
+<h2>
+<a name="manager-events" class="anchor" href="#manager-events"><span class="octicon octicon-link"></span></a>Manager Events</h2>
 
 <ul>
 <li>
@@ -729,7 +705,8 @@ tblSets.set 'mySetsId', data, ( err, setData )-&gt;
 <li>
 <code>all-tables-generated</code>: Fired after all tables are generated.<br>
 </li>
-</ul><h2>Table Events</h2>
+</ul><h2>
+<a name="table-events" class="anchor" href="#table-events"><span class="octicon octicon-link"></span></a>Table Events</h2>
 
 <ul>
 <li>
@@ -775,32 +752,49 @@ tblSets.set 'mySetsId', data, ( err, setData )-&gt;
 <strong>item_old</strong>: the item before the delete</li>
 </ul>
 </li>
-</ul><h2>Changelogs</h2>
+</ul><h2>
+<a name="changelogs" class="anchor" href="#changelogs"><span class="octicon octicon-link"></span></a>Changelogs</h2>
 
-<h3>0.3.5</h3>
+<h3>
+<a name="037" class="anchor" href="#037"><span class="octicon octicon-link"></span></a>0.3.7</h3>
+
+<ul>
+<li>Bugfix for correct handling of <code>BETWEEN</code> predicates</li>
+</ul><h3>
+<a name="036" class="anchor" href="#036"><span class="octicon octicon-link"></span></a>0.3.6</h3>
+
+<ul>
+<li>Added conditionals to delete</li>
+</ul><h3>
+<a name="035" class="anchor" href="#035"><span class="octicon octicon-link"></span></a>0.3.5</h3>
 
 <ul>
 <li>fixed #5: fixed bug for set empty array on create</li>
 <li>fixed #9: fixed bug for null on fliedtype `number</li>
-</ul><h3>0.3.4</h3>
+</ul><h3>
+<a name="034" class="anchor" href="#034"><span class="octicon octicon-link"></span></a>0.3.4</h3>
 
 <ul>
 <li>fixed #7: bug fix set a attribute to <code>null</code> will lead to a removal. For a string attribute a set to an empty string will also lead to a attribute removal</li>
-</ul><h3>0.3.3</h3>
+</ul><h3>
+<a name="033" class="anchor" href="#033"><span class="octicon octicon-link"></span></a>0.3.3</h3>
 
 <ul>
 <li>bug fix set handling by passing empty arrays</li>
 <li>feature #6: added <code>defaultfields</code> option to table-config.</li>
-</ul><h3>0.3.2</h3>
+</ul><h3>
+<a name="032" class="anchor" href="#032"><span class="octicon octicon-link"></span></a>0.3.2</h3>
 
 <ul>
 <li>added implicit set detection for <code>update</code> by testing for a object with one of the keys <code>$add</code>, <code>$rem</code> and <code>$reset</code> </li>
-</ul><h3>0.3.1</h3>
+</ul><h3>
+<a name="031" class="anchor" href="#031"><span class="octicon octicon-link"></span></a>0.3.1</h3>
 
 <ul>
 <li>bugfix <code>option.forward</code> on <code>find.()</code>
 </li>
-</ul><h3>0.3.0</h3>
+</ul><h3>
+<a name="030" class="anchor" href="#030"><span class="octicon octicon-link"></span></a>0.3.0</h3>
 
 <ul>
 <li>changed update behavior. Now there is not get before set.</li>
@@ -808,17 +802,20 @@ tblSets.set 'mySetsId', data, ( err, setData )-&gt;
 <li>added option <code>conditionals</code> to update. So you can define conditions to your update</li>
 <li>removed option <code>removeMissing</code>. Now you have to set a attribute to <code>null</code> to remove it.</li>
 <li>added <code>forward</code> option to <code>.find()</code> to define the direction of a range query</li>
-</ul><h2>Todos</h2>
+</ul><h2>
+<a name="todos" class="anchor" href="#todos"><span class="octicon octicon-link"></span></a>Todos</h2>
 
 <ul>
 <li>handle <code>throughput exceed</code>with a retry</li>
 <li>better check of the given config-data</li>
 <li>check for node.js 0.8.0 </li>
-</ul><h3>Work in progress</h3>
+</ul><h3>
+<a name="work-in-progress" class="anchor" href="#work-in-progress"><span class="octicon octicon-link"></span></a>Work in progress</h3>
 
 <p><code>simple-dynamo</code> is work in progress. Your ideas, suggestions etc. are very welcome.</p>
 
-<h2>License</h2>
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>(The MIT License)</p>
 
@@ -848,7 +845,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
