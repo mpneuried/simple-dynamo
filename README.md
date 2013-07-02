@@ -559,6 +559,10 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.3.8
+
+- Added option to be able to increment a numeric by `n`. To use this you can set the field e.g. to `table_key: { "$add": 1 }`
+
 ### 0.3.7
 
 - Bugfix for correct handling of `BETWEEN` predicates

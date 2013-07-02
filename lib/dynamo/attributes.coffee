@@ -105,7 +105,7 @@ class Attributes
 								@table._error( cb, error )
 								return
 						when "number"
-							if ( not isCreate and val isnt null ) and not _.isNumber( val )
+							if ( not isCreate and val isnt null ) and not ( _.isNumber( val ) or val[ "$add" ]? )
 								error = new Error
 								error.name = "validation-error"
 								error.message = "Wrong type of `#{ key }`. Please pass this key as a `Number`"
@@ -160,6 +160,9 @@ class Attributes
 							_vA = ( if _.isArray( _v[ "$reset" ] ) then _v[ "$reset" ] else [ _v[ "$reset" ] ] )
 							@put( _k, _vA ) if _vA.length
 
+				else if ( _attr?.type is "number" and  _v[ "$add" ]? )
+					console.log "add", _k, _v[ "$add" ]
+					@add( _k, _v[ "$add" ] ) if _v?[ "$add" ]?
 				else 
 					if _attr?.type is "string" and _.isString( _v ) and not _v.length
 						# remove attribute if type is a empty string
