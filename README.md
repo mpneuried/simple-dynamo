@@ -559,6 +559,11 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+
+### 0.3.10
+
+- toString radix bugfix
+
 ### 0.3.9
 
 - removed log output

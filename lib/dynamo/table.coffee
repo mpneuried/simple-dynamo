@@ -586,7 +586,7 @@ module.exports = class DynamoTable extends EventEmitter
 			when "N"
 				parseFloat( val, 10 )
 			when "S"
-				val.toString( val ) if val
+				val.toString( 10 ) if val
 			else
 				val
 
