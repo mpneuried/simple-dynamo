@@ -256,12 +256,12 @@ class Attributes
 
 		switch type
 			when "string", "S"
-				if _vt not in [ "string", "undefined" ]
+				if value? and _vt not in [ "string", "undefined" ]
 					value.toString()
 				else
 					value
 			when "number", "N"
-				if _vt not in [ "number", "undefined" ]
+				if value? and _vt not in [ "number", "undefined" ]
 					parseFloat( value, 10 )
 				else
 					value
