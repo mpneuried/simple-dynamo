@@ -559,6 +559,10 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.4.0
+
+- added newer dynamo datatypes: BOOL, NULL, M, L, B
+
 ### 0.3.11
 
 - correct handling of a string predicate with filter for `null`

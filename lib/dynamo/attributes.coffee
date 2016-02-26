@@ -1,17 +1,26 @@
 _ = require "underscore"
 utils = require "./utils"
+type = require( "type-detect" )
 
-Helper = 
+Helper =
 	val2dyn: ( value )->
 
-		switch typeof value
+		switch type( value )
 			when "number" then return {N: String(value)}
 			when "string" then return {S: value}
+			when "object" then return {M: Helper.obj2dyn( value )}
+			when "boolean" then return {BOOL: value.toString() }
+			when "buffer" then return {B: value.toString('base64') }
 
-		if value
-			switch typeof value[0]
+		if value?[ 0 ]?
+			switch type( value[ 0 ] )
 				when "number" then return {NN: value.map(String)}
 				when "string" then return {SS: value}
+				else
+					_vs = []
+					for _v in value
+						_vs.push( Helper.val2dyn( _v ) )
+					return {L:_vs}
 
 		throw new Error("Invalid key value type.")
 
@@ -23,6 +32,14 @@ Helper =
 			when "S", "SS" then value
 			when "N" then Number(value)
 			when "NS" then value.map(Number)
+			when "BOOL", "NULL" then Boolean( value )
+			when "B" then new Buffer(value, "base64")
+			when "M" then Helper.dyn2obj( value )
+			when "L"
+				_vs = []
+				for _v in value
+					_vs.push( Helper.dyn2val( _v ) )
+				return _vs
 			else
 				throw new Error("Invalid data type: " + name)
 
@@ -39,6 +56,8 @@ Helper =
 			obj[key] = Helper.dyn2val( data[ key ] )
 
 		obj
+
+
 
 class Attributes
 	constructor: ( @raw, @table )->
@@ -277,4 +296,3 @@ class Attributes
 exports = module.exports = Attributes
 
 exports.helper = Helper
-
