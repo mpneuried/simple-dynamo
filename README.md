@@ -559,6 +559,10 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.3.12
+
+- bugfix in `mp-dynamo` that is now a new npm module to load the dependency via npm and get rid of the github dep.
+
 ### 0.3.11
 
 - correct handling of a string predicate with filter for `null`
