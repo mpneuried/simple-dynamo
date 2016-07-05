@@ -378,7 +378,7 @@ module.exports = class DynamoTable extends EventEmitter
 		_self = @
 
 		_batch = @mng.client.get ->
-			if options?.fields?.length
+			if options?.fields?.length and _.isArray( options.fields )
 				@get _self.tableName, mquery, options.fields
 			else
 				@get _self.tableName, mquery
@@ -669,4 +669,3 @@ ERRORMAPPING =
 	"com.amazonaws.dynamodb.v20111205#ConditionalCheckFailedException":
 		name: "conditional-check-failed"
 		message: "This is not a valid request. It doesnt match the conditions or you tried to insert a existing hash."
-

@@ -559,6 +559,10 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.4.3
+
+- fixed usage of fields= `all` for mget + recompile with newer coffe version
+
 ### 0.4.2
 
 - fixed usage of new npm module `mp-dynamo`
