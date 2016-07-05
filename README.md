@@ -559,6 +559,14 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.4.1
+
+- bugfix in `mp-dynamo` that is now a new npm module to load the dependency via npm and get rid of the github dep.
+
+### 0.3.12
+
+- fixed git link to use the old dynamo api version
+
 ### 0.4.0
 
 - added newer dynamo datatypes: BOOL, NULL, M, L, B
