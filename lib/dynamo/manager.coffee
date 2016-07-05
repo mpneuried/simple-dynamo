@@ -1,4 +1,4 @@
-dynamo = require "dynamo"
+dynamo = require "mp-dynamo"
 
 EventEmitter = require( "events" ).EventEmitter
 Table = require "./table"
