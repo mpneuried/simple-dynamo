@@ -1,31 +1,39 @@
 {
 	"name": "simple-dynamo",
-	"description": "Abstraction of Amazons Dynamo DB Service. Usage of AWS DynamoDB incredible simple.",
-	"keywords": [ "dynamo", "aws", "amazon", "model", "abstraction", "db", "simple" ],
-	"tags": [ "dynamo", "aws", "amazon", "model", "abstraction", "db", "simple" ],
-	"version": "0.4.3",
-	"author": "mpneuried",
-	"main": "./lib/dynamo/index.js",
-	"homepage": "http://mpneuried.github.com/simple-dynamo/",
-	"engines": {
-		"node": ">=0.6.0"
+	"version": "1.0.0",
+	"description": "Simple ORM module to handle AWS DynamoDB data",
+	"keywords": [],
+	"homepage": "https://github.com/mpneuried/simple-dynamo",
+	"bugs": "https://github.com/mpneuried/simple-dynamo/issues",
+	"author": {
+		"name": "mpneuried",
+		"email": "",
+		"url": "https://github.com/mpneuried/simple-dynamo"
+	},
+	"main": "./index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mpneuried/simple-dynamo.git"
 	},
 	"scripts": {
-		"start": "node rest-test.js",
-		"pretest": "mocha ./test/setup.js",
-		"test": "mocha ./test/tests/*.js",
-		"posttest": "mocha ./test/teardown.js"
+		"test": "mocha -r should -t 3000 test/main.js"
 	},
+	"engines": {
+		"node": ">= &gt;= 4.0.0"
+	},
+	"license": "MIT",
 	"dependencies": {
-		"underscore": "1.3.3",
-		"node-uuid": "1.3.3",
-		"type-detect": "1.0.x",
-		"mp-dynamo": "0.2.x"
+		
+		"mpbasic": "0.0.x"
 	},
 	"devDependencies": {
-		"optimist": "0.3.1",
-		"express": "2.5.9",
-		"mocha": "*",
-		"should": "*"
+		"should": "8.x",
+		"grunt": "1.x",
+		"grunt-contrib-watch": "1.0",
+		"grunt-contrib-coffee": "1.x",
+		"grunt-contrib-clean": "1.x",
+		"grunt-include-replace": "*",
+		"grunt-mocha-cli": "2.x",
+		"grunt-newer": "1.x"
 	}
 }

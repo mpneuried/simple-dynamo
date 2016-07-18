@@ -1,5 +1,17 @@
+os:
+  - linux
 language: node_js
+
 node_js:
-  - 0.6
-# These are IAM credentials limited to Travis-CI, so don't get any funny ideas wiseguy.
-env: AWS_ACCESS_KEY_ID=AKIAJXHTJZLQCOPQERMQ AWS_SECRET_ACCESS_KEY=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
+  - 0.10
+  - 0.12
+  - 4.0
+  - 4.1
+  - 4.2
+  - 5.0
+  - 5.1
+  - 5.2
+  - iojs
+before_script:
+  - "npm install -g mocha grunt-cli"
+  - "grunt build"
