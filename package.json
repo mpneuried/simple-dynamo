@@ -14,7 +14,7 @@
 		"start": "export $(cat config.env | grep -v '^#' | xargs) && node rest-test.js",
 		"pretest": "export $(cat config.env | grep -v '^#' | xargs) && mocha ./test/setup.js",
 		"test": "export $(cat config.env | grep -v '^#' | xargs) && mocha ./test/tests/*.js",
-		"posttest": "xport $(cat config.env | grep -v '^#' | xargs) && mocha ./test/teardown.js",
+		"posttest": "export $(cat config.env | grep -v '^#' | xargs) && mocha ./test/teardown.js",
 		"clean-js": "find ./lib -name \"*.js\" | xargs rm; find ./test -name \"*.js\" | xargs rm; rm -f *.js",
 		"compile": "find . -name \"*.coffee\" | xargs coffee -c",
 		"watch": "find . -name \"*.coffee\" | xargs coffee -cw"

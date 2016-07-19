@@ -12,4 +12,4 @@ deploy.json
 *.env*
 coffeelint.json
 *.coffee
-resr-test.js
+rest-test.js

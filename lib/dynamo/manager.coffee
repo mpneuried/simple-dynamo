@@ -18,11 +18,11 @@ module.exports = class DynamoManager extends EventEmitter
 		overwriteExistingHash: false
 
 	constructor: ( @options, @tableSettings )->
-		@options.scanWarning or= true
+		if not @options.scanWarning?
+			@options.scanWarning = true
 		@options.tablePrefix or= ""
-
 		@_tables = {}
-
+		
 		@__defineGetter__ "fetched", =>
 			return @_fetched
 
