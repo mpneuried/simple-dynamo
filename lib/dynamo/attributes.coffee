@@ -179,7 +179,7 @@ class Attributes
 							_vA = ( if _.isArray( _v[ "$reset" ] ) then _v[ "$reset" ] else [ _v[ "$reset" ] ] )
 							@put( _k, _vA ) if _vA.length
 
-				else if ( _attr?.type is "number" and  _v[ "$add" ]? )
+				else if ( _attr?.type is "number" and _v?[ "$add" ]? )
 					@add( _k, _v[ "$add" ] ) if _v?[ "$add" ]?
 				else 
 					if _attr?.type is "string" and _.isString( _v ) and not _v.length

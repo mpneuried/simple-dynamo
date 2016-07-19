@@ -6,15 +6,16 @@ should = require('should')
 # read replace AWS keys from environment
 _CONFIG.aws.accessKeyId = process.env.AWS_AKI if process.env?.AWS_AKI?
 _CONFIG.aws.secretAccessKey = process.env.AWS_SAK if process.env?.AWS_SAK?
+_CONFIG.aws.region = process.env.AWS_REGION if process.env?.AWS_REGION?
+_CONFIG.aws.tablePrefix = process.env.AWS_TABLEPREFIX if process.env?.AWS_TABLEPREFIX?
+
 
 # import module to test
 SimpleDynamo = require "../../lib/dynamo/"
 _utils = SimpleDynamo.utils
-
 dynDB = null
 dynDBDummy = null
 _tables = []
-
 
 describe "----- Manager Tests -----", ->
 	before ( done )->

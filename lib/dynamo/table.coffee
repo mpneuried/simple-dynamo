@@ -666,6 +666,6 @@ module.exports = class DynamoTable extends EventEmitter
 
 
 ERRORMAPPING = 
-	"com.amazonaws.dynamodb.v20111205#ConditionalCheckFailedException":
+	"com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException":
 		name: "conditional-check-failed"
 		message: "This is not a valid request. It doesnt match the conditions or you tried to insert a existing hash."

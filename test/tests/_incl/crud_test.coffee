@@ -6,8 +6,10 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 	should = require('should')
 
 	# read replace AWS keys from environment
-	_CONFIG.aws.accessKeyId = process.env.AWS_ACCESS_KEY_ID if process.env?.AWS_ACCESS_KEY_ID?
-	_CONFIG.aws.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY if process.env?.AWS_SECRET_ACCESS_KEY?
+	_CONFIG.aws.accessKeyId = process.env.AWS_AKI if process.env?.AWS_AKI?
+	_CONFIG.aws.secretAccessKey = process.env.AWS_SAK if process.env?.AWS_SAK?
+	_CONFIG.aws.region = process.env.AWS_REGION if process.env?.AWS_REGION?
+	_CONFIG.aws.tablePrefix = process.env.AWS_TABLEPREFIX if process.env?.AWS_TABLEPREFIX?
 
 	# import module to test
 	SimpleDynamo = require "../../../lib/dynamo/"
@@ -184,7 +186,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					items.should.have.length( 2 )
 					aPred = [ _G[ "insert1" ], _G[ "insert2" ] ]
 					for item in items
-						aPred.should.includeEql( item )
+						aPred.should.containEql( item )
 
 					done()
 					return
@@ -197,7 +199,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					items.should.have.length( 2 )
 					aPred = [ _G[ "insert1" ], _G[ "insert2" ] ]
 					for item in items
-						aPred.should.includeEql( item )
+						aPred.should.containEql( item )
 
 					done()
 					return
@@ -509,7 +511,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					items.should.have.length( 2 )
 					aPred = [ _G1[ 1 ], _G1[ 5 ] ]
 					for item in items
-						aPred.should.includeEql( item )
+						aPred.should.containEql( item )
 
 					done()
 					return
@@ -522,7 +524,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					items.should.have.length( 2 )
 					aPred = [ _G2[ 1 ], _G2[ 5 ] ]
 					for item in items
-						aPred.should.includeEql( item )
+						aPred.should.containEql( item )
 
 					done()
 					return

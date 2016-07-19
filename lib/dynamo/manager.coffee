@@ -13,13 +13,13 @@ module.exports = class DynamoManager extends EventEmitter
 
 	defaults:
 		throughput:
-			read: 10
-			write: 5
+			read: 3
+			write: 3
 		overwriteExistingHash: false
 
 	constructor: ( @options, @tableSettings )->
-
 		@options.scanWarning or= true
+		@options.tablePrefix or= ""
 
 		@_tables = {}
 
@@ -89,6 +89,17 @@ module.exports = class DynamoManager extends EventEmitter
 				# destroy existing table
 				if @_tables[ tableName ]?
 					delete @_tables[ tableName ]
+					
+				if @options.tablePrefix?.length
+					if table.combineTableTo?.length
+						if table.combineTableTo.indexOf( @options.tablePrefix ) < 0
+							table.combineTableTo = @options.tablePrefix + table.combineTableTo
+						else
+							
+					else
+						if table.name.indexOf( @options.tablePrefix ) < 0
+							table.name = @options.tablePrefix + table.name
+				
 				
 				# generate a Table Object for each table-element out of @tableSettings
 				_ext = if table.combineTableTo?.length then @client.tables[ table.combineTableTo ] else @client.tables[ table.name ]

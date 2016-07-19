@@ -35,6 +35,7 @@ first you have to define the connection and table attributes and get an instance
 - **accessKeyId** : Your AWS access key id
 - **secretAccessKey** : Your AWS secret access key
 - **region** : The region your Dynamo-Tables will be placed 
+- **tablePrefix** : A general table prefix which will be added before all real dynamo table names
 
 ###table Definition
 
@@ -94,6 +95,7 @@ connectionSettings =
 	accessKeyId: "-"
 	secretAccessKey: "-"
 	region: "eu-west-1"
+	tablePrefix: null
 	
 # define tables
 tables = 
@@ -558,6 +560,13 @@ To provide a API to react on different events you can listen to a bunch of event
 	- **item_old**: the item before the delete
 	
 ## Changelogs
+
+### 0.5.0
+
+- fixed create table
+- smaller bug fixes due to switch to newer api version by 0.4.x
+- optimized published files and dev env
+- fixed tests
 
 ### 0.4.3
 

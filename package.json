@@ -3,7 +3,7 @@
 	"description": "Abstraction of Amazons Dynamo DB Service. Usage of AWS DynamoDB incredible simple.",
 	"keywords": [ "dynamo", "aws", "amazon", "model", "abstraction", "db", "simple" ],
 	"tags": [ "dynamo", "aws", "amazon", "model", "abstraction", "db", "simple" ],
-	"version": "0.4.3",
+	"version": "0.5.0",
 	"author": "mpneuried",
 	"main": "./lib/dynamo/index.js",
 	"homepage": "http://mpneuried.github.com/simple-dynamo/",
@@ -11,10 +11,13 @@
 		"node": ">=0.6.0"
 	},
 	"scripts": {
-		"start": "node rest-test.js",
-		"pretest": "mocha ./test/setup.js",
-		"test": "mocha ./test/tests/*.js",
-		"posttest": "mocha ./test/teardown.js"
+		"start": "export $(cat config.env | grep -v '^#' | xargs) && node rest-test.js",
+		"pretest": "export $(cat config.env | grep -v '^#' | xargs) && mocha ./test/setup.js",
+		"test": "export $(cat config.env | grep -v '^#' | xargs) && mocha ./test/tests/*.js",
+		"posttest": "xport $(cat config.env | grep -v '^#' | xargs) && mocha ./test/teardown.js",
+		"clean-js": "find ./lib -name \"*.js\" | xargs rm; find ./test -name \"*.js\" | xargs rm; rm -f *.js",
+		"compile": "find . -name \"*.coffee\" | xargs coffee -c",
+		"watch": "find . -name \"*.coffee\" | xargs coffee -cw"
 	},
 	"dependencies": {
 		"underscore": "1.3.3",
