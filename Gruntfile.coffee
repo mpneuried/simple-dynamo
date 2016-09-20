@@ -44,10 +44,11 @@ module.exports = ( grunt ) ->
 				slow: 3
 
 			main:
-				src: [ "test/main.js" ]
+				#src: [ "test/setup.js", "test/tests/*.js", "test/teardown.js" ]
+				src: [ "test/setup.js", "test/teardown.js" ]
 				options:
 					env:
-						severity_simple-dynamo: "info"
+						severity_simple_dynamo: "info"
 		
 		
 

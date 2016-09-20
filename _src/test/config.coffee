@@ -1,7 +1,13 @@
+_CONFIG.aws.accessKeyId = process.env.AWS_AKI if process.env?.AWS_AKI?
+_CONFIG.aws.secretAccessKey = process.env.AWS_SAK if process.env?.AWS_SAK?
+_CONFIG.aws.region = process.env.AWS_REGION if process.env?.AWS_REGION?
+_CONFIG.aws.tablePrefix = process.env.AWS_TABLEPREFIX if process.env?.AWS_TABLEPREFIX?
+
+
 module.exports  =
 	aws:
-		accessKeyId: "-"
-		secretAccessKey: "-"
+		accessKeyId: process.env.AWS_AKI or "-"
+		secretAccessKey: process.env.AWS_SAK or "-"
 		region: "eu-west-1"
 		scanWarning: false
 
@@ -9,7 +15,7 @@ module.exports  =
 		deleteTablesOnEnd: true
 		singleCreateTableTest: "Employees"
 
-	tables: 
+	tables:
 		"Employees":
 			name: "test_employees"
 			hashKey:  "id"
@@ -162,7 +168,7 @@ module.exports  =
 			]
 
 
-	dummyTables: 
+	dummyTables:
 		"Dummy":
 			name: "dummy"
 			hashKey:  "id"

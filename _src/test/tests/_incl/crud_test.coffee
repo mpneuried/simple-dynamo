@@ -1,20 +1,25 @@
+async = require("async")
+should = require('should')#
+
+_clone = require( "lodash/clone" )
+_throttle = require( "lodash/throttle" )
+_bind = require( "lodash/bind" )
+_delay = require( "lodash/delay" )
+
+# read configuration
+_CONFIG = require "../../config"
+
+# read replace AWS keys from environment
+_CONFIG.aws.accessKeyId = process.env.AWS_AKI if process.env?.AWS_AKI?
+_CONFIG.aws.secretAccessKey = process.env.AWS_SAK if process.env?.AWS_SAK?
+_CONFIG.aws.region = process.env.AWS_REGION if process.env?.AWS_REGION?
+_CONFIG.aws.tablePrefix = process.env.AWS_TABLEPREFIX if process.env?.AWS_TABLEPREFIX?
+
+# import module to test
+SimpleDynamo = require "../../../."
+_DATA = require "../../testdata"
+
 module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTable2, _setTable )->
-
-	# read configuration
-	_CONFIG = require "../../config.js"
-	_ = require("underscore")
-	should = require('should')
-
-	# read replace AWS keys from environment
-	_CONFIG.aws.accessKeyId = process.env.AWS_ACCESS_KEY_ID if process.env?.AWS_ACCESS_KEY_ID?
-	_CONFIG.aws.secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY if process.env?.AWS_SECRET_ACCESS_KEY?
-
-	# import module to test
-	SimpleDynamo = require "../../../lib/dynamo/"
-	_utils = SimpleDynamo.utils
-
-
-	_DATA = require "../../testdata.js"
 
 	dynDB = null
 	tableG = null
@@ -71,7 +76,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "create an item", ( done )->
-				tableG.set _.clone( _D[ "insert1" ] ), ( err, item )->
+				tableG.set _clone( _D[ "insert1" ] ), ( err, item )->
 					throw err if err
 					should.exist( item.id )
 					should.exist( item.name )
@@ -111,7 +116,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "create a second item", ( done )->
 				
-				tableG.set _.clone( _D[ "insert2" ] ), ( err, item )->
+				tableG.set _clone( _D[ "insert2" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -134,7 +139,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "create a third item", ( done )->
 				
-				tableG.set _.clone( _D[ "insert3" ] ), ( err, item )->
+				tableG.set _clone( _D[ "insert3" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -156,7 +161,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			if _basicTable.slice( 0,2 ) is "C_"
 				it "insert a invalid item to combined table", ( done )->
 				
-					tableG.set _.clone( _D[ "insert4" ] ), ( err, item )->
+					tableG.set _clone( _D[ "insert4" ] ), ( err, item )->
 						should.exist( err )
 						err.name.should.equal( "combined-hash-invalid" )
 
@@ -267,9 +272,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "update third item with successfull conditonal", ( done )->
 
-				_opt = 
+				_opt =
 					fields: [ "id", "name", "age" ]
-					conditionals: 
+					conditionals:
 						"age": { "==": 78 }
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
@@ -293,9 +298,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "update third item with failing conditonal", ( done )->
 
-				_opt = 
+				_opt =
 					fields: [ "id", "name", "age" ]
-					conditionals: 
+					conditionals:
 						"age": { "==": 123 }
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
@@ -308,7 +313,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "update third item with `number` field = `null`", ( done )->
 
-				_opt = 
+				_opt =
 					fields: [ "id", "name", "age" ]
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3_2" ], _opt, ( err, item )->
@@ -375,7 +380,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "create item", ( done )->
 				
-				table.set _.clone( _D[ "insert1" ] ), ( err, item )->
+				table.set _clone( _D[ "insert1" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -456,10 +461,10 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "insert #{ _D1.inserts.length } items to range list of table 1", ( done )->
 				aFns = []
 				for insert in _D1.inserts
-					_throtteldSet = _.throttle( table1.set, 250 )
-					aFns.push _.bind( ( insert, cba )->
+					_throtteldSet = _throttle( table1.set, 250 )
+					aFns.push _bind( ( insert, cba )->
 						tbl = @
-						_throtteldSet _.clone( insert ), ( err, item )->
+						_throtteldSet _clone( insert ), ( err, item )->
 							throw err if err
 							if tbl.isCombinedTable
 								item.id.should.equal( tbl.name + tbl.combinedHashDelimiter + insert.user )
@@ -472,18 +477,18 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 							_G1.push( item )
 							cba( item )
 
-					, table1, insert ) 
+					, table1, insert )
 
-				_utils.runSeries aFns, ( err )->
+				async.series aFns, ( err )->
 					done()
 
 			it "insert #{ _D2.inserts.length } items to range list of table 2", ( done )->
 				aFns = []
 				for insert in _D2.inserts
-					_throtteldSet = _.throttle( table2.set, 250 )
-					aFns.push _.bind( ( insert, cba )->
+					_throtteldSet = _throttle( table2.set, 250 )
+					aFns.push _bind( ( insert, cba )->
 						tbl = @
-						_throtteldSet _.clone( insert ), ( err, item )->
+						_throtteldSet _clone( insert ), ( err, item )->
 							throw err if err
 							if tbl.isCombinedTable
 								item.id.should.equal( tbl.name + tbl.combinedHashDelimiter + insert.user )
@@ -496,9 +501,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 							_G2.push( item )
 							cba( item )
 
-					, table2, insert ) 
+					, table2, insert )
 
-				_utils.runSeries aFns, ( err )->
+				async.series aFns, ( err )->
 					done()
 
 
@@ -530,11 +535,11 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "get a range of table 1", ( done )->
 				if _logTable1.slice( 0,2 ) is "C_"
-					_q = 
+					_q =
 						id: { "==": "#{ _C1.name }A" }
 						t: { ">=": 5 }
 				else
-					_q = 
+					_q =
 						id: { "==": "A" }
 						t: { ">=": 5 }
 				
@@ -547,11 +552,11 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "get a range of table 2", ( done )->
 				if _logTable2.slice( 0,2 ) is "C_"
-					_q = 
+					_q =
 						id: { "==": "#{ _C2.name }D" }
 						t: { ">=": 3 }
 				else
-					_q = 
+					_q =
 						id: { "==": "D" }
 						t: { ">=": 3 }
 
@@ -573,15 +578,15 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "should return only 3 items", (done) ->
 				_count = 3
 				if _logTable2.slice( 0,2 ) is "C_"
-					_q = 
+					_q =
 						id: { "==": "#{ _C2.name }A" }
 						t: { ">=": 0 }
 				else
-					_q = 
+					_q =
 						id: { "==": "A" }
 						t: { ">=": 0 }
 
-				_o = 
+				_o =
 					limit: _count
 
 				table2.find _q, _o, ( err, items )->
@@ -596,14 +601,14 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "should return the next 3 by `startAt`", (done) ->
 				_count = 3
 				if _logTable2.slice( 0,2 ) is "C_"
-					_q = 
+					_q =
 						id: { "==": "#{ _C2.name }A" }
 						t: { ">=": 0 }
 				else
-					_q = 
+					_q =
 						id: { "==": "A" }
 						t: { ">=": 0 }
-				_o = 
+				_o =
 					limit: _count
 
 				_c = [ pre_last.id, pre_last.t ]
@@ -621,29 +626,29 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "delete whole data from table 1", ( done )->
 				aFns = []
 				for item in _G1
-					_throtteldDel = _.throttle( table1.del, 250 )
-					aFns.push _.bind( ( item, cba )->
+					_throtteldDel = _throttle( table1.del, 250 )
+					aFns.push _bind( ( item, cba )->
 						_throtteldDel [ item.id, item.t ], ( err )->
 							throw err if err
 							_ItemCount1--
 							cba()
 					, table1, item )
 
-				_utils.runSeries aFns, ( err )->
+				async.series aFns, ( err )->
 					done()
 
 			it "delete whole data from table 2", ( done )->
 				aFns = []
 				for item in _G2
-					_throtteldDel = _.throttle( table2.del, 250 )
-					aFns.push _.bind( ( item, cba )->
+					_throtteldDel = _throttle( table2.del, 250 )
+					aFns.push _bind( ( item, cba )->
 						_throtteldDel [ item.id, item.t ], ( err )->
 							throw err if err
 							_ItemCount2--
 							cba()
 					, table2, item )
 
-				_utils.runSeries aFns, ( err )->
+				async.series aFns, ( err )->
 					done()
 
 			it "check for empty table 1", ( done )->
@@ -681,7 +686,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "create the test item", ( done )->
 				
-				table.set _.clone( _D[ "insert1" ] ), ( err, item )->
+				table.set _clone( _D[ "insert1" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -701,7 +706,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "test raw reset", ( done )->
 				
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update1" ] ), ( err, item )->
+				table.set _G[ "insert1" ].id, _clone( _D[ "update1" ] ), ( err, item )->
 					throw err if err
 					should.exist( item.id )
 					should.exist( item.name )
@@ -718,7 +723,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "test $add action", ( done )->
 				
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update2" ] ), ( err, item )->
+				table.set _G[ "insert1" ].id, _clone( _D[ "update2" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -736,7 +741,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 
 			it "test $rem action", ( done )->
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update3" ] ), ( err, item )->
+				table.set _G[ "insert1" ].id, _clone( _D[ "update3" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -754,7 +759,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "test $reset action", ( done )->
 				
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update4" ] ), ( err, item )->
+				table.set _G[ "insert1" ].id, _clone( _D[ "update4" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -772,7 +777,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "test $add action with string", ( done )->
 				
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update5" ] ), ( err, item )->
+				table.set _G[ "insert1" ].id, _clone( _D[ "update5" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -790,7 +795,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "test $rem action with string", ( done )->
 				
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update6" ] ), ( err, item )->
+				table.set _G[ "insert1" ].id, _clone( _D[ "update6" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -808,7 +813,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "test $reset action with string", ( done )->
 				
-				table.set _G[ "insert1" ].id, _.clone( _D[ "update7" ] ), ( err, item )->
+				table.set _G[ "insert1" ].id, _clone( _D[ "update7" ] ), ( err, item )->
 					throw err if err
 
 					should.exist( item.id )
@@ -825,8 +830,8 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "test $add action with empty array", ( done )->
-				_.delay( =>
-					table.set _G[ "insert1" ].id, _.clone( _D[ "update8" ] ), ( err, item )->
+				_delay( ->
+					table.set _G[ "insert1" ].id, _clone( _D[ "update8" ] ), ( err, item )->
 						throw err if err
 
 						should.exist( item.id )
@@ -845,8 +850,8 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "test $rem action with empty array", ( done )->
-				_.delay( =>
-					table.set _G[ "insert1" ].id, _.clone( _D[ "update9" ] ), ( err, item )->
+				_delay( ->
+					table.set _G[ "insert1" ].id, _clone( _D[ "update9" ] ), ( err, item )->
 						throw err if err
 
 						should.exist( item.id )
@@ -865,8 +870,8 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "update set to null should remove attribute", ( done )->
-				_.delay( =>
-					table.set _G[ "insert1" ].id, _.clone( _D[ "update10" ] ), ( err, item )->
+				_delay( ->
+					table.set _G[ "insert1" ].id, _clone( _D[ "update10" ] ), ( err, item )->
 						throw err if err
 
 						should.exist( item.id )
@@ -884,8 +889,8 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "create the test item2 with empty array as set", ( done )->
-				_.delay( =>
-					table.set _.clone( _D[ "insert2" ] ), ( err, item )->
+				_delay( ->
+					table.set _clone( _D[ "insert2" ] ), ( err, item )->
 						throw err if err
 
 						should.exist( item.id )
@@ -904,8 +909,8 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "create the test item3 with empty array as set", ( done )->
-				_.delay( =>
-					table.set _.clone( _D[ "insert3" ] ), ( err, item )->
+				_delay( ->
+					table.set _clone( _D[ "insert3" ] ), ( err, item )->
 						throw err if err
 
 						should.exist( item.id )
@@ -924,7 +929,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "delete test item. ( Has delay of 250ms to prevent from throughput error )", ( done )->
-				_.delay( =>
+				_delay( ->
 					table.del _G[ "insert1" ].id, ( err )->
 						throw err if err
 						_ItemCount--
@@ -935,7 +940,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "delete test item 2", ( done )->
-				_.delay( =>
+				_delay( ->
 					table.del _G[ "insert2" ].id, ( err )->
 						throw err if err
 						_ItemCount--
@@ -946,7 +951,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				return
 
 			it "delete test item 3", ( done )->
-				_.delay( =>
+				_delay( ->
 					table.del _G[ "insert3" ].id, ( err )->
 						throw err if err
 						_ItemCount--
@@ -956,4 +961,4 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				, 250 )
 				return
 
-		return			
+		return

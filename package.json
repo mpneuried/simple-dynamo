@@ -23,11 +23,13 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		
-		"mpbasic": "0.0.x"
+		"lodash": "4.x",
+		"aws-sdk": "2.4.x",
+		"mpbasic": "0.0.x",
+		"async": "2.0.x"
 	},
 	"devDependencies": {
-		"should": "8.x",
+		"should": "10.x",
 		"grunt": "1.x",
 		"grunt-contrib-watch": "1.0",
 		"grunt-contrib-coffee": "1.x",

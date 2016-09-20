@@ -1,12 +1,16 @@
-_ = require "underscore"
+_all = require( "lodash/all" )
+_isArray = require( "lodash/isArray" )
+_any = require( "lodash/any" )
+_identity = require( "lodash/identity" )
+
 
 module.exports =
 
 	params: ( obj, params )->
-	 	if _.all( params, ( key, idx )-> obj[ key ]? )
-	 		true
-	 	else
-	 		false 
+		if _all( params, ( key, idx )-> obj[ key ]? )
+			true
+		else
+			false
 
 	# simple serial flow controll
 	runSeries: (fns, callback) ->
@@ -44,10 +48,10 @@ module.exports =
 	# check for a single `true` element in an array
 	checkArray: ( ar )->
 
-		if _.isArray( ar )
-			_.any( ar, _.identity )
+		if _isArray( ar )
+			_any( ar, _identity )
 		else
-			_.identity( ar )
+			_identity( ar )
 
 	# *reduce the keys of an object to the keys listed in the `keys array*  
 	# **obj:** { Object } *object to reduce*  
@@ -56,64 +60,3 @@ module.exports =
 		ret = {}
 		ret[ key ] = val for key, val of obj when keys.indexOf( key ) >= 0
 		ret
-	
-	# ## extend
-	#
-	# jquery extend method.
-	#
-	# **Parameters:**
-	#
-	# * `[ deep = false ]` ( Boolean ): Make a deep extend
-	# * `baseobj` ( Object ): The base object
-	# * `extendobj...` ( Object ): The Objects to extend teh base obj
-	# 
-	# **Returns:**
-	#
-	# ( Object ): the extended object
-	# 
-	# **Example:**
-	#
-	#     obj1 = { a: 1, b: { aaaa: { d: 'org' } } }
-	#     obj2 = { c: 1, b: { xxxx: { d: 'org' } } }
-	#     
-	#     utils.extend( obj1, obj2 )
-	#     # { c: 1, a: 1, b: { xxxx: { d: 'org' } } }
-	#
-	#     utils.extend( true, obj1, obj2 )
-	#     # { c: 1, a: 1, b: { xxxx: { d: 'org' }, aaaa: { d: 'org' } } } }
-	#
-	extend: ->
-		target = arguments[0] or {}
-		i = 1
-		length = arguments.length
-		deep = false
-		if typeof target == "boolean"
-			deep = target
-			target = arguments[1] or {}
-			i = 2
-		target = {}	if typeof target != "object" and not typeof target == "function"
-		isArray = (obj) ->
-			(if toString.call(copy) == "[object Array]" then true else false)
-		
-		isPlainObject = (obj) ->
-			return false	if not obj or toString.call(obj) != "[object Object]" or obj.nodeType or obj.setInterval
-			has_own_constructor = hasOwnProperty.call(obj, "constructor")
-			has_is_property_of_method = hasOwnProperty.call(obj.constructor::, "isPrototypeOf")
-			return false	if obj.constructor and not has_own_constructor and not has_is_property_of_method
-			
-			for key of obj
-				last_key = key
-			typeof last_key == "undefined" or hasOwnProperty.call(obj, last_key)
-		
-		while i < length
-			if (options = arguments[i]) != null
-				for name of options
-					src = target[name]
-					copy = options[name]
-					continue	if target == copy
-					if deep and copy and (isPlainObject(copy) or isArray(copy))
-						clone = (if src and (isPlainObject(src) or isArray(src)) then src else (if isArray(copy) then [] else {}))
-						target[name] = utils.extend(deep, clone, copy)
-					else target[name] = copy	if typeof copy != "undefined"
-			i++
-		target

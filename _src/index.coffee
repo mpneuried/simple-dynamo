@@ -1,3 +1,3 @@
 exports.version = "@@version"
 
-module.exports = require( "./lib/main" )
+module.exports = require( "./lib/manager" )

@@ -1,15 +1,15 @@
 # read configuration
-_CONFIG = require "../config.js"
-_ = require("underscore")
+_CONFIG = require "../config"
 should = require('should')
 
 # read replace AWS keys from environment
 _CONFIG.aws.accessKeyId = process.env.AWS_AKI if process.env?.AWS_AKI?
 _CONFIG.aws.secretAccessKey = process.env.AWS_SAK if process.env?.AWS_SAK?
+_CONFIG.aws.region = process.env.AWS_REGION if process.env?.AWS_REGION?
+_CONFIG.aws.tablePrefix = process.env.AWS_TABLEPREFIX if process.env?.AWS_TABLEPREFIX?
 
 # import module to test
-SimpleDynamo = require "../../lib/dynamo/"
-_utils = SimpleDynamo.utils
+SimpleDynamo = require "../../."
 
 dynDB = null
 dynDBDummy = null
@@ -123,7 +123,7 @@ describe "----- Manager Tests -----", ->
 		it "generate ( existend ) table", ( done )->
 
 			_has = dynDB.generate _CONFIG.test.singleCreateTableTest, ( err, created )->
-				throw err if err 
+				throw err if err
 				created.should.be.false
 				done()
 			return
