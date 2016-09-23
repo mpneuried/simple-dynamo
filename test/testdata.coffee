@@ -1,20 +1,20 @@
-module.exports = 
-	"Employees": 
+module.exports =
+	"Employees":
 		"insert1": { id:"1234567890", name: "First employee", email: "first@employee.com", age: 20, additional: "more ... "  }
-		"insert2": { name: "Second employee", email: "second@employee.com", age: 30, boolean: true, additional: "more ... " }
-		"insert3": { name: "Third employee", email: "third@employee.com", age: 78, boolean: false }
+		"insert2": { name: "Second employee", email: "second@employee.com", age: 30, boolean: true, obj: {n:1, s: "a", b: true}, additional: "more ... " }
+		"insert3": { name: "Third employee", email: "third@employee.com", age: 78, boolean: false, obj: {n:1, s: "a", b: false} }
 		"insert4": { id:"9999999", name: "Invalid employee", email: "invalid@employee.com", age: 99 }
 
 		"update1": { name: "First employee", additional: "" }
 		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35, additional: null }
-		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35 }
+		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35, obj: {n:23, s: "foo", b: true} }
 		"update3_2": { name: "Third employee Conditional Update", email: "third@employee.com", age: null }
 
-	"Todos": 
+	"Todos":
 		"insert1": { id: "123456", title: "First", done: 0 }
 		"insert2": { id: "123456", title: "Second", done: 0  }
 
-	"Rooms": 
+	"Rooms":
 		"insert1": { name: "First", users: [ "a" ] }
 		"insert2": { name: "Second", users: [] }
 		"insert3": { name: "Third", users: null }
@@ -29,7 +29,7 @@ module.exports =
 		"update9": { name: "First", users: { "$rem": [] } }
 		"update10": { name: "First", users: null }
 
-	"Logs1": 
+	"Logs1":
 		"inserts": [
 			{ t: 1, title: "1: I", user: "A" }
 			{ t: 2, title: "1: II", user: "A" }
@@ -45,7 +45,7 @@ module.exports =
 			{ t: 12, title: "1: XII", user: "A" }
 		]
 
-	"Logs2": 
+	"Logs2":
 		"inserts": [
 			{ t: 1, title: "2: I", user: "A" }
 			{ t: 2, title: "2: II", user: "A" }
@@ -61,23 +61,23 @@ module.exports =
 			{ t: 12, title: "2: XII", user: "A" }
 		]
 
-	"C_Employees": 
+	"C_Employees":
 		"insert1": { id:"emp1234567890", name: "First employee", email: "first@employee.com", age: 20, additional: "more ... " }
-		"insert2": { name: "Second employee", email: "second@employee.com", age: 30, boolean: true, additional: "more ... " }
-		"insert3": { name: "Third employee", email: "third@employee.com", age: 78, boolean: false }
+		"insert2": { name: "Second employee", email: "second@employee.com", age: 30, boolean: true, obj: {n:1, s: "a", b: true}, additional: "more ... " }
+		"insert3": { name: "Third employee", email: "third@employee.com", age: 78, boolean: false, obj: {n:1, s: "a", b: false} }
 		"insert4": { id:"9999999", name: "Invalid employee", email: "invalid@employee.com", age: 99 }
 
 		"update1": { name: "First employee", additional: "" }
 		"update2": { name: "Second employee Update", email: "second@employee.com", age: 35, additional: null }
-		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35 }
+		"update3": { name: "Third employee Conditional Update", email: "third@employee.com", age: 35, obj: {n:23, s: "foo", b: true} }
 		"update3_2": { name: "Third employee Conditional Update", email: "third@employee.com", age: null }
 
-	"C_Todos": 
+	"C_Todos":
 		"insert1": { id: "tds12345678911", title: "First", done: 0 }
 
 		"insert2": { id: "tds12345678911", title: "Second", done: 0  }
 
-	"C_Rooms": 
+	"C_Rooms":
 		"insert1": { name: "C_First", users: [ "a" ] }
 		"insert2": { name: "C_Second", users: [] }
 		"insert3": { name: "C_Third", users: null }
@@ -92,7 +92,7 @@ module.exports =
 		"update9": { name: "C_First", users: { "$rem": [] } }
 		"update10": { name: "C_First", users: null }
 
-	"C_Logs1": 
+	"C_Logs1":
 		"inserts": [
 			{ t: 1, title: "1: I", user: "A" }
 			{ t: 2, title: "1: II", user: "A" }
@@ -108,7 +108,7 @@ module.exports =
 			{ t: 12, title: "1: XII", user: "A" }
 		]
 
-	"C_Logs2": 
+	"C_Logs2":
 		"inserts": [
 			{ t: 1, title: "2: I", user: "A" }
 			{ t: 2, title: "2: II", user: "A" }

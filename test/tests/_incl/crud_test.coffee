@@ -79,14 +79,14 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					should.exist( item.name )
 					should.exist( item.email )
 					should.exist( item.age )
+					
+					_ItemCount++
+					_G[ "insert1" ] = item
 
 					item.id.should.equal( _D[ "insert1" ].id )
 					item.name.should.equal( _D[ "insert1" ].name )
 					item.email.should.equal( _D[ "insert1" ].email )
 					item.age.should.equal( _D[ "insert1" ].age )
-
-					_ItemCount++
-					_G[ "insert1" ] = item
 
 					done()
 					return
@@ -121,15 +121,17 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					should.exist( item.email )
 					should.exist( item.age )
 					should.exist( item.additional )
+					
+					_ItemCount++
+					_G[ "insert2" ] = item
 
 					item.name.should.equal( _D[ "insert2" ].name )
 					item.email.should.equal( _D[ "insert2" ].email )
 					item.age.should.equal( _D[ "insert2" ].age )
 					item.boolean.should.equal( _D[ "insert2" ].boolean )
 					item.additional.should.equal( _D[ "insert2" ].additional )
+					item.obj.should.eql( _D[ "insert2" ].obj )
 
-					_ItemCount++
-					_G[ "insert2" ] = item
 
 					done()
 					return
@@ -144,14 +146,15 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					should.exist( item.name )
 					should.exist( item.email )
 					should.exist( item.age )
+					
+					_ItemCount++
+					_G[ "insert3" ] = item
 
 					item.name.should.equal( _D[ "insert3" ].name )
 					item.email.should.equal( _D[ "insert3" ].email )
 					item.boolean.should.equal( _D[ "insert3" ].boolean )
 					item.age.should.equal( _D[ "insert3" ].age )
-
-					_ItemCount++
-					_G[ "insert3" ] = item
+					item.obj.should.eql( _D[ "insert3" ].obj )
 
 					done()
 					return
@@ -250,20 +253,22 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			
 
 			it "update second item", ( done )->
-				tableG.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], fields: [ "id", "name", "age" ], ( err, item )->
+				tableG.set _G[ "insert2" ][ _C.hashKey ], _D[ "update2" ], fields: [ "id", "name", "age", "obj" ], ( err, item )->
 					throw err if err
+					
+					_G[ "insert2" ] = item
 
 					should.exist( item.id )
 					should.exist( item.name )
 					should.exist( item.age )
+					should.exist( item.obj )
 					should.not.exist( item.email )
 					should.not.exist( item.additional )
 
 					item.id.should.equal( _G[ "insert2" ].id )
 					item.name.should.equal( _D[ "update2" ].name )
 					item.age.should.equal( _D[ "update2" ].age )
-
-					_G[ "insert2" ] = item
+					item.obj.should.eql( _D[ "insert2" ].obj )
 
 					done()
 					return
@@ -272,24 +277,26 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "update third item with successfull conditonal", ( done )->
 
 				_opt =
-					fields: [ "id", "name", "age" ]
+					fields: [ "id", "name", "age", "obj" ]
 					conditionals:
 						"age": { "==": 78 }
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
 					throw err if err
-
+					
+					_G[ "insert3" ] = item
+					
 					should.exist( item.id )
 					should.exist( item.name )
 					should.exist( item.age )
+					should.exist( item.obj )
 					should.not.exist( item.email )
 					should.not.exist( item.additional )
 
 					item.id.should.equal( _G[ "insert3" ].id )
 					item.name.should.equal( _D[ "update3" ].name )
 					item.age.should.equal( _D[ "update3" ].age )
-
-					_G[ "insert3" ] = item
+					item.obj.should.eql( _D[ "update3" ].obj )
 
 					done()
 					return

@@ -9,7 +9,7 @@ module.exports  =
 		deleteTablesOnEnd: true
 		singleCreateTableTest: "Employees"
 
-	tables: 
+	tables:
 		"Employees":
 			name: "test_employees"
 			hashKey:  "id"
@@ -18,6 +18,7 @@ module.exports  =
 				{ key: "name", type: "string", required: true }
 				{ key: "email", type: "string" }
 				{ key: "age", type: "number" }
+				{ key: "obj", type: "map" }
 				{ key: "additional", type: "string" }
 			]
 
@@ -93,6 +94,7 @@ module.exports  =
 				{ key: "name", type: "string", required: true }
 				{ key: "email", type: "string" }
 				{ key: "age", type: "number" }
+				{ key: "obj", type: "object" }
 				{ key: "additional", type: "string" }
 			]
 
@@ -162,7 +164,7 @@ module.exports  =
 			]
 
 
-	dummyTables: 
+	dummyTables:
 		"Dummy":
 			name: "dummy"
 			hashKey:  "id"

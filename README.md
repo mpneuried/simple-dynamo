@@ -561,6 +561,10 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.6.2
+
+- fixed handling ob map/opbject types
+
 ### 0.6.1
 
 - fixed parsing of boolean values

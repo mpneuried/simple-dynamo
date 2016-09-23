@@ -8,7 +8,7 @@ Helper =
 		switch type( value )
 			when "number" then return {N: String(value)}
 			when "string" then return {S: value}
-			when "object" then return {M: Helper.obj2dyn( value )}
+			when "object", "map" then return {M: Helper.obj2dyn( value )}
 			when "boolean" then return {BOOL: value.toString() }
 			when "buffer" then return {B: value.toString('base64') }
 
@@ -120,6 +120,13 @@ class Attributes
 				if _attr
 					# check the type of the attributes
 					switch _attr.type
+						when "map", "object"
+							if ( not isCreate and val isnt null ) and not _.isObject( val )
+								error = new Error
+								error.name = "validation-error"
+								error.message = "Wrong type of `#{ key }`. Please pass this key as a `Object`"
+								@table._error( cb, error )
+								return
 						when "string"
 							if ( not isCreate and val isnt null ) and not _.isString( val )
 								error = new Error
