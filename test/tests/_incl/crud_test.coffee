@@ -125,6 +125,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 					item.name.should.equal( _D[ "insert2" ].name )
 					item.email.should.equal( _D[ "insert2" ].email )
 					item.age.should.equal( _D[ "insert2" ].age )
+					item.boolean.should.equal( _D[ "insert2" ].boolean )
 					item.additional.should.equal( _D[ "insert2" ].additional )
 
 					_ItemCount++
@@ -146,6 +147,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 					item.name.should.equal( _D[ "insert3" ].name )
 					item.email.should.equal( _D[ "insert3" ].email )
+					item.boolean.should.equal( _D[ "insert3" ].boolean )
 					item.age.should.equal( _D[ "insert3" ].age )
 
 					_ItemCount++
@@ -269,9 +271,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "update third item with successfull conditonal", ( done )->
 
-				_opt = 
+				_opt =
 					fields: [ "id", "name", "age" ]
-					conditionals: 
+					conditionals:
 						"age": { "==": 78 }
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
@@ -295,9 +297,9 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "update third item with failing conditonal", ( done )->
 
-				_opt = 
+				_opt =
 					fields: [ "id", "name", "age" ]
-					conditionals: 
+					conditionals:
 						"age": { "==": 123 }
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3" ], _opt, ( err, item )->
@@ -310,7 +312,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "update third item with `number` field = `null`", ( done )->
 
-				_opt = 
+				_opt =
 					fields: [ "id", "name", "age" ]
 
 				tableG.set _G[ "insert3" ][ _C.hashKey ], _D[ "update3_2" ], _opt, ( err, item )->
@@ -474,7 +476,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 							_G1.push( item )
 							cba( item )
 
-					, table1, insert ) 
+					, table1, insert )
 
 				_utils.runSeries aFns, ( err )->
 					done()
@@ -498,7 +500,7 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 							_G2.push( item )
 							cba( item )
 
-					, table2, insert ) 
+					, table2, insert )
 
 				_utils.runSeries aFns, ( err )->
 					done()
@@ -532,11 +534,11 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "get a range of table 1", ( done )->
 				if _logTable1.slice( 0,2 ) is "C_"
-					_q = 
+					_q =
 						id: { "==": "#{ _C1.name }A" }
 						t: { ">=": 5 }
 				else
-					_q = 
+					_q =
 						id: { "==": "A" }
 						t: { ">=": 5 }
 				
@@ -549,11 +551,11 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 
 			it "get a range of table 2", ( done )->
 				if _logTable2.slice( 0,2 ) is "C_"
-					_q = 
+					_q =
 						id: { "==": "#{ _C2.name }D" }
 						t: { ">=": 3 }
 				else
-					_q = 
+					_q =
 						id: { "==": "D" }
 						t: { ">=": 3 }
 
@@ -575,15 +577,15 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "should return only 3 items", (done) ->
 				_count = 3
 				if _logTable2.slice( 0,2 ) is "C_"
-					_q = 
+					_q =
 						id: { "==": "#{ _C2.name }A" }
 						t: { ">=": 0 }
 				else
-					_q = 
+					_q =
 						id: { "==": "A" }
 						t: { ">=": 0 }
 
-				_o = 
+				_o =
 					limit: _count
 
 				table2.find _q, _o, ( err, items )->
@@ -598,14 +600,14 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 			it "should return the next 3 by `startAt`", (done) ->
 				_count = 3
 				if _logTable2.slice( 0,2 ) is "C_"
-					_q = 
+					_q =
 						id: { "==": "#{ _C2.name }A" }
 						t: { ">=": 0 }
 				else
-					_q = 
+					_q =
 						id: { "==": "A" }
 						t: { ">=": 0 }
-				_o = 
+				_o =
 					limit: _count
 
 				_c = [ pre_last.id, pre_last.t ]
@@ -958,4 +960,4 @@ module.exports = ( testTitle, _basicTable, _overwriteTable, _logTable1, _logTabl
 				, 250 )
 				return
 
-		return			
+		return

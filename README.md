@@ -561,6 +561,11 @@ To provide a API to react on different events you can listen to a bunch of event
 	
 ## Changelogs
 
+### 0.6.1
+
+- fixed parsing of boolean values
+
+
 ### 0.6.0
 
 - updated mp-dynamo to version 1.0.0 so region `eu-central-1` with signature version 4 should be possible

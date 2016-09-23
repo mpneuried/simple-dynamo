@@ -32,7 +32,11 @@ Helper =
 			when "S", "SS" then value
 			when "N" then Number(value)
 			when "NS" then value.map(Number)
-			when "BOOL", "NULL" then Boolean( value )
+			when "BOOL", "NULL"
+				if( [ "true", "TRUE", "True", "t", "T", "1", "ok", "OK", "yes", "YES", "Yes", true, 1 ].indexOf( value ) >= 0 )
+					return true
+				else
+					return false
 			when "B" then new Buffer(value, "base64")
 			when "M" then Helper.dyn2obj( value )
 			when "L"
@@ -81,7 +85,7 @@ class Attributes
 			@attrs[ _outE.key ] = _outE
 
 		if not @attrs[ _hKey ]
-			@attrs[ _hKey ] = 
+			@attrs[ _hKey ] =
 				key: _hKey
 				isHash: true
 				type: @table.hashKeyType
@@ -90,7 +94,7 @@ class Attributes
 			#@_required_attrs.push( _hKey )
 
 		if @table.hasRange and not @attrs[ _rKey ]
-			@attrs[ _rKey ] = 
+			@attrs[ _rKey ] =
 				key: _rKey
 				isRange: true
 				type: @table.rangeKeyType
@@ -181,7 +185,7 @@ class Attributes
 
 				else if ( _attr?.type is "number" and _v?[ "$add" ]? )
 					@add( _k, _v[ "$add" ] ) if _v?[ "$add" ]?
-				else 
+				else
 					if _attr?.type is "string" and _.isString( _v ) and not _v.length
 						# remove attribute if type is a empty string
 						@remove( _k )
@@ -261,7 +265,7 @@ class Attributes
 			else if not _.isArray( predicate[ _op ] )
 				_v = @_fixPredicateValue( predicate[ _op ], _attr.type )
 				predicate[ _op ] = _v if _v
-			else 
+			else
 				throw new Error( "Malformed query. Arrays only allowed for `#{ _arrayAcceptOps }" )
 
 		else
@@ -270,7 +274,7 @@ class Attributes
 
 		predicate
 
-	_fixPredicateValue: ( value, type = "string" )=>
+	_fixPredicateValue: ( value, type = "string" )->
 		_vt = typeof value
 
 		switch type
